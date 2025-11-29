@@ -1,0 +1,380 @@
+/* Create Overlay */
+.create-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(0px) saturate(120%);
+    -webkit-backdrop-filter: blur(0px) saturate(120%);
+    background: rgba(214, 214, 214, 0.08);
+    transition: opacity 260ms cubic-bezier(.2,.8,.2,1), background 260ms cubic-bezier(.2,.8,.2,1);
+    will-change: opacity;
+    opacity: 0;
+}
+
+.create-overlay.open {
+    display: flex;
+    backdrop-filter: blur(26px) saturate(120%);
+    -webkit-backdrop-filter: blur(26px) saturate(120%);
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.create-overlay .create-panel {
+    width: min(920px, 96vw);
+    max-height: 88vh;
+    overflow: auto;
+    padding: 0;
+    border-radius: 12px;
+    background: #e0e0e0;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.45);
+    backdrop-filter: blur(26px);
+    -webkit-backdrop-filter: blur(26px);
+    position: relative;
+    transition: transform 260ms cubic-bezier(.22,.9,.3,1), opacity 260ms cubic-bezier(.22,.9,.3,1);
+    will-change: transform, opacity;
+    transform: translateY(18px) scale(0.995) translateZ(0);
+    opacity: 0;
+}
+
+.create-overlay.open .create-panel {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.create-panel .panel-input {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(12px);
+}
+
+.create-panel .btn-dark {
+    background: var(--accent-weak);
+    color: var(--accent-foreground);
+}
+
+.create-panel .custom-file-text {
+    display: none;
+}
+
+.create-panel .custom-select {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+    border: 1px solid var(--border-weak);
+    padding: 8px 36px 8px 12px;
+    border-radius: 8px;
+    color: var(--text);
+}
+
+.create-panel .custom-select-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.create-panel .custom-select-wrapper::after {
+    content: '\25BC';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--muted);
+}
+
+.create-panel .overlay-top {
+    padding: 8px 6px 10px;
+    border-bottom: 1px solid var(--border-weak);
+}
+
+.create-panel .overlay-middle {
+    padding: 12px 6px;
+    border-bottom: 1px solid var(--border-weak);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.create-panel .overlay-bottom {
+    padding: 12px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.create-panel .create-textbox textarea {
+    min-height: 120px;
+    resize: none;
+    border: 0;
+}
+
+.create-panel .custom-file-btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#photos-preview img {
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+/* Search Overlay */
+#search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: rgba(0,0,0,0);
+    backdrop-filter: blur(4px) saturate(100%);
+    -webkit-backdrop-filter: blur(4px) saturate(100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 260ms cubic-bezier(.2,.8,.2,1);
+    overscroll-behavior: contain;
+}
+
+#search-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#search-overlay .overlay-panel {
+    margin-top: 6vh;
+    width: min(960px, 96vw);
+    max-height: 86vh;
+    background: rgba(255,255,255,1);
+    border-radius: 12px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.8);
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 260ms cubic-bezier(.2,.8,.2,1), transform 260ms cubic-bezier(.2,.8,.2,1);
+}
+
+#search-overlay.open .overlay-panel {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Generic Site Overlay */
+.site-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 260ms cubic-bezier(.2,.8,.2,1);
+    overscroll-behavior: contain;
+}
+
+.site-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.site-overlay .overlay-panel {
+    max-width: 90vw;
+    width: 360px;
+    background: rgba(255,255,255,0.92);
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.8);
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 260ms cubic-bezier(.2,.8,.2,1), transform 260ms cubic-bezier(.2,.8,.2,1);
+    text-align: center;
+}
+
+.site-overlay.open .overlay-panel {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.site-overlay .overlay-panel img {
+    max-width: 240px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 8px;
+}
+
+/* Voters Modal */
+#voters-modal-overlay,
+.bio-modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 200000;
+}
+
+#voters-modal-overlay {
+    display: none;
+}
+
+#voters-modal {
+    background: rgba(255,255,255,0.85);
+    border-radius: 14px;
+    max-width: 680px;
+    width: min(94vw, 680px);
+    max-height: 84vh;
+    overflow: hidden;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.8);
+    border: 1px solid rgba(0,0,0,0.06);
+    transform: translateZ(0);
+    opacity: 0;
+    transform: translateY(16px) scale(0.995);
+    will-change: transform, opacity;
+}
+
+#voters-modal.bio-open {
+    animation: bio-clean-open 280ms cubic-bezier(0,0,0.2,1) both;
+    will-change: transform, opacity;
+}
+
+#voters-modal.bio-closing {
+    animation: bio-clean-close 200ms cubic-bezier(0,0,0.2,1) both;
+}
+
+#voters-modal .vm-close {
+    background: none;
+    border: 0;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 8px;
+}
+
+#voters-modal-content {
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: auto;
+}
+
+.vm-section {
+    padding-bottom: 6px;
+}
+
+.vm-section .vm-count {
+    color: #646464;
+    font-size: 0.95em;
+    margin-bottom: 6px;
+}
+
+.vm-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 6px;
+    border-radius: 10px;
+    transition: background 160ms;
+}
+
+.vm-row:hover {
+    background: rgba(144,16,16,0.04);
+}
+
+.vm-row img.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex: 0 0 44px;
+}
+
+.vm-row .vm-name {
+    font-weight: 600;
+    color: #111;
+}
+
+.vm-row .vm-meta {
+    color: #646464;
+    font-size: 0.92em;
+}
+
+.vm-subtitle {
+    color: #646464;
+    font-size: 0.95em;
+    margin-left: 8px;
+}
+
+.vm-count {
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vm-avatar-fallback {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg,#B71C1C,#901010);
+    flex: 0 0 44px;
+}
+
+.vm-row.highlight {
+    box-shadow: inset 4px 0 0 0 rgba(144,16,16,0.12);
+    background: rgba(144,16,16,0.02);
+}
+
+/* Bio Modal */
+.bio-modal-panel {
+    background: rgba(255,255,255,0.80);
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.8);
+    max-width: 640px;
+    width: min(640px, calc(100vw - 24px));
+    margin: 0 auto;
+    box-sizing: border-box;
+    transform: translateY(18px) scale(0.995);
+    opacity: 0;
+    transition: transform 260ms cubic-bezier(0,0,0.2,1), opacity 260ms cubic-bezier(0,0,0.2,1);
+}
+
+.bio-modal-content {
+    white-space: pre-wrap;
+    color: #111;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+@media (max-width: 420px) {
+    #voters-modal {
+        width: calc(100vw - 28px);
+    }
+    
+    .vm-row img.avatar,
+    .vm-avatar-fallback {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+    }
+}

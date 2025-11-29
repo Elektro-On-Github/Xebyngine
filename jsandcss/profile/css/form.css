@@ -1,0 +1,278 @@
+/* Form Styling */
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: slideInFromLeft var(--metro-duration) var(--metro-ease);
+    animation-fill-mode: backwards;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.3s; }
+.form-group:nth-child(2) { animation-delay: 0.4s; }
+.form-group:nth-child(3) { animation-delay: 0.5s; }
+
+.form-label {
+    color: #901010;
+    font-weight: 600;
+    font-size: 1.05em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform var(--metro-duration-fast) var(--metro-ease);
+}
+
+.form-label i {
+    transition: transform var(--metro-duration) var(--metro-ease);
+}
+
+.form-group:focus-within .form-label {
+    transform: translateX(6px);
+}
+
+.form-group:focus-within .form-label i {
+    transform: translateX(3px) scale(1.1);
+}
+
+/* Textarea */
+.profile-form textarea {
+    width: 100%;
+    min-height: 110px;
+    border-radius: 14px;
+    border: 2px solid #e3e3e3;
+    padding: 16px 14px;
+    font-size: 1em;
+    background: #fff;
+    color: #222;
+    outline: none;
+    resize: vertical;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    transition: all var(--metro-duration) var(--metro-ease);
+    will-change: border-color, box-shadow, transform;
+}
+
+.profile-form textarea:hover {
+    border-color: #c9c9c9;
+    transform: translateX(4px);
+}
+
+.profile-form textarea:focus {
+    border-color: #901010;
+    box-shadow: 0 6px 16px rgba(144, 16, 16, 0.12);
+    transform: translateX(6px);
+}
+
+.profile-form textarea::placeholder {
+    color: #999;
+    opacity: 0.7;
+    transition: opacity var(--metro-duration-fast) var(--metro-ease);
+}
+
+.profile-form textarea:focus::placeholder {
+    opacity: 0.5;
+}
+
+/* File Input */
+.custom-file {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.custom-file input[type="file"] {
+    display: none;
+}
+
+.custom-file-btn {
+    background: #901010;
+    color: #fff;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 6px 18px rgba(144,16,16,0.18);
+    transition: all var(--metro-duration) var(--metro-ease);
+    width: 100%;
+    box-sizing: border-box;
+    will-change: transform, box-shadow;
+}
+
+.custom-file-btn:active {
+    transform: translateX(3px) scale(0.98);
+    transition-duration: var(--metro-duration-fast);
+}
+
+.custom-file-btn i {
+    transition: transform var(--metro-duration) var(--metro-ease);
+}
+
+
+.custom-file-text {
+    background: #fff;
+    border: 2px solid #e3e3e3;
+    padding: 12px 16px;
+    border-radius: 50px;
+    color: #646464;
+    font-size: 0.96em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+    transition: all var(--metro-duration) var(--metro-ease);
+}
+
+
+/* Social Links Inputs */
+.social-links-group {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.social-entry {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    animation: slideInFromLeft var(--metro-duration) var(--metro-ease);
+    transition: all var(--metro-duration) var(--metro-ease);
+}
+
+.social-entry.removing {
+    animation: slideInFromLeft var(--metro-duration) var(--metro-ease) reverse;
+    opacity: 0;
+    transform: translateX(-60px);
+}
+
+.remove-social-btn {
+    background: #fff;
+    border: 2px solid #e3e3e3;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: #901010;
+    font-weight: 600;
+    font-size: 16px;
+    min-width: 40px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--metro-duration) var(--metro-ease);
+    will-change: transform, background, border-color;
+}
+
+
+.remove-social-btn:active {
+    transform: translateX(-3px) rotate(90deg) scale(0.95);
+    transition-duration: var(--metro-duration-fast);
+}
+
+.profile-form input[type="url"] {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 50px;
+    border: 2px solid #e3e3e3;
+    font-size: 1em;
+    background: #fff;
+    color: #222;
+    outline: none;
+    box-sizing: border-box;
+    transition: all var(--metro-duration) var(--metro-ease);
+    will-change: border-color, box-shadow, transform;
+}
+
+.profile-form input[type="url"]:hover {
+    border-color: #c9c9c9;
+    transform: translateX(4px);
+}
+
+.profile-form input[type="url"]:focus {
+    border-color: #901010;
+    box-shadow: 0 6px 16px rgba(144, 16, 16, 0.12);
+    transform: translateX(6px);
+}
+
+.profile-form input[type="url"]::placeholder {
+    color: #999;
+    opacity: 0.7;
+    transition: opacity var(--metro-duration-fast) var(--metro-ease);
+}
+
+.profile-form input[type="url"]:focus::placeholder {
+    opacity: 0.5;
+}
+
+/* Submit Button */
+.submit-btn {
+    position: absolute;
+    background: #901010;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 24px;
+    font-size: 1.15em;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 8px 24px rgba(144,16,16,0.2);
+    transition: all var(--metro-duration) var(--metro-ease);
+    margin-top: 12px;
+    animation: slideInFromLeft var(--metro-duration-slow) var(--metro-ease) 0.6s backwards;
+    will-change: transform, box-shadow;
+    text-align: center;
+    right: 27%;
+    left: 27%;
+}
+
+
+.submit-btn:active {
+    transform: translateX(4px) scale(0.98);
+    transition-duration: var(--metro-duration-fast);
+}
+
+.submit-btn i {
+    transition: transform var(--metro-duration) var(--metro-ease);
+}
+
+.submit-btn:hover i {
+    transform: translateX(3px) rotate(15deg) scale(1.1);
+}
+
+/* Loading state for submit button */
+.submit-btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.submit-btn.loading i {
+    animation: rotating 1s linear infinite;
+}
+
+/* Disabled state for add button */
+.custom-file-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.custom-file-btn:disabled:hover {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}

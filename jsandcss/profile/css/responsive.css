@@ -1,0 +1,46 @@
+/* Media Queries */
+@media (max-width: 700px) {
+    .main {
+        padding: 70px 12px 30px;
+    }
+    
+    .profile-container {
+        padding: 28px 20px;
+        border-radius: 14px;
+    }
+
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 20px;
+    }
+
+    .header-title {
+        font-size: 1.0em;
+    }
+
+    .header-back-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+    }
+
+    .profile-form {
+        gap: 24px;
+    }
+
+    .form-group {
+        gap: 8px;
+    }
+
+    .submit-btn {
+        padding: 12px 56px;
+        font-size: 1.1em;
+        right: 10%;
+        left: 10%;
+    }
+
+    .custom-file-btn {
+        padding: 12px 20px;
+    }
+}

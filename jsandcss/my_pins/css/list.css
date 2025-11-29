@@ -1,0 +1,77 @@
+/* Lista utenti */
+ul.user-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 16px;
+    padding-bottom: 16px;
+}
+
+.list-end-spacer {
+    height: calc(64px + 80px + 16px + env(safe-area-inset-bottom, 0px));
+    width: 100%;
+    display: block;
+    pointer-events: none;
+}
+
+/* USER ITEM - Stato iniziale (invisibile, spostato) */
+li.user-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 12px 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    background: transparent;
+    transition: background 120ms ease;
+    opacity: 0;
+    transform: translateX(-80px);
+}
+
+/* Quando viene aggiunta la classe .animate-in, parte l'animazione */
+li.user-item.animate-in {
+    animation: slideInFromLeft 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) both;
+}
+
+li.user-item:hover {
+    background: rgba(0,0,0,0.02);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e3e3e3;
+}
+
+.user-link {
+    text-decoration: none;
+    font-weight: bold;
+    color: inherit;
+}
+
+.unpin-btn {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: #e53935;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.unpin-btn:active {
+    transform: scale(0.96);
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+    ul.user-list {
+        margin: 0 8px;
+    }
+}

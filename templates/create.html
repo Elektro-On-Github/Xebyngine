@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Crea post</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Create CSS -->
+    <link rel="stylesheet" href="/jsandcss/create/css/base.css">
+    <link rel="stylesheet" href="/jsandcss/create/css/animations.css">
+    <link rel="stylesheet" href="/jsandcss/create/css/header.css">
+    <link rel="stylesheet" href="/jsandcss/create/css/form.css">
+    <link rel="stylesheet" href="/jsandcss/create/css/timeline.css">
+    <link rel="stylesheet" href="/jsandcss/create/css/poll.css">
+    <link rel="stylesheet" href="/jsandcss/create/css/footer.css">
+</head>
+<body>
+
+<!-- Data from template (JSON format - CSP compliant) -->
+<script type="application/json" id="create-data">
+{
+    "urls": {
+        "index": "{{ url_for('misc_bp.index') }}",
+        "createPost": "{{ url_for('posts_bp.create_post') }}"
+    }
+}
+</script>
+
+<!-- HEADER -->
+<header class="app-header animate-slide-top">
+    <a class="back-btn" href="{{ url_for('misc_bp.index') }}" aria-label="Indietro">
+        <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h2>Crea un post</h2>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+    <div class="create-post">
+        <form id="create-post-form" action="{{ url_for('posts_bp.create_post') }}" method="post" enctype="multipart/form-data">
+            <div class="create-textbox animate-stagger delay-1">
+                <textarea name="content" placeholder="Scrivi qualcosa..." required></textarea>
+            </div>
+
+            <div class="attach-row">
+                <input type="file" id="photos-input" name="photos" accept=".png,.jpg,.jpeg" multiple style="display:none">
+                <button type="button" id="photos-browse" class="expand-btn animate-stagger delay-2">
+                    <i class="fa-solid fa-paperclip"></i> Allega foto
+                </button>
+                <button type="button" id="add-poll-btn" class="expand-btn animate-stagger delay-3">
+                    <i class="fa-solid fa-poll"></i> Sondaggio
+                </button>
+            </div>
+
+            <div id="photos-preview"></div>
+
+            <div class="timeline-wrapper animate-stagger delay-4">
+                <label style="font-weight:700;display:block;margin-bottom:6px">Timeline</label>
+                <div class="timeline" id="timeline">
+                    <div class="timeline-track">
+                        <div class="timeline-fill" id="timeline-fill"></div>
+                        <div class="timeline-ticks" id="timeline-ticks"></div>
+                        <div class="timeline-thumb" id="timeline-thumb" tabindex="0" role="slider" aria-valuemin="1" aria-valuemax="48" aria-valuenow="1"></div>
+                    </div>
+                    <div class="timeline-tooltip" id="timeline-tooltip">1 h</div>
+                    <div id="timeline-labels" style="position:relative;height:20px; width:100%;"></div>
+                </div>
+                <div id="timeline-selected-indicator">1 h</div>
+                <input type="range" id="timeline-range" name="duration_hours" min="1" max="48" value="1" style="width:100%;opacity:0;height:0;margin-top:8px;" aria-hidden="true">
+            </div>
+
+            <div id="poll-hidden-container" style="display:none;">
+                <input type="hidden" name="poll_question" value="">
+                <div id="poll-options-container"></div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<button type="submit" form="create-post-form" class="footer-btn animate-fade-scale delay-5">Pubblica</button>
+
+<!-- POLL OVERLAY -->
+<div id="poll-overlay" aria-hidden="true">
+    <div class="overlay-panel" role="dialog" aria-modal="true">
+        <div class="modal-poll-header">
+            <strong>Imposta sondaggio</strong>
+        </div>
+        <div class="modal-poll-body">
+            <input id="modal-poll-question" type="text" class="modal-poll-option" placeholder="La domanda del sondaggio">
+            <div id="modal-poll-options" style="display:flex;flex-direction:column;gap:8px;">
+                <input class="modal-poll-option" id="modal-poll-opt-1" placeholder="Opzione 1">
+                <input class="modal-poll-option" id="modal-poll-opt-2" placeholder="Opzione 2">
+            </div>
+            <button type="button" id="modal-add-option" class="modal-add-opt">+ Aggiungi opzione</button>
+        </div>
+        <div class="modal-poll-footer">
+            <button type="button" id="modal-cancel" class="expand-btn" style="background:#eee;color:#111;">Annulla</button>
+            <button type="button" id="modal-save" class="expand-btn">Salva sondaggio</button>
+        </div>
+    </div>
+</div>
+
+<!-- CSRF Management (CRITICAL - DO NOT REMOVE) -->
+<script src="/jsandcss/create/js/csrf.js"></script>
+
+<!-- Create JavaScript -->
+<script src="/jsandcss/create/js/config.js"></script>
+<script src="/jsandcss/create/js/photos.js"></script>
+<script src="/jsandcss/create/js/poll.js"></script>
+<script src="/jsandcss/create/js/timeline-styles.js"></script>
+<script src="/jsandcss/create/js/timeline.js"></script>
+<script src="/jsandcss/create/js/init.js"></script>
+<script src="/jsandcss/darkness.js"></script>
+
+<!-- Service Worker -->
+<script src="/jsandcss/sw-linked.js"></script>
+
+</body>
+</html>

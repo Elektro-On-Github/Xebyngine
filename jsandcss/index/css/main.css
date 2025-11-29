@@ -1,0 +1,44 @@
+/* Root Variables & Base Styles */
+:root { 
+    --accent-weak: rgba(144,16,16,0.14);
+    --like-size: 40px;
+    --like-font-size: 1.1em;
+    --like-color: #e53935;
+    --like-bg: rgba(255,255,255,0.14);
+    --like-backdrop-blur: 6px;
+    --like-backdrop-saturate: 300%;
+    --like-box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    --like-transition: transform 0.18s ease, background 0.18s ease;
+}
+
+/* Typography & Links */
+strong a:link,
+strong a:visited,
+strong a:hover,
+strong a:active {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Base */
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    margin: 0;
+    background: #f5f5f5;
+    min-height: 100vh;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Modal scroll lock */
+.modal-open {
+    position: fixed;
+    top: var(--voters-scroll-y, 0);
+    left: 0;
+    right: 0;
+    width: 100%;
+    overflow: hidden;
+}

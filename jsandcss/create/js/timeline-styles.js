@@ -1,0 +1,18 @@
+// Inject timeline styles dynamically
+// (This was originally inline in the HTML)
+
+(function() {
+    const s = document.createElement('style');
+    s.textContent = `
+        .timeline { position: relative; width: 100%; max-width: 100%; }
+        .timeline-track { position: relative; height: 14px; background: linear-gradient(90deg, rgba(0,0,0,0.06), rgba(0,0,0,0.04)); border-radius: 8px; overflow: visible; }
+        .timeline-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 2%; background: linear-gradient(90deg, #e74c3c, #901010); border-radius: 8px; transform-origin: left center; transition: width 360ms cubic-bezier(.1,.9,.2,1); }
+        .timeline-tick { position: absolute; top:50%; transform: translateY(-50%); width:2px; height:10px; background: rgba(0,0,0,0.12); }
+        .timeline-thumb { position: absolute; top:50%; transform: translate(-50%,-50%); width:18px; height:18px; background:#fff; border-radius:50%; box-shadow:0 6px 18px rgba(0,0,0,0.18); border:2px solid #901010; transition: transform 180ms cubic-bezier(.1,.9,.2,1), left 360ms cubic-bezier(.1,.9,.2,1); cursor: pointer; }
+        .timeline-thumb:hover { transform: translate(-50%,-50%) scale(1.15); }
+        .timeline-thumb:active { transform: translate(-50%,-50%) scale(0.95); }
+        .timeline-tooltip { position:absolute; left:0; transform: translate(-50%,-120%); top:0; background:#161616; color:#fff; padding:6px 8px; border-radius:8px; white-space:nowrap; }
+        .timeline-label { position:absolute; top:calc(100% + 6px); transform:translateX(-50%); font-size:0.9em; color:#444; }
+    `;
+    document.head.appendChild(s);
+})();

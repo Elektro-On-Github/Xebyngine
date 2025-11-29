@@ -1,0 +1,87 @@
+/* ============================================
+   ANIMAZIONI METRO UI WINDOWS 8/10 AUTENTICHE
+   Curva originale: cubic-bezier(0.1, 0.9, 0.2, 1)
+   Movimento sempre da SINISTRA a DESTRA
+============================================ */
+
+/* Fade in base */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Fade in con movimento da sotto */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slide in da sinistra (principale) */
+@keyframes fadeSlideDown {
+    from {
+        opacity: 0;
+        transform: translateX(-150px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Slide up da sinistra */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateX(-120px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Slide in from left (soft) */
+@keyframes slideInFromLeftSoft {
+    from {
+        opacity: 0;
+        transform: translateX(-80px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Form field slide in - con stato finale esplicito */
+@keyframes formFieldSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Button slide in - con stato finale esplicito */
+@keyframes buttonSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-60px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

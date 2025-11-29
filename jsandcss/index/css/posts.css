@@ -1,0 +1,211 @@
+/* Posts */
+.post {
+    background: rgba(255, 255, 255, 0);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    margin-bottom: 18px;
+    padding: 16px;
+    position: relative;
+    border-radius: 0;
+}
+
+.post > *:not(.ink-canvas) {
+    position: relative;
+    z-index: 1;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.post-content {
+    margin-bottom: 8px;
+}
+
+.post-text-box {
+    display: block;
+    box-sizing: border-box;
+    max-width: calc(100% - 5px);
+    padding-right: 12px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: pre-wrap;
+    line-height: 1.4;
+}
+
+.post-text-box.collapsed {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    position: relative;
+    padding-right: 6ch;
+}
+
+.post-timer-top {
+    z-index: 2;
+    line-height: 1;
+}
+
+.post-timer-top .timer,
+.post-timer-top i.fa-clock {
+    font-size: calc(1em + 2px);
+    font-weight: 700;
+}
+
+/* Post Actions */
+.post-actions {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    font-size: 1.1em;
+    color: #901010;
+    position: relative;
+}
+
+.post-actions-modern {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.view-count-modern {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.0em;
+    color: #901010;
+}
+
+.view-count-modern .fa-eye {
+    color: #901010;
+}
+
+/* Post Menu */
+.post-menu {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 40;
+}
+
+.post-menu .post-menu-btn:hover {
+    background: rgba(0,0,0,0.04);
+}
+
+.post-menu-popup {
+    position: absolute;
+    top: 44px;
+    right: 0;
+    min-width: 160px;
+    max-width: 280px;
+    background: rgba(255,255,255,0.62);
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    padding: 6px;
+    opacity: 0;
+    transform: scale(0.96) translateY(-6px);
+    transition: opacity 220ms cubic-bezier(.2,.9,.2,1), transform 220ms cubic-bezier(.2,.9,.2,1);
+    pointer-events: none;
+    z-index: 60;
+    overflow: visible;
+}
+
+.post-menu-popup.open {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
+}
+
+.post-menu-popup.closing {
+    opacity: 0;
+    transform: scale(0.9) translateY(-8px);
+    pointer-events: none;
+}
+
+.post-menu-popup .popup-trash {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e53935;
+    font-size: 16px;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.post-menu-popup button.post-delete-btn {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    color: #e53935;
+    font-weight: 700;
+    border-radius: 8px;
+}
+
+.post-menu-popup button.post-delete-btn:hover {
+    background: rgba(0,0,0,0.04);
+}
+
+/* Expand Buttons */
+.post-expand-btn,
+.comment-expand-btn {
+    display: inline-block;
+    background: none;
+    border: none;
+    color: #901010;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 6px;
+    margin-left: 0;
+    font-weight: 700;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    text-decoration: none;
+    outline: none;
+}
+
+.post-expand-btn:focus,
+.comment-expand-btn:focus,
+.bio-show-more:focus {
+    text-decoration: none !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(144,16,16,0.12);
+    border-radius: 6px;
+    border: 0 none !important;
+    background: transparent !important;
+}
+
+.post-expand-btn:active,
+.comment-expand-btn:active,
+.post-expand-btn:focus:active,
+.comment-expand-btn:focus:active,
+.bio-show-more:active,
+.bio-show-more:focus:active {
+    box-shadow: none !important;
+    border: 0 none !important;
+    background: transparent !important;
+    transform: scale(0.995);
+}
+
+.post-expand-btn:focus:not(:focus-visible),
+.comment-expand-btn:focus:not(:focus-visible),
+.bio-show-more:focus:not(:focus-visible) {
+    box-shadow: none !important;
+}

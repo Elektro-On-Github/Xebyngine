@@ -1,0 +1,38 @@
+/* Profile Specific */
+.profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: transparent;
+    border-radius: 16px;
+    padding: 40px;
+    animation: slideInFromLeft var(--metro-duration-slow) var(--metro-ease) 0.15s backwards;
+    transition: box-shadow var(--metro-duration) var(--metro-ease);
+}
+
+.profile-avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 40px;
+    animation: slideInFromLeft var(--metro-duration-slow) var(--metro-ease) 0.25s backwards;
+}
+
+.profile-avatar {
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e3e3e3;
+    margin-bottom: 24px;
+    box-shadow: 0px 8px 48px rgba(0,0,0,0.2);
+    transition: all var(--metro-duration) var(--metro-ease);
+    will-change: transform, box-shadow;
+}
+
+.profile-username {
+    color: #901010;
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    animation: slideInFromLeftSoft var(--metro-duration-slow) var(--metro-ease) 0.35s backwards;
+}

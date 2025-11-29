@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#000000">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Xebyngine</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/jsandcss/dirty.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/main.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/layout.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/posts.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/images.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/forms.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/modals.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/profile.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/components.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/animations.css">
+    
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <input type="hidden" id="csrf-token-input" name="csrf_token" value="{{ csrf_token if csrf_token is defined else (session.csrf_token if session and session.csrf_token is defined else '') }}" />
+</head>
+<body>
+    <div class="app-header">
+        <div style="color:#000000;">Xebyngine</div>
+        <button id="open-search-overlay" title="Cerca" class="nav-btn-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </div>
+    
+    <div class="main">
+        {% if profile_mode %}
+        <div class="profile-stack">
+            <div class="profile-header">
+                <img src="{{ url_for('uploaded_avatar', filename=avatar.split('/')[-1] if avatar else 'default.png') }}" class="avatar" alt="avatar">
+                <div class="meta">
+                    <h2 style="margin:0;">{{ username }}</h2>
+                    {% if bio %}
+                    <div style="color:#444;font-size:1.1em;margin-top:6px;">
+                        <span class="profile-bio-preview" data-full-bio="{{ bio|e }}">{{ bio[:15] }}{% if bio|length > 15 %}…{% endif %}</span>
+                        {% if bio|length > 15 %}
+                        <button type="button" class="bio-show-more" aria-expanded="false">Mostra di più</button>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% if is_owner %}
+            <div class="profile-actions">
+                <a href="{{ url_for('profile_bp.profile') }}" class="profile-action-btn" style="background:#901010;color:#fff;padding:8px 12px;border-radius:50px;text-decoration:none;">Personalizza profilo</a>
+                <button id="qr-me-btn" class="profile-action-btn" style="background:#e0e0e0;color:#222;padding:8px 12px;border-radius:50px;border:none;">Fatti conoscere</button>
+            </div>
+            {% else %}
+            <div class="profile-actions">
+                <a href="{{ url_for('chat_bp.chat_page') }}{% if user_id %}?user_id={{ user_id }}{% endif %}" class="profile-action-btn" style="background:#901010;color:#fff;padding:8px 12px;border-radius:50px;text-decoration:none;">Messaggia</a>
+                {% if contacts and contacts|length %}
+                <button id="open-contacts-btn" class="profile-action-btn" style="background:#e0e0e0;color:#222;padding:8px 12px;border-radius:50px;border:none;">Contatti</button>
+                {% endif %}
+                <button id="pin-toggle-btn" class="profile-action-btn" data-username="{{ username|e }}" data-initial-pinned="{{ (pinned_status|default(false))|tojson }}" style="background:#fff;border:1px solid #e0e0e0;color:#222;padding:8px 12px;border-radius:50px;border:none;">Metti in lista</button>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Search Overlay -->
+        <div id="search-overlay">
+            <div class="overlay-panel" id="search-overlay-panel">
+                <div style="display:flex; align-items:center; gap:8px; padding:12px;">
+                    <button id="close-search-overlay" style="background:rgba(144, 16, 16, 0.1);border:none;color:rgba(144, 16, 16, 1);font-size:20px;cursor:pointer;width:40px;height:40px;border-radius: 50px;"><i class="fa-solid fa-arrow-left"></i></button>
+                    <div style="position:relative; flex:1;">
+                        <input id="overlay-search-input" class="comment-input" type="text" placeholder="Cerca utenti e post">
+                        <button id="overlay-clear-btn" type="button" title="Annulla" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:6px;">
+                            <i class="fa-solid fa-xmark" style="color:#000000; font-size:18px;"></i>
+                        </button>
+                    </div>
+                    <button id="overlay-send-btn" type="button" class="comment-send-btn" title="Cerca">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+                <div style="padding:12px; overflow:auto; flex:1;">
+                    <div id="overlay-results"></div>
+                    <div id="overlay-history"></div>
+                </div>
+            </div>
+        </div>
+
+        {% if search_query %}
+        <div class="user-results material-card">
+            <h3 style="margin-top:0;">Risultati ricerca:</h3>
+            {% if found_users %}
+            <ul>
+                {% for user in found_users %}
+                <li><a href="{{ url_for('view_profile', username=user) }}"><i class="fa-solid fa-user"></i> {{ user }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>Nessun utente trovato.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div id="post-feed"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <form action="/user/{{ username }}" style="margin:0;">
+            <button class="nav-btn" title="Profilo"><i class="fa-solid fa-user"></i></button>
+        </form>
+        <form action="/my_pins" style="margin:0;">
+            <button class="nav-btn" title="Pins"><i class="fa-solid fa-thumbtack"></i></button>
+        </form>
+        <form action="/chat" style="margin:0;">
+            <button class="nav-btn" title="Chat"><i class="fa-solid fa-envelope"></i></button>
+        </form>
+        <form action="{{ url_for('posts_bp.create') }}" method="get" style="margin:0;">
+            <button id="fab-create" type="submit" class="nav-btn" title="Crea post"><i class="fa-solid fa-plus"></i></button>
+        </form>
+    </nav>
+
+    <!-- Create Overlay -->
+    <div id="create-overlay" class="create-overlay" aria-hidden="true">
+        <div class="create-panel" id="create-overlay-panel">
+            <form class="create-post" action="{{ url_for('posts_bp.create_post') }}" method="post" enctype="multipart/form-data" id="create-post-form">
+                <div class="create-pages" style="display:block;">
+                    <div class="create-page page-active" data-page="1">
+                        <div class="overlay-top">
+                            <div class="create-textbox">
+                                <textarea name="content" required placeholder="Scrivi qualcosa..."></textarea>
+                            </div>
+                        </div>
+                        <div class="btn-row" style="display:flex; gap:10px; margin-top:12px; align-items:center;">
+                            <button type="submit" class="custom-file-btn" style="flex:1;border-radius: 100px;">Pubblica</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Voters Modal -->
+    <div id="voters-modal-overlay" data-current-user="{{ username if username else '' }}" data-default-avatar="{{ url_for('uploaded_avatar', filename='default.png') }}" style="display:none; position:fixed; inset:0; z-index:200000; align-items:center; justify-content:center;">
+        <div id="voters-modal" role="dialog" aria-modal="true" style="background:linear-gradient(180deg,#ffffff,#fbfbfb); border-radius:14px; max-width:680px; width:min(94vw,680px); max-height:84vh; overflow:auto; box-shadow:0 30px 80px rgba(8,8,8,0.6); border:1px solid rgba(0,0,0,0.06); transform:translateZ(0);">
+            <div id="voters-modal-content" style="padding:12px 16px; display:flex; flex-direction:column; gap:12px; overflow:auto;"></div>
+        </div>
+    </div>
+
+    <p><a href="/logout">Logout</a></p>
+
+
+    <script id="server-data" type="application/json">
+    {
+    "profileMode": {{ profile_mode|tojson }},
+    "loggedUsername": {{ username|tojson }},
+    "loggedAvatar": {% if avatar_url is defined %}{{ avatar_url|tojson }}{% else %}null{% endif %},
+    "profileContacts": {% if contacts is defined %}{{ contacts|tojson }}{% else %}[]{% endif %},
+    "serverProfilePosts": {% if posts is defined %}{{ posts|tojson }}{% else %}[]{% endif %}
+    }
+    </script>
+    
+    <!-- JavaScript Files -->
+    <script src="/jsandcss/index/js/config.js"></script>
+    <script src="/jsandcss/index/js/utils.js"></script>
+    <script src="/jsandcss/index/js/contacts.js"></script>
+    <script src="/jsandcss/index/js/collapse.js"></script>
+    <script src="/jsandcss/index/js/timers.js"></script>
+    <script src="/jsandcss/index/js/ink-splash.js"></script>
+    <script src="/jsandcss/index/js/interactions.js"></script>
+    <script src="/jsandcss/index/js/comments.js"></script>
+    <script src="/jsandcss/index/js/search.js"></script>
+    <script src="/jsandcss/index/js/modals.js"></script>
+    <script src="/jsandcss/index/js/posts.js"></script>
+    <script src="/jsandcss/index/js/image-viewer.js"></script>
+    <script src="/jsandcss/index/js/profile.js"></script>
+    <script src="/jsandcss/index/js/gestures.js"></script>
+    <script src="/jsandcss/index/js/csrf.js"></script>
+    <script src="/jsandcss/index/js/init.js"></script>
+    <script src="/jsandcss/dirty.js"></script>
+    <script src="/jsandcss/darkness.js"></script>
+    <script src="/jsandcss/sw-linked.js"></script>
+</body>
+</html>

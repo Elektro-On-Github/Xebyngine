@@ -1,0 +1,93 @@
+/* Poll overlay */
+#poll-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 320ms cubic-bezier(0.1, 0.9, 0.2, 1);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: rgba(0,0,0,0.0);
+}
+
+#poll-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#poll-overlay .overlay-panel {
+    margin-top: 6vh;
+    width: min(920px, 96vw);
+    max-height: 86vh;
+    background: rgba(255,255,255,0.96);
+    border-radius: 12px;
+    overflow: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    opacity: 0;
+    transform: translateX(-80px);
+    transition: opacity 380ms cubic-bezier(0.1, 0.9, 0.2, 1),
+                transform 380ms cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+#poll-overlay.open .overlay-panel {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.modal-poll-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: none;
+}
+
+.modal-poll-body {
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-poll-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: none;
+}
+
+.modal-poll-option {
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    background: #ffffff;
+    border-radius: 8px;
+    transition: all 280ms cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+.modal-poll-option:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: 0 4px 12px rgba(144, 16, 16, 0.1) !important;
+    background: #ffffff !important;
+    transform: translateX(4px);
+}
+
+.modal-add-opt {
+    background: none;
+    border: none;
+    color: #901010;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 280ms cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+.modal-add-opt:hover {
+    transform: translateX(6px);
+}

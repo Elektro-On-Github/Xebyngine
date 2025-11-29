@@ -1,0 +1,90 @@
+/* Header container */
+.app-header-text {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    font-weight: 700;
+    z-index: 101;
+    letter-spacing: 0.6px;
+    padding: 0 12px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    background: rgba(255,255,255,0.25);
+    border-radius: 0px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12px) saturate(120%);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+    animation: slideInFromLeft 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) 0s both;
+}
+
+.app-header-inner {
+    font-size: 1.3em;
+    font-weight: 700;
+    width: 100%;
+    max-width: 920px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 8px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.app-header-left {
+    position: fixed;
+    left: 10px;
+    top: calc(var(--header-height) / 2);
+    transform: translateY(-50%);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    z-index: 1100;
+}
+
+.app-header-right {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+}
+
+.app-header-title {
+    flex: 1 1 auto;
+    text-align: center;
+}
+
+.header-btn, .back-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    border: none;
+    background: rgba(144, 16, 16, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: #111;
+    padding: 0;
+}
+
+.back-btn {
+    color: rgba(144, 16, 16, 1);
+    border: none;
+    padding: 12px 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1em;
+}

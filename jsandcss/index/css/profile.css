@@ -1,0 +1,169 @@
+/* Profile Stack */
+.profile-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0;
+    text-align: center;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: center;
+}
+
+.profile-header .meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.profile-stack .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-bio-preview {
+    display: inline;
+    color: inherit;
+}
+
+/* Profile Actions */
+.profile-actions {
+    display: flex !important;
+    width: 100%;
+    gap: 8px !important;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 8pc;
+    padding-right: 8pc;
+    box-sizing: border-box;
+    margin-top: 6px;
+    flex-wrap: wrap;
+}
+
+.profile-actions .profile-action-btn {
+    flex: 1 1 0%;
+    margin: 0 !important;
+    padding: 12px 0 !important;
+    min-width: 0;
+    text-align: center;
+    border-radius: 50px !important;
+    box-sizing: border-box;
+    transition: flex 420ms cubic-bezier(.2,.9,.2,1), opacity 320ms ease, padding 320ms ease, margin 320ms ease, transform 320ms ease;
+    line-height: 1;
+    vertical-align: middle;
+    border: 1px solid transparent;
+}
+
+.profile-action-btn,
+.profile-action-btn:focus,
+.profile-action-btn:active {
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    transform: translateY(0) !important;
+}
+
+.profile-actions .profile-action-btn.morphing {
+    transition: width 360ms cubic-bezier(.2,.9,.2,1), padding 360ms cubic-bezier(.2,.9,.2,1), border-radius 360ms cubic-bezier(.2,.9,.2,1), background-color 360ms ease, color 240ms ease, transform 360ms ease;
+    overflow: hidden;
+}
+
+.profile-actions .profile-action-btn.morphed {
+    width: 56px !important;
+    min-width: 56px !important;
+    padding: 12px !important;
+    border-radius: 999px !important;
+    background: #901010 !important;
+    color: #fff !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 6px 18px rgba(144,16,16,0.12) !important;
+}
+
+.profile-actions .profile-action-btn.pinned-icon {
+    flex: 0 0 56px !important;
+    width: 56px !important;
+    padding: 12px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    border-radius: 50px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #901010 !important;
+    color: #fff !important;
+}
+
+.pinned-circle {
+    flex: 0 0 56px !important;
+    width: 56px !important;
+    padding: 12px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    border-radius: 50px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #901010 !important;
+    color: #fff !important;
+}
+
+.pinned-flyer {
+    flex: 0 0 56px !important;
+    width: 56px !important;
+    padding: 12px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    border-radius: 50px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #901010 !important;
+    color: #fff !important;
+    transition: transform 420ms cubic-bezier(.2,.9,.2,1), left 420ms cubic-bezier(.2,.9,.2,1), top 420ms ease, opacity 220ms ease;
+}
+
+.profile-actions .profile-action-btn.expanded {
+    flex: 2 1 0%;
+}
+
+.profile-actions .profile-action-btn.shrinking {
+    transition: transform 360ms cubic-bezier(.2,.9,.2,1), opacity 320ms ease, width 360ms ease, padding 360ms ease;
+    transform: scale(0.84);
+    opacity: 0.9;
+}
+
+.pinned-caption {
+    position: fixed;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 0.95em;
+    z-index: 1299;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 220ms ease, transform 220ms ease;
+    pointer-events: none;
+}
+
+@media (max-width: 800px) {
+    .profile-actions {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    
+    .profile-actions .profile-action-btn {
+        padding: 12px 0 !important;
+        font-size: 0.95em;
+    }
+}

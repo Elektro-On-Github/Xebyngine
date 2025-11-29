@@ -1,0 +1,95 @@
+/* Comment input and search styles */
+.comment-input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 100px;
+    border: 1px solid #e3e3e3;
+    box-sizing: border-box;
+    font-size: 0.98em;
+    background: rgba(255,255,255,0.4);
+    color: #222;
+    outline: none;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.comment-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.bottom-comment-form {
+    position: fixed;
+    bottom: 76px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 110;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: rgba(255,255,255,0.95);
+    padding: 12px;
+    border-radius: 24px;
+    box-shadow: 0 -2px 16px 2px rgba(0,0,0,0.10);
+    max-width: min(920px, calc(100vw - 32px));
+    width: calc(100% - 32px);
+    box-sizing: border-box;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: slideInFromLeft 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) 0.2s both;
+}
+
+.comment-row .comment-text {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+    white-space: normal;
+    line-height: 1.5;
+    display: block;
+    box-sizing: border-box;
+    padding-right: 8px;
+    max-width: calc(100% - 2px);
+}
+
+.comment-text-box {
+    display: block;
+    box-sizing: border-box;
+    max-width: calc(100% - 10px);
+    padding-right: 8px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+}
+
+.comment-form,
+.bottom-comment-form {
+    border-radius: 100px !important;
+    background: rgba(255,255,255,0.7) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+    box-shadow: 0 -2px 16px 2px rgba(0,0,0,0.10) !important;
+}
+
+.comment-input:focus {
+    border-color: #901010;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.comment-send-btn {
+    background: #901010;
+    color: #fff;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1em;
+}
+
+.comment-send-btn:active,
+.comment-send-btn:focus {
+    outline: none;
+}

@@ -1,0 +1,151 @@
+/* ========================================
+   DIRTY OVERLAY - Stili per l'overlay giallo
+   ======================================== */
+
+/* Overlay giallo trasparente */
+.dirty-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 230, 0, 0.35);
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px);
+    transition: opacity 0.5s ease;
+}
+
+/* Stato nascosto */
+.dirty-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Card del messaggio */
+.dirty-card {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    padding: 40px 50px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        0 0 0 5px rgba(255, 200, 0, 0.5);
+    max-width: 450px;
+    animation: bounceIn 0.6s ease;
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Icona */
+.dirty-icon {
+    font-size: 64px;
+    margin-bottom: 15px;
+    animation: shake 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes shake {
+    0% { transform: rotate(-5deg); }
+    100% { transform: rotate(5deg); }
+}
+
+/* Titolo */
+.dirty-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Messaggio */
+.dirty-message {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+
+/* Bottone Clean */
+.clean-button {
+    background: linear-gradient(145deg, #4CAF50, #45a049);
+    color: white;
+    padding: 15px 50px;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+}
+
+.clean-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+}
+
+.clean-button:active {
+    transform: translateY(0);
+}
+
+/* Loading state */
+.clean-button.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .dirty-card {
+        background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+    }
+    
+    .dirty-title {
+        color: #fff;
+    }
+    
+    .dirty-message {
+        color: #ccc;
+    }
+    
+    .dirty-days {
+        background: #4a4000;
+        color: #ffc107;
+    }
+}
+
+/* Mobile responsive */
+@media (max-width: 500px) {
+    .dirty-card {
+        margin: 20px;
+        padding: 30px 25px;
+    }
+    
+    .dirty-icon {
+        font-size: 48px;
+    }
+    
+    .dirty-title {
+        font-size: 22px;
+    }
+    
+    .clean-button {
+        padding: 12px 40px;
+        font-size: 16px;
+    }
+}

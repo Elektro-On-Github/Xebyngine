@@ -1,0 +1,147 @@
+/* Avatar */
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 48px;
+    object-fit: cover;
+    background: #e3e3e3;
+}
+
+/* Post Images */
+.post img:not(.avatar) {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    display: block;
+    object-fit: contain;
+    touch-action: pan-y;
+    -ms-touch-action: pan-y;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+}
+
+.post-ava_circle {
+    width: 40px;
+    height: 40px;
+    max-width: 100%;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+/* Image Scroller */
+.post-images-scroller {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    touch-action: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.post-images-scroller::-webkit-scrollbar {
+    height: 6px;
+    display: none;
+}
+
+.post .post-images-scroller {
+    scroll-snap-type: x proximity;
+    align-items: center;
+}
+
+.post-images-scroller img,
+.post .post-images-scroller img {
+    flex: 0 0 auto;
+    width: auto;
+    height: auto;
+    max-width: calc(90vw - 1px);
+    max-height: 60vh;
+    object-fit: contain;
+    border-radius: 12px;
+    touch-action: auto;
+    -ms-touch-action: auto;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    display: block;
+    border: 0 none;
+    background-color: transparent;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform;
+    scroll-snap-align: start;
+}
+
+/* Scroller Dots */
+.post-scroller-dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0 6px;
+}
+
+.scroller-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.18);
+    cursor: pointer;
+    transition: transform 260ms cubic-bezier(.2,.8,.2,1), background 260ms ease, box-shadow 260ms ease;
+    transform-origin: center center;
+    padding: 0;
+}
+
+.scroller-dot.active {
+    transform: scale(1.6);
+    background: #901010;
+    box-shadow: 0 6px 18px rgba(144,16,16,0.12);
+}
+
+/* Image Viewer */
+.img-viewer-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--overlay-bg, rgba(0,0,0,0.6));
+    backdrop-filter: blur(10px);
+    z-index: 1000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 220ms ease;
+}
+
+.img-viewer-inner {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    touch-action: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.img-viewer-img {
+    max-width: none;
+    max-height: none;
+    width: auto;
+    height: auto;
+    will-change: transform;
+    transform-origin: center center;
+    user-select: none;
+    -webkit-user-drag: none;
+    object-fit: none;
+    cursor: grab;
+    display: block;
+    transition: transform 200ms cubic-bezier(.22,.9,.3,1);
+}
+
+.img-viewer-img:active {
+    cursor: grabbing;
+    transition: none;
+}

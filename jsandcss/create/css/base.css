@@ -1,0 +1,36 @@
+/* Base styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Roboto, Arial, sans-serif;
+    margin: 0;
+    background: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+body.modal-open .app-header,
+body.modal-open .create-post *:not(.footer-btn) {
+    filter: blur(2px) saturate(0.95);
+    transition: filter 220ms ease;
+    pointer-events: none;
+}
+
+body.modal-open .app-header {
+    z-index: 105;
+}
+
+.footer-btn {
+    z-index: 200;
+}
+
+body.modal-open .footer-btn {
+    pointer-events: auto;
+}
+
+.main {
+    padding-top: 60px;
+}
