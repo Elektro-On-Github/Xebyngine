@@ -1,44 +1,7 @@
 // Fullscreen Image Viewer with Pinch-to-Zoom
 
 (function injectImageViewerStyles(){
-    const css = `
-    .img-viewer-overlay {
-        position: fixed;
-        inset: 0;
-        background: var(--overlay-bg, rgba(0,0,0,0.6));
-        backdrop-filter: blur(10px);
-        z-index: 1000000;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        transition: opacity 220ms ease;
-    }
-    .img-viewer-inner {
-        position: relative;
-        width: 100vw;
-        height: 100vh;
-        overflow: hidden;
-        touch-action: none;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-    }
-    .img-viewer-img {
-        max-width: none;
-        max-height: none;
-        width: auto;
-        height: auto;
-        will-change: transform;
-        transform-origin: center center;
-        user-select: none;
-        -webkit-user-drag: none;
-        object-fit: none;
-        cursor: grab;
-        display:block;
-        transition: transform 200ms cubic-bezier(.22,.9,.3,1);
-    }
-    .img-viewer-img:active { cursor: grabbing; transition: none; }
-    `;
+    const css = `...`;
     const s = document.createElement('style');
     s.textContent = css;
     document.head.appendChild(s);

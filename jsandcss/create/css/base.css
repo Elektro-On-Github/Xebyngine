@@ -12,12 +12,6 @@ body {
     flex-direction: column;
 }
 
-body.modal-open .app-header,
-body.modal-open .create-post *:not(.footer-btn) {
-    filter: blur(2px) saturate(0.95);
-    transition: filter 220ms ease;
-    pointer-events: none;
-}
 
 body.modal-open .app-header {
     z-index: 105;
