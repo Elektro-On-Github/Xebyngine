@@ -33,7 +33,6 @@ def ensure_dirty_table():
         
         conn.commit()
         cur.close()
-        print("✅ Tabella 'dirty' inizializzata")
     except Exception as e:
         import sys
         print(f"Warning: could not ensure dirty table exists: {e}", file=sys.stderr)

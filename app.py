@@ -7,9 +7,7 @@ import config
 
 # Import utils per inizializzazione
 from utils.db import ensure_crono_table, ensure_post_views_table
-
 from utils.dirty_manager import ensure_dirty_table
-
 
 # Import blueprints
 from blueprints import all_blueprints
@@ -45,12 +43,10 @@ socketio = SocketIO(app, cors_allowed_origins=config.SOCKETIO_CORS_ORIGINS)
 # DATABASE INITIALIZATION
 # ============================================================================
 
-print("Inizializzazione tabelle database...")
 ensure_crono_table()
 ensure_post_views_table()
 ensure_dirty_table()
 
-print("Database pronto!")
 
 # ============================================================================
 # UPLOAD ROUTES (GLOBALI - senza blueprint prefix)
@@ -114,10 +110,8 @@ def add_security_headers(response):
 # BLUEPRINT REGISTRATION
 # ============================================================================
 
-print("Registrazione blueprints...")
 for blueprint, options in all_blueprints:
     app.register_blueprint(blueprint, **options)
-print("Blueprints registrati!")
 
 # ============================================================================
 # Service Worker Route - per fare in modo che venga servito dalla root (e' un casino, lo so)
@@ -146,8 +140,6 @@ def public_stuff_ico2():
 # ============================================================================
 
 if __name__ == "__main__":
-    print("\n" + "="*60)
-    print("MOMENT2 SERVER STARTING")
     print("="*60)
     print(f"Host: {config.HOST}")
     print(f"Port: {config.PORT}")

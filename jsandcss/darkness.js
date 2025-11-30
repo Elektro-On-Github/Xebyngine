@@ -1,6 +1,8 @@
 (function() {
+    // chiede al browser se usa la darkmode
     if (!window.matchMedia('(prefers-color-scheme: dark)').matches) return;
 
+    // doppia inversione (altrimenti immagini negative)
     document.head.innerHTML += `
     <style>
         html { filter: invert(1) hue-rotate(180deg); }
@@ -12,10 +14,19 @@
         .show-likers-btn *,
         .comment-count-modern *,
         .view-count-modern,
-        .overlay-search-input
-
+        .overlay-search-input,
+        .profile-action-btn,
+        .expand-btn,
+        .footer-btn,
+        .timeline-thumb,
+        .timeline-fill,
+        .bar-fill,
+        .unpin-btn,
+        .confirm-btn,
+        .show-more-comments-btn
+        
         { 
-            filter: invert(1) hue-rotate(180deg); 
+        filter: invert(1) hue-rotate(180deg); 
         }
     </style>
     `;
