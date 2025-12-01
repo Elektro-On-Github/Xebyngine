@@ -23,7 +23,9 @@
         .bar-fill,
         .unpin-btn,
         .confirm-btn,
-        .show-more-comments-btn
+        .show-more-comments-btn,
+        .me span,
+        #send-btn
         
         { 
         filter: invert(1) hue-rotate(180deg); 

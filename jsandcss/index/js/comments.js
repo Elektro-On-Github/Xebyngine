@@ -35,7 +35,7 @@ function createOverlay(id, root) {
     });
     try {
         overlay.style.background = root.getPropertyValue('--overlay-bg') || 'rgba(255,255,255,0)';
-        overlay.style.backdropFilter = root.getPropertyValue('--glass-blur') ? `blur(${root.getPropertyValue('--glass-blur')})` : 'blur(4px)';
+        overlay.style.backdropFilter = root.getPropertyValue('--glass-blur') ? `blur(${root.getPropertyValue('--glass-blur')})` : 'blur(8px)';
         overlay.style.webkitBackdropFilter = overlay.style.backdropFilter;
     } catch(_) {}
     return overlay;

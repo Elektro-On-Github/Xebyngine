@@ -128,7 +128,7 @@ function showLikers(postId) {
             Object.assign(overlay.style, {
                 position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
                 background: root.getPropertyValue('--overlay-bg') || 'rgba(255,255,255,0)',
-                backdropFilter: `blur(${root.getPropertyValue('--glass-blur')||'4px'})`,
+                backdropFilter: `blur(${root.getPropertyValue('--glass-blur')||'8px'})`,
                 zIndex: 99998, opacity: 0, transition: 'opacity 0.35s cubic-bezier(.2,.8,.2,1)'
             });
             document.body.appendChild(overlay);
