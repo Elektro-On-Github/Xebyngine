@@ -1,115 +1,65 @@
-// Tab toggle functionality - Metro UI clean and fixed
+// Tab toggle - Data-driven version
+
+let isInitialized = false;
 
 function switchTab(targetTab) {
-    const loginTab = document.getElementById('login-tab');
-    const registerTab = document.getElementById('register-tab');
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const title = document.querySelector('h2');
+    // Get elements by data attributes
+    const tabs = document.querySelectorAll('[data-tab]');
+    const forms = document.querySelectorAll('[data-tab-content]');
+    const title = document.querySelector('h2[data-login-text]');
     
-    // Prevent double-click
-    const currentTab = loginTab.classList.contains('active') ? 'login' : 'register';
+    // Find active tab
+    const currentTab = document.querySelector('[data-tab].active')?.dataset.tab;
     if (currentTab === targetTab) return;
     
-    // Title fade-out animation
-    title.style.opacity = '0';
-    title.style.transform = 'translateX(30px)';
+    const isLogin = targetTab === 'login';
+    const showForm = document.querySelector(`[data-tab-content="${targetTab}"]`);
+    const hideForm = document.querySelector(`[data-tab-content="${currentTab}"]`);
     
-    if (targetTab === 'login') {
-        // Attiva tab
-        loginTab.classList.add('active');
-        registerTab.classList.remove('active');
+    // 1. Update tabs
+    tabs.forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.tab === targetTab);
+    });
+    
+    // 2. Title transition
+    title.classList.add('switching');
+    
+    // 3. Hide current form
+    hideForm.classList.add(isLogin ? 'exit-right' : 'exit-left');
+    hideForm.classList.remove('active');
+    
+    // 4. After exit, show new form
+    setTimeout(() => {
+        hideForm.classList.remove('exit-left', 'exit-right');
         
-        // Metro transition: Register esce a DESTRA, Login entra da SINISTRA
-        registerForm.classList.remove('active');
-        registerForm.classList.add('exit-right');
+        // Update title from data attribute
+        title.textContent = isLogin ? title.dataset.loginText : title.dataset.registerText;
+        title.classList.remove('switching');
         
-        setTimeout(() => {
-            loginForm.classList.add('active');
-            loginForm.classList.remove('enter-left');
-            registerForm.classList.remove('exit-right');
-        }, 50);
+        // Show new form
+        showForm.classList.add('active');
         
-        // Title fade-in with new text - FIXED
-        setTimeout(() => {
-            title.textContent = 'Accedi';
-            // Force reflow
-            void title.offsetWidth;
-            title.style.opacity = '1';
-            title.style.transform = 'translateX(0)';
-        }, 267);
-        
-        // Update URL
-        if (window.history.replaceState) {
-            window.history.replaceState(null, null, '/login');
-        }
-        
-    } else {
-        // Attiva tab
-        registerTab.classList.add('active');
-        loginTab.classList.remove('active');
-        
-        // Metro transition: Login esce a SINISTRA, Register entra da DESTRA
-        loginForm.classList.remove('active');
-        loginForm.classList.add('exit-left');
-        
-        setTimeout(() => {
-            registerForm.classList.add('active');
-            registerForm.classList.remove('enter-right');
-            loginForm.classList.remove('exit-left');
-        }, 50);
-        
-        // Title fade-in with new text - FIXED
-        setTimeout(() => {
-            title.textContent = 'Crea un account';
-            // Force reflow
-            void title.offsetWidth;
-            title.style.opacity = '1';
-            title.style.transform = 'translateX(0)';
-        }, 267);
-        
-        // Update URL
-        if (window.history.replaceState) {
-            window.history.replaceState(null, null, '/register');
-        }
-    }
+    }, 300);
+    
+    // 5. Update URL
+    window.history?.replaceState(null, null, isLogin ? '/login' : '/register');
 }
 
 function initTabSwitcher() {
-    const loginTab = document.getElementById('login-tab');
-    const registerTab = document.getElementById('register-tab');
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const title = document.querySelector('h2');
+    if (isInitialized) return;
+    isInitialized = true;
     
-    // Aggiungi animazione iniziale al title
-    title.classList.add('initial-animation');
+    const tabs = document.querySelectorAll('[data-tab]');
+    const forms = document.querySelectorAll('[data-tab-content]');
+    const title = document.querySelector('h2[data-login-text]');
     
-    // Rimuovi la classe animation dopo che finisce
+    // Event delegation - usa click sui button con data-tab
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+    });
+    
+    // Cleanup initial animation dopo primo load
     setTimeout(() => {
-        title.classList.remove('initial-animation');
-        // Forza gli stili finali
-        title.style.opacity = '1';
-        title.style.transform = 'translateX(0)';
-    }, 1000); // 667ms animation + 200ms delay + margine
-    
-    // Event listeners
-    loginTab.addEventListener('click', () => switchTab('login'));
-    registerTab.addEventListener('click', () => switchTab('register'));
-    
-    // Check URL and set initial state
-    const path = window.location.pathname;
-    if (path.includes('register')) {
-        registerTab.classList.add('active');
-        loginTab.classList.remove('active');
-        title.textContent = 'Crea un account';
-        registerForm.classList.add('active');
-        loginForm.classList.remove('active');
-    } else {
-        loginTab.classList.add('active');
-        registerTab.classList.remove('active');
-        title.textContent = 'Accedi';
-        loginForm.classList.add('active');
-        registerForm.classList.remove('active');
-    }
+        forms.forEach(form => form.classList.remove('initial-animate'));
+    }, 800);
 }

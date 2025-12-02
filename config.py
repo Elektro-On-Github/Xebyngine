@@ -96,7 +96,7 @@ SECURITY_HEADERS = {
     'X-Frame-Options': 'SAMEORIGIN',
     'X-XSS-Protection': '1; mode=block',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Content-Security-Policy': "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; font-src 'self' https: data:; img-src 'self' https: data: blob:; style-src 'self' 'unsafe-inline' https:;"
+    'Content-Security-Policy': ""
 }
 
 HSTS_HEADER = 'max-age=31536000; includeSubDomains'

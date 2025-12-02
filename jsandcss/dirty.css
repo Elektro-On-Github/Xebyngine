@@ -26,28 +26,23 @@
 
 /* Card del messaggio */
 .dirty-card {
-    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    background: linear-gradient(145deg, rgba(238, 238, 238, 0.7), rgba(184, 184, 184, 0.7));
     padding: 40px 50px;
-    border-radius: 20px;
+    border-radius: 18px;
     text-align: center;
-    box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.3),
-        0 0 0 5px rgba(255, 200, 0, 0.5);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     max-width: 450px;
-    animation: bounceIn 0.6s ease;
+    animation: bounceIn 600ms cubic-bezier(0.1, 0.9, 0.2, 1) backwards;
 }
 
 @keyframes bounceIn {
-    0% {
-        transform: scale(0.5);
+    from {
         opacity: 0;
+        transform: translateX(-60px);
     }
-    70% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1);
+    to {
         opacity: 1;
+        transform: translateX(0);
     }
 }
 
@@ -74,7 +69,7 @@
 /* Messaggio */
 .dirty-message {
     font-size: 16px;
-    color: #666;
+    color: #000;
     margin-bottom: 25px;
     line-height: 1.5;
 }
@@ -112,15 +107,15 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
     .dirty-card {
-        background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+        background: linear-gradient(145deg, rgba(238, 238, 238, 0.7), rgba(184, 184, 184, 0.7));
     }
     
     .dirty-title {
-        color: #fff;
+        color: #000;
     }
     
     .dirty-message {
-        color: #ccc;
+        color: #000;
     }
     
     .dirty-days {

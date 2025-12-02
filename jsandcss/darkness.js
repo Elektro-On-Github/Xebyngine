@@ -25,7 +25,10 @@
         .confirm-btn,
         .show-more-comments-btn,
         .me span,
-        #send-btn
+        #send-btn,
+        .clean-button,
+        .tab-btn,
+        .submitbtn
         
         { 
         filter: invert(1) hue-rotate(180deg); 

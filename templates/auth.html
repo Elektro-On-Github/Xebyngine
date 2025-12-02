@@ -7,24 +7,35 @@
     <title>{% if 'register' in request.path %}Registrati{% else %}Login{% endif %}</title>
     
     <!-- Auth CSS -->
-    <link rel="stylesheet" href="/jsandcss/auth/css/base.css">
-    <link rel="stylesheet" href="/jsandcss/auth/css/animations.css">
-    <link rel="stylesheet" href="/jsandcss/auth/css/forms.css">
+    <link rel="stylesheet" href="/jsandcss/auth/css/auth.css">
 </head>
 <body>
-    <!-- Tab Switcher - NO CONTAINER -->
+    <!-- Tab Switcher -->
     <div class="tab-switcher">
-        <button type="button" class="tab-btn active" id="login-tab">Login</button>
-        <button type="button" class="tab-btn" id="register-tab">Registrati</button>
+        <button type="button" 
+                class="tab-btn {% if 'register' not in request.path %}active{% endif %}" 
+                data-tab="login">
+            Login
+        </button>
+        <button type="button" 
+                class="tab-btn {% if 'register' in request.path %}active{% endif %}" 
+                data-tab="register">
+            Registrati
+        </button>
     </div>
 
-    <!-- Title - NO CONTAINER -->
-    <h2>Accedi</h2>
+    <!-- Title -->
+    <h2 class="ready" data-login-text="Accedi" data-register-text="Crea un account">
+        {% if 'register' in request.path %}Crea un account{% else %}Accedi{% endif %}
+    </h2>
 
-    <!-- Forms Container - NO WRAPPER -->
+    <!-- Forms Container -->
     <div class="form-wrapper">
         <!-- Login Form -->
-        <form method="POST" action="/login" id="login-form" class="active">
+        <form method="POST" 
+              action="/login" 
+              data-tab-content="login"
+              class="{% if 'register' not in request.path %}active initial-animate{% endif %}">
             <div>
                 <label>Username:</label>
                 <input type="text" name="username" required maxlength="32" autocomplete="username">
@@ -35,11 +46,14 @@
                 <input type="password" name="password" required maxlength="200" autocomplete="current-password">
             </div>
 
-            <button type="submit">Login</button>
+            <button class="submitbtn" type="submit">Login</button>
         </form>
 
         <!-- Register Form -->
-        <form method="POST" action="/register" id="register-form">
+        <form method="POST" 
+              action="/register" 
+              data-tab-content="register"
+              class="{% if 'register' in request.path %}active initial-animate{% endif %}">
             <div>
                 <label>Username:</label>
                 <input type="text" name="username" maxlength="32" required autocomplete="username">
@@ -55,14 +69,14 @@
                 <input type="password" name="password" maxlength="200" required autocomplete="new-password">
             </div>
 
-            <button type="submit">Registrati</button>
+            <button class="submitbtn" type="submit">Registrati</button>
         </form>
     </div>
 
-    <!-- Bottom text - NO CONTAINER -->
+    <!-- Bottom text -->
     <p></p>
 
-    <!-- CSRF Management (CRITICAL - DO NOT REMOVE) -->
+    <!-- CSRF Management -->
     <script src="/jsandcss/auth/js/csrf.js"></script>
 
     <!-- Auth JavaScript -->

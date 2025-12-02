@@ -52,14 +52,14 @@ class DirtyManager {
         const overlayHTML = `
             <div id="dirty-overlay" class="dirty-overlay hidden">
                 <div class="dirty-card">
-                    <div class="dirty-icon">🧹</div>
+                    <div class="dirty-icon"><i class="fa-solid fa-bath"></i></div>
                     <h2 class="dirty-title">Account Sporco!</h2>
                     <p class="dirty-message">
-                        Non hai effettuato l'accesso per più di 7 giorni.<br>
-                        Adesso il tuo account e' 
+                        Non hai effettuato l'accesso per più di 7 giorni.
+                        Devi togliere la polvere!
                     </p>
                     <button id="clean-btn" class="clean-button">
-                        🧽 Pulisci
+                        <i class="fa-solid fa-bath"></i> Pulisci
                     </button>
                 </div>
             </div>
@@ -110,7 +110,7 @@ class DirtyManager {
     async cleanAccount() {
         // Stato loading
         this.cleanBtn.classList.add('loading');
-        this.cleanBtn.textContent = '🧽 Pulizia in corso...';
+        this.cleanBtn.textContent = 'Pulizia in corso...';
 
         try {
             const headers = {
@@ -136,7 +136,7 @@ class DirtyManager {
 
             if (data.success) {
                 // Animazione di successo
-                this.cleanBtn.textContent = '✅ Pulito!';
+                this.cleanBtn.textContent = 'Pulito!';
                 this.cleanBtn.style.background = 'linear-gradient(145deg, #28a745, #218838)';
                 
                 // Nascondi overlay dopo un breve delay
@@ -151,7 +151,7 @@ class DirtyManager {
 
         } catch (error) {
             console.error('Errore pulizia account:', error);
-            this.cleanBtn.textContent = '❌ Errore - Riprova';
+            this.cleanBtn.textContent = 'Errore - Riprova';
             this.cleanBtn.style.background = 'linear-gradient(145deg, #dc3545, #c82333)';
             
             setTimeout(() => this.resetButton(), 2000);
@@ -173,7 +173,7 @@ class DirtyManager {
 
     resetButton() {
         this.cleanBtn.classList.remove('loading');
-        this.cleanBtn.textContent = '🧽 Clean';
+        this.cleanBtn.textContent = 'Clean';
         this.cleanBtn.style.background = 'linear-gradient(145deg, #4CAF50, #45a049)';
     }
 }
