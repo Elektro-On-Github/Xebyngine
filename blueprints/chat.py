@@ -1,8 +1,3 @@
-"""
-💬 CHAT ROUTES
-Messaggi, conversazioni, SSE
-"""
-
 from flask import Blueprint, render_template, request, session, Response, url_for
 from threading import Lock
 import queue
@@ -267,10 +262,8 @@ def chat_history(other_user_id):
 
     avatars = {}
     for uid, a_path in avatar_rows:
-        # FIX: Blueprint endpoint
         avatars[uid] = url_for('uploaded_avatar', filename=os.path.basename(a_path)) if a_path else url_for('uploaded_avatar', filename='default.png')
 
-    # FIX: Blueprint endpoint
     avatars.setdefault(my_id, url_for('uploaded_avatar', filename='default.png'))
     avatars.setdefault(other_user_id, url_for('uploaded_avatar', filename='default.png'))
 
@@ -282,38 +275,66 @@ def chat_history(other_user_id):
             avatar_html = f'<img class="message-avatar" src="{avatars.get(sender_id)}" alt="avatar" />'
         safe = escape(content or "")
         html_parts.append(f'<div class="message {cls}">{avatar_html}<span>{safe}</span></div>')
-    
-    try:
-        conn_mark = get_conn()
-        with conn_mark.cursor() as c_mark:
-            c_mark.execute("UPDATE messages SET is_read = TRUE WHERE sender_id=%s AND receiver_id=%s AND (is_read IS NULL OR is_read = FALSE)", (other_user_id, my_id))
-            conn_mark.commit()
-    except Exception:
-        pass
-    finally:
-        try:
-            release_conn(conn_mark)
-        except Exception:
-            pass
-
-    try:
-        conn_conv = get_conn()
-        with conn_conv.cursor() as c_conv:
-            c_conv.execute("SELECT user_a, user_b FROM conversations WHERE user_min = LEAST(%s::uuid, %s::uuid) AND user_max = GREATEST(%s::uuid, %s::uuid) LIMIT 1", (my_id, other_user_id, my_id, other_user_id))
-            row = c_conv.fetchone()
-            if row:
-                user_a, user_b = row
-                if str(user_a) == str(my_id):
-                    c_conv.execute("UPDATE conversations SET unread_for_a = 0 WHERE user_min = LEAST(%s::uuid, %s::uuid) AND user_max = GREATEST(%s::uuid, %s::uuid)", (my_id, other_user_id, my_id, other_user_id))
-                elif str(user_b) == str(my_id):
-                    c_conv.execute("UPDATE conversations SET unread_for_b = 0 WHERE user_min = LEAST(%s::uuid, %s::uuid) AND user_max = GREATEST(%s::uuid, %s::uuid)", (my_id, other_user_id, my_id, other_user_id))
-                conn_conv.commit()
-    except Exception:
-        pass
-    finally:
-        try:
-            release_conn(conn_conv)
-        except Exception:
-            pass
 
     return "".join(html_parts)
+
+
+@chat_bp.route("/chat/mark_read/<other_user_id>", methods=["POST"])
+@require_csrf
+def mark_chat_read(other_user_id):
+    """Segna tutti i messaggi di una chat come letti"""
+    if "user_id" not in session:
+        return "Unauthorized", 401
+    
+    my_id = session["user_id"]
+    
+    try:
+        conn = get_conn()
+        with conn.cursor() as c:
+            # 1. Segna i messaggi come letti
+            c.execute("""
+                UPDATE messages 
+                SET is_read = TRUE 
+                WHERE sender_id = %s AND receiver_id = %s AND (is_read IS NULL OR is_read = 'true')
+            """, (other_user_id, my_id))
+            
+            # 2. Azzera il contatore nella conversazione
+            c.execute("""
+                SELECT user_a, user_b 
+                FROM conversations 
+                WHERE user_min = LEAST(%s::uuid, %s::uuid) 
+                AND user_max = GREATEST(%s::uuid, %s::uuid) 
+                LIMIT 1
+            """, (my_id, other_user_id, my_id, other_user_id))
+            
+            row = c.fetchone()
+            if row:
+                user_a, user_b = row
+                # Azzera il contatore per l'utente corrente
+                if str(user_a) == str(my_id):
+                    c.execute("""
+                        UPDATE conversations 
+                        SET unread_for_a = 0 
+                        WHERE user_min = LEAST(%s::uuid, %s::uuid) 
+                        AND user_max = GREATEST(%s::uuid, %s::uuid)
+                    """, (my_id, other_user_id, my_id, other_user_id))
+                else:
+                    c.execute("""
+                        UPDATE conversations 
+                        SET unread_for_b = 0 
+                        WHERE user_min = LEAST(%s::uuid, %s::uuid) 
+                        AND user_max = GREATEST(%s::uuid, %s::uuid)
+                    """, (my_id, other_user_id, my_id, other_user_id))
+            
+            conn.commit()
+        release_conn(conn)
+        return "OK", 200
+        
+    except Exception as e:
+        print(f"Errore mark_read: {e}")
+        return "Error", 500
+    finally:
+        try:
+            release_conn(conn)
+        except:
+            pass

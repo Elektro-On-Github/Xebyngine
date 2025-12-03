@@ -10,6 +10,9 @@ function initializeSSE() {
             if (ChatConfig.activeChatId && String(data.sender) === String(ChatConfig.activeChatId)) {
                 const avatarUrl = ChatConfig.pinnedUsers.find(u => String(u.id) === String(data.sender))?.avatar_url || '/static/default.png';
                 appendMessage(data.sender, data.content, avatarUrl);
+                
+                // marka come letto
+                markChatAsRead(data.sender);
                 return;
             }
 

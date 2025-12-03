@@ -29,4 +29,11 @@ function updateChatHeader(username, avatar) {
         <img class="chat-user-avatar" src="${avatar || '/static/default.png'}" alt="avatar">
         <span class="chat-user-name">${username}</span>
     `;
+    // rende clikkabile il profilo
+    ChatConfig.elements.chatUserInfo.cursor = 'pointer';
+    ChatConfig.elements.chatUserInfo.onclick = function() {
+        if (ChatConfig.activeChatId) {
+            window.location.href = '/profile/$ChatConfig.activeChatId'
+        }
+    }
 }
