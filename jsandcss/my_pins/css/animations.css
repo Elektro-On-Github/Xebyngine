@@ -1,9 +1,3 @@
-/* ============================================
-   ANIMAZIONI STILE WINDOWS 8 METRO
-   TUTTE DA SINISTRA VERSO DESTRA
-============================================ */
-
-/* Keyframes per slide in da sinistra */
 @keyframes slideInFromLeft {
     0% {
         transform: translateX(-80px);

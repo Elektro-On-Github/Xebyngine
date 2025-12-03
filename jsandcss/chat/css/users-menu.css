@@ -47,7 +47,7 @@
 }
 
 .close-menu-btn {
-    background: none;
+    background: rgba(144,16,16,0.1);
     border: none;
     font-size: 24px;
     color: #901010;
@@ -59,10 +59,6 @@
     justify-content: center;
     border-radius: 50%;
     transition: background 0.2s;
-}
-
-.close-menu-btn:active {
-    background: rgba(144,16,16,0.1);
 }
 
 #users-list {

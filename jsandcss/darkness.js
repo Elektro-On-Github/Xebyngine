@@ -28,7 +28,11 @@
         #send-btn,
         .clean-button,
         .tab-btn,
-        .submitbtn
+        .submitbtn,
+        .close-menu-btn,
+        .timeline-thumb,
+        .header-btn
+
         
         { 
         filter: invert(1) hue-rotate(180deg); 

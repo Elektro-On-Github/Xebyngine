@@ -11,7 +11,7 @@
     background: rgba(255,255,255,0.7);
     padding: 12px;
     border-radius: 50px;
-    box-shadow: 0 -2px 16px 2px rgba(0,0,0,0.10);
+    box-shadow: 0 -2px 8px 2px rgba(0,0,0,0.05);
     max-width: min(920px, 96vw);
     width: calc(100% - 48px);
     box-sizing: border-box;
@@ -43,8 +43,7 @@
 }
 
 #message-input:focus {
-    border-color: #901010;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border-color: rgba(144, 16, 16, 0.2);
 }
 
 #message-input::placeholder {
@@ -64,6 +63,13 @@
     font-size: 1em;
     transition: transform 0.2s;
     flex-shrink: 0;
+    transition: all 400ms cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+input:valid ~ #send-btn {
+    box-shadow: 0px 0px 16px rgba(144, 16, 16, 1);
+    background-color: #ff1010;
+    transition: all 400ms cubic-bezier(0.1, 0.9, 0.2, 1);
 }
 
 #send-btn:active {
