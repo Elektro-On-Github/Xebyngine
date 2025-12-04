@@ -1,21 +1,14 @@
-/* Messages */
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 .message {
     display: flex;
     align-items: flex-end;
     margin: 6px 0;
     max-width: 100%;
-    animation: messageSlideIn 0.3s ease;
-}
-
-@keyframes messageSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    animation: slideIn .3s ease;
 }
 
 .message-avatar {
@@ -28,12 +21,10 @@
     background: #e3e3e3;
 }
 
-.me {
-    justify-content: flex-end;
-}
+.me { justify-content: flex-end; }
 
 .me span {
-    background: #901010;
+    background: var(--primary);
     color: #fff;
     padding: 12px 16px;
     border-radius: 18px 18px 4px 18px;
@@ -41,22 +32,20 @@
     line-height: 1.4;
     white-space: pre-wrap;
     word-break: break-word;
-    box-shadow: 0 2px 8px rgba(144,16,16,0.2);
+    box-shadow: 0 2px 8px rgba(144,16,16,.2);
 }
 
-.other {
-    justify-content: flex-start;
-}
+.other { justify-content: flex-start; }
 
 .other span {
-    background: rgba(255,255,255,0.9);
-    color: #222;
+    background: rgba(255,255,255,.9);
+    color: var(--text);
     padding: 12px 16px;
     border-radius: 18px 18px 18px 4px;
     max-width: 75%;
     line-height: 1.4;
     white-space: pre-wrap;
     word-break: break-word;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    border: 1px solid rgba(0,0,0,.05);
 }

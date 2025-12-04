@@ -1,4 +1,3 @@
-// Global configuration and variables
 const ChatConfig = {
     myId: null,
     activeChatId: null,
@@ -6,8 +5,8 @@ const ChatConfig = {
     activeChatAvatar: null,
     pinnedUsers: [],
     initialChat: null,
+    typingTimeout: null,
     
-    // DOM Elements
     elements: {
         chatContainer: null,
         chatContainerEl: null,
@@ -19,26 +18,15 @@ const ChatConfig = {
         chatUserInfo: null
     },
     
-    loadDataFromJSON: function() {
-        // Load data from JSON script tag
-        const dataElement = document.getElementById('chat-data');
-        if (dataElement) {
-            try {
-                const data = JSON.parse(dataElement.textContent);
-                this.myId = data.myId;
-                this.pinnedUsers = data.pinnedUsers || [];
-                this.initialChat = data.initialChat;
-            } catch (e) {
-                console.error('Error parsing chat data:', e);
-            }
+    init() {
+        const dataEl = document.getElementById('chat-data');
+        if (dataEl) {
+            const data = JSON.parse(dataEl.textContent);
+            this.myId = data.myId;
+            this.pinnedUsers = data.pinnedUsers || [];
+            this.initialChat = data.initialChat;
         }
-    },
-    
-    init: function() {
-        // Load data from JSON
-        this.loadDataFromJSON();
         
-        // Initialize DOM elements
         this.elements.chatContainer = document.getElementById('chat');
         this.elements.chatContainerEl = document.getElementById('chat-container');
         this.elements.inputContainer = document.getElementById('input-container');

@@ -6,8 +6,6 @@
 <meta name="csrf-token" content="{{ csrf_token }}">
 <title>Testiny</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<!-- Chat CSS -->
 <link rel="stylesheet" href="/jsandcss/chat/css/main.css">
 <link rel="stylesheet" href="/jsandcss/chat/css/chat.css">
 <link rel="stylesheet" href="/jsandcss/chat/css/messages.css">
@@ -18,7 +16,6 @@
 </head>
 <body>
 
-<!-- Data from template (JSON format - not executable code, CSP compliant) -->
 <script type="application/json" id="chat-data">
 {
     "myId": "{{ my_id }}",
@@ -27,22 +24,47 @@
 }
 </script>
 
+<!-- TEMPLATES -->
+<template id="user-item-template">
+    <div class="user-item">
+        <img class="user-avatar" alt="avatar">
+        <div class="user-meta">
+            <div class="user-row">
+                <span class="user-name"></span>
+                <span class="user-time"></span>
+            </div>
+            <div class="user-preview"></div>
+        </div>
+    </div>
+</template>
+
+<template id="typing-template">
+    <div class="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+    </div>
+</template>
+
 <!-- HEADER -->
 <div class="app-header">
     <div class="header-left">
-        <button class="header-btn" id="back-btn" onclick="handleBackButton()">
+        <button class="header-btn" onclick="handleBackButton()">
             <i class="fa-solid fa-arrow-left"></i>
         </button>
-        <div class="chat-user-info" id="chat-user-info"></div>
+        <div class="chat-user-info" id="chat-user-info" onclick="ChatConfig.activeChatId && (window.location.href='/profile/'+ChatConfig.activeChatId)">
+            <img class="chat-user-avatar" src="/static/default.png" alt="avatar">
+            <span class="chat-user-name"></span>
+        </div>
     </div>
 </div>
 
-<!-- CHAT AREA -->
+<!-- CHAT -->
 <div id="chat-container">
     <div id="chat"></div>
 </div>
 
-<!-- INPUT BAR -->
+<!-- INPUT -->
 <div id="input-container">
     <input type="text" id="message-input" placeholder="Scrivi un messaggio..." maxlength="4096" required/>
     <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
@@ -59,20 +81,13 @@
     <div id="users-list"></div>
 </div>
 
-<!-- CSRF Management (CRITICAL - DO NOT REMOVE) -->
 <script src="/jsandcss/chat/js/csrf.js"></script>
-
-<!-- Chat JavaScript -->
 <script src="/jsandcss/chat/js/config.js"></script>
 <script src="/jsandcss/chat/js/ui.js"></script>
-<script src="/jsandcss/chat/js/messages.js"></script>
-<script src="/jsandcss/chat/js/users.js"></script>
 <script src="/jsandcss/chat/js/chat.js"></script>
 <script src="/jsandcss/chat/js/sse.js"></script>
 <script src="/jsandcss/chat/js/init.js"></script>
 <script src="/jsandcss/darkness.js"></script>
-
-<!-- Service Worker -->
 <script src="/jsandcss/sw-linked.js"></script>
 
 </body>

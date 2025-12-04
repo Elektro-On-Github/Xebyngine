@@ -1,33 +1,29 @@
-// Initialization and event listeners
-
-function initializeEventListeners() {
-    // Send button click
+function initializeChat() {
+    ChatConfig.init();
+    
+    // Send button
     ChatConfig.elements.sendBtn.addEventListener('click', sendMessage);
-
-    // Enter key to send message
+    
+    // Enter to send
     ChatConfig.elements.input.addEventListener('keypress', e => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendMessage();
         }
     });
-}
 
-function initializeChat() {
-    // Initialize configuration (now reads from JSON in the HTML)
-    ChatConfig.init();
+    // Typing indicator
+    let typingTimer;
+    ChatConfig.elements.input.addEventListener('input', () => {
+        clearTimeout(typingTimer);
+        sendTypingStatus(true);
+        typingTimer = setTimeout(() => sendTypingStatus(false), 3000);
+    });
     
-    // Set up event listeners
-    initializeEventListeners();
-    
-    // Load user list
     loadUserList();
-
-    // Initialize SSE
     initializeSSE();
 
-    // Handle initial chat if provided
-    if (ChatConfig.initialChat && ChatConfig.initialChat.id) {
+    if (ChatConfig.initialChat?.id) {
         const found = ChatConfig.pinnedUsers.find(u => u.id === ChatConfig.initialChat.id);
         if (found) {
             switchChat(found.id, found.username, found.avatar_url);
@@ -43,9 +39,6 @@ function initializeChat() {
     }
 }
 
-// Start when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeChat);
-} else {
+document.readyState === 'loading' ? 
+    document.addEventListener('DOMContentLoaded', initializeChat) : 
     initializeChat();
-}

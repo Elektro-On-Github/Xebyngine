@@ -32,7 +32,8 @@
         .close-menu-btn,
         .timeline-thumb,
         .header-btn,
-        .fa-clock
+        .fa-clock,
+        .unread-dot
 
         
         { 

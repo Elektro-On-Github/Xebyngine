@@ -1,11 +1,7 @@
-// UI Management functions
-
 function handleBackButton() {
-    // Se il menu utenti è aperto, vai a index.html
     if (ChatConfig.elements.usersMenu.classList.contains('open')) {
         window.location.href = '/';
     } else {
-        // Altrimenti torna alla lista contatti
         openUsersMenu();
     }
 }
@@ -24,16 +20,33 @@ function closeUsersMenu() {
     }, 100);
 }
 
-function updateChatHeader(username, avatar) {
-    ChatConfig.elements.chatUserInfo.innerHTML = `
-        <img class="chat-user-avatar" src="${avatar || '/static/default.png'}" alt="avatar">
-        <span class="chat-user-name">${username}</span>
-    `;
-    // rende clikkabile il profilo
-    ChatConfig.elements.chatUserInfo.cursor = 'pointer';
-    ChatConfig.elements.chatUserInfo.onclick = function() {
-        if (ChatConfig.activeChatId) {
-            window.location.href = '/profile/$ChatConfig.activeChatId'
-        }
+function updateChatHeader() {
+    const info = ChatConfig.elements.chatUserInfo;
+    info.querySelector('img').src = ChatConfig.activeChatAvatar;
+    info.querySelector('span').textContent = ChatConfig.activeChatUsername;
+}
+
+function showTypingIndicator(show) {
+    let indicator = ChatConfig.elements.chatContainer.querySelector('.typing-indicator');
+    if (show && !indicator) {
+        const template = document.getElementById('typing-template');
+        indicator = template.content.cloneNode(true);
+        ChatConfig.elements.chatContainer.appendChild(indicator);
+        ChatConfig.elements.chatContainer.scrollTop = ChatConfig.elements.chatContainer.scrollHeight;
+    } else if (!show && indicator) {
+        indicator.remove();
     }
+}
+
+function sendTypingStatus(isTyping) {
+    if (!ChatConfig.activeChatId) return;
+    
+    fetch('/chat/typing', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            recipient_id: ChatConfig.activeChatId,
+            is_typing: isTyping
+        })
+    }).catch(console.error);
 }
