@@ -31,7 +31,8 @@
         .submitbtn,
         .close-menu-btn,
         .timeline-thumb,
-        .header-btn
+        .header-btn,
+        .fa-clock
 
         
         { 
