@@ -123,7 +123,7 @@ function renderHistoryItems(history) {
                 <img src="${chooseAvatar(item) || '/uploads/avatars/default.png'}" 
                      style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 <a href="/user/${encodeURIComponent(item.username)}" 
-                   style="color:#901010; text-decoration:none;">
+                   style="color:#000; text-decoration:none;">
                     ${item.username}
                 </a>
             </div>
