@@ -35,12 +35,12 @@
 .menu-header h2 { margin: 0; font-size: 1.3em; color: var(--text); font-weight: 700; }
 
 .close-menu-btn {
-    background: rgba(144,16,16,.1);
+    background: none;
     border: none;
     font-size: 24px;
-    color: var(--primary);
+    color: #901010;
     cursor: pointer;
-    width: 40px;
+    width: 36px;
     height: 40px;
     display: flex;
     align-items: center;

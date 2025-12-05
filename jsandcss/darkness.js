@@ -37,7 +37,11 @@
         .custom-file-btn,
         .submit-btn,
         .form-label,
-        .profile-username
+        .profile-username,
+        .modal-add-opt,
+        .back-btn,
+        .header-back-btn,
+        .back-btn-search
 
         
         { 

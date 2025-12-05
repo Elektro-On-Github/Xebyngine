@@ -46,10 +46,11 @@
     height: 40px;
     border-radius: 40px;
     border: none;
-    background: rgba(144, 16, 16, 0.1);
+    background: none;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.3rem;
     cursor: pointer;
     font-size: 18px;
     color: #111;

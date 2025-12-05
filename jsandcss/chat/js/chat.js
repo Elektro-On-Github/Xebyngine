@@ -121,7 +121,7 @@ function loadUserList() {
             const dot = document.createElement('span');
             dot.className = 'unread-dot';
             dot.title = `${user.unread_count} non letti`;
-            div.querySelector('.user-row').appendChild(dot);
+            div.querySelector('.user-preview').appendChild(dot);
         }
 
         div.addEventListener('click', () => {
