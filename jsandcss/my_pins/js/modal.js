@@ -1,14 +1,9 @@
-// Modal confirmation logic
-
 let pendingUser = null;
 
 function initModal() {
-    const overlay = MyPinsConfig.elements.confirmOverlay;
-    const msg = MyPinsConfig.elements.confirmMessage;
-    const btnOk = MyPinsConfig.elements.confirmOk;
-    const btnCancel = MyPinsConfig.elements.confirmCancel;
+    const { confirmOverlay: overlay, confirmMessage: msg, confirmOk: btnOk, confirmCancel: btnCancel } = MyPinsConfig.elements;
 
-    const showModal = (user) => {
+    const showModal = user => {
         pendingUser = user;
         msg.textContent = `Sei sicuro di voler rimuovere "${user}" dalla lista?`;
         overlay.classList.add('open');
@@ -20,18 +15,13 @@ function initModal() {
         overlay.classList.remove('open');
     };
 
-    // Click on unpin button
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', e => {
         const btn = e.target.closest('.unpin-btn');
-        if (btn?.dataset.username) {
-            showModal(btn.dataset.username);
-        }
+        if (btn?.dataset.username) showModal(btn.dataset.username);
     });
 
-    // Cancel button
     btnCancel?.addEventListener('click', hideModal);
 
-    // Confirm button
     btnOk?.addEventListener('click', async () => {
         if (!pendingUser) return hideModal();
 
@@ -48,7 +38,6 @@ function initModal() {
             if (data.status === 'ok' && data.pinned === false) {
                 const item = document.querySelector(`li.user-item[data-username="${CSS.escape(pendingUser)}"]`);
                 if (item) {
-                    // Animazione di uscita verso sinistra prima di rimuovere
                     item.style.animation = 'slideInFromLeft 0.3s cubic-bezier(0.7, 0, 0.3, 1) reverse';
                     setTimeout(() => item.remove(), 300);
                 }
@@ -65,13 +54,11 @@ function initModal() {
         }
     });
 
-    // Click outside modal
-    overlay?.addEventListener('click', (e) => {
+    overlay?.addEventListener('click', e => {
         if (e.target === overlay) hideModal();
     });
 
-    // Escape key
-    window.addEventListener('keydown', (e) => {
+    window.addEventListener('keydown', e => {
         if (e.key === 'Escape') hideModal();
     });
 }

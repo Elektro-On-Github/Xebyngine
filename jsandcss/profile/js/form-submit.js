@@ -1,52 +1,36 @@
-// Form submission handler
-
 function initFormSubmit() {
-    const form = ProfileConfig.elements.form;
-    const submitBtn = ProfileConfig.elements.submitBtn;
-    
+    const { form, submitBtn } = ProfileConfig.elements;
+
     if (!form || !submitBtn) return;
-    
-    form.addEventListener('submit', function(e) {
+
+    form.addEventListener('submit', async e => {
         e.preventDefault();
-        
-        // Add loading state
+
         submitBtn.classList.add('loading');
         submitBtn.innerHTML = '<i class="fas fa-spinner"></i> Salvataggio...';
-        
-        // Create FormData and send via fetch
-        const formData = new FormData(form);
-        
-        fetch('/profile', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
+
+        try {
+            const response = await fetch('/profile', {
+                method: 'POST',
+                body: new FormData(form)
+            });
+
             if (response.ok) {
-                // Success - add exit animation
                 document.body.classList.add('page-exit');
-                
-                // Redirect to user page after animation
                 setTimeout(() => {
                     window.location.href = '/user/' + ProfileConfig.username;
                 }, 400);
             } else {
-                // Error handling
-                submitBtn.classList.remove('loading');
-                submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Errore';
-                
-                setTimeout(() => {
-                    submitBtn.innerHTML = '<i class="fas fa-save"></i> Aggiorna Profilo';
-                }, 2000);
+                throw new Error('Response not ok');
             }
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Error:', error);
             submitBtn.classList.remove('loading');
             submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Errore';
-            
+
             setTimeout(() => {
                 submitBtn.innerHTML = '<i class="fas fa-save"></i> Aggiorna Profilo';
             }, 2000);
-        });
+        }
     });
 }

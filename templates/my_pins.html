@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
     <title>Xebyngine</title>
-    
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- My Pins CSS -->
     <link rel="stylesheet" href="/jsandcss/my_pins/css/base.css">
     <link rel="stylesheet" href="/jsandcss/my_pins/css/animations.css">
     <link rel="stylesheet" href="/jsandcss/my_pins/css/header.css">
@@ -20,22 +16,14 @@
 </head>
 <body>
 
-<!-- Data from template (JSON format - CSP compliant) -->
 <script type="application/json" id="my-pins-data">
-{
-    "urls": {
-        "profile": "{{ url_for('profile_bp.view_profile', username='USERNAME') }}",
-        "pinToggle": "/pin_toggle/",
-        "uploadedAvatar": "{{ url_for('uploaded_avatar', filename='FILENAME') }}"
-    }
-}
+{"urls":{"profile":"{{ url_for('profile_bp.view_profile', username='USERNAME') }}","pinToggle":"/pin_toggle/","uploadedAvatar":"{{ url_for('uploaded_avatar', filename='FILENAME') }}"}}
 </script>
 
-<!-- Blurred translucent header bar with back button and centered title -->
 <header class="app-header-text">
     <div class="app-header-inner">
-        <div class="app-header-left" style="display:flex;gap:8px;align-items:center;">
-            <button type="button" class="back-btn" onclick="history.back();">
+        <div class="app-header-left" style="display:flex;gap:8px;align-items:center">
+            <button type="button" class="back-btn" onclick="history.back()">
                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
             </button>
         </div>
@@ -48,31 +36,27 @@
 
 <main class="content">
     {% if pinned_users %}
-        <ul class="user-list">
-            {% for u in pinned_users %}
-                <li class="user-item" data-username="{{ u.username }}">
-                    {% if u.avatar %}
-                        <img src="{{ url_for('uploaded_avatar', filename=u.avatar.split('/')[-1]) }}" class="user-avatar">
-                    {% else %}
-                        <img src="/uploads/avatars/default.png" class="user-avatar">
-                    {% endif %}
-
-                    <a href="{{ url_for('profile_bp.view_profile', username=u.username) }}" class="user-link">
-                        {{ u.username }}
-                    </a>
-                    <button class="unpin-btn" data-username="{{ u.username }}" title="Rimuovi"> 
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </li>
-            {% endfor %}
-            <li class="list-end-spacer" aria-hidden="true"></li>
-        </ul>
+    <ul class="user-list">
+        {% for u in pinned_users %}
+        <li class="user-item" data-username="{{ u.username }}">
+            {% if u.avatar %}
+            <img src="{{ url_for('uploaded_avatar', filename=u.avatar.split('/')[-1]) }}" class="user-avatar">
+            {% else %}
+            <img src="/uploads/avatars/default.png" class="user-avatar">
+            {% endif %}
+            <a href="{{ url_for('profile_bp.view_profile', username=u.username) }}" class="user-link">{{ u.username }}</a>
+            <button class="unpin-btn" data-username="{{ u.username }}" title="Rimuovi">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </li>
+        {% endfor %}
+        <li class="list-end-spacer" aria-hidden="true"></li>
+    </ul>
     {% else %}
-        <p>Non hai utenti in lista.</p>
+    <p>Non hai utenti in lista.</p>
     {% endif %}
 </main>
 
-<!-- Confirmation modal -->
 <div id="confirmOverlay" class="confirm-overlay" role="dialog" aria-modal="true">
     <div class="confirm-panel">
         <h4 class="confirm-title">Conferma</h4>
@@ -84,41 +68,34 @@
     </div>
 </div>
 
-<!-- Bottom-centered comment/search bar -->
 <div class="bottom-comment-form" id="my-pins-bottom-comment" aria-hidden="false">
     <input id="my-pins-comment-input" class="comment-input" type="text" placeholder="Cerca qui">
 </div>
 
-<!-- Bottom navbar -->
 <nav class="navbar">
-    <form action="/" style="margin:0;">
+    <form action="/" style="margin:0">
         <button class="nav-btn" title="Profilo"><i class="fa-solid fa-user"></i></button>
     </form>
-    <form action="/my_pins" style="margin:0;">
+    <form action="/my_pins" style="margin:0">
         <button class="nav-btn" title="Pins"><i class="fa-solid fa-thumbtack"></i></button>
     </form>
-    <form action="/chat" style="margin:0;">
+    <form action="/chat" style="margin:0">
         <button class="nav-btn" title="Chat"><i class="fa-solid fa-envelope"></i></button>
     </form>
-    <form action="{{ url_for('posts_bp.create') }}" method="get" style="margin:0;">
+    <form action="{{ url_for('posts_bp.create') }}" method="get" style="margin:0">
         <button id="fab-create" type="submit" class="nav-btn" title="Crea post">
             <i class="fa-solid fa-plus"></i>
         </button>
     </form>
 </nav>
 
-<!-- CSRF Management (CRITICAL - DO NOT REMOVE) -->
 <script src="/jsandcss/my_pins/js/csrf.js"></script>
-
-<!-- My Pins JavaScript -->
 <script src="/jsandcss/my_pins/js/config.js"></script>
 <script src="/jsandcss/my_pins/js/animations.js"></script>
 <script src="/jsandcss/my_pins/js/modal.js"></script>
 <script src="/jsandcss/my_pins/js/search.js"></script>
 <script src="/jsandcss/my_pins/js/init.js"></script>
 <script src="/jsandcss/darkness.js"></script>
-
-<!-- Service Worker -->
 <script src="/jsandcss/sw-linked.js"></script>
 
 </body>

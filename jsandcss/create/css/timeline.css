@@ -1,4 +1,3 @@
-/* Timeline wrapper */
 .timeline-wrapper {
     margin-top: 16px;
     padding: 16px;
@@ -36,7 +35,6 @@
     display: none !important;
 }
 
-/* Timeline component styles (injected by timeline-styles.js) */
 .timeline-track {
     position: relative;
     height: 14px;

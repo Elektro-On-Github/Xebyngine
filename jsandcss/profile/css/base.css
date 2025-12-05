@@ -1,5 +1,4 @@
-/* CSS Variables */
-:root { 
+:root {
     --accent-weak: rgba(144,16,16,0.14);
     --like-size: 40px;
     --like-font-size: 1.1em;
@@ -8,19 +7,13 @@
     --like-backdrop-blur: 6px;
     --like-backdrop-saturate: 300%;
     --like-box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    
-    /* Windows 8 Metro Animation Variables */
     --metro-ease: cubic-bezier(0.1, 0.9, 0.2, 1);
     --metro-duration: 400ms;
     --metro-duration-fast: 300ms;
     --metro-duration-slow: 500ms;
 }
 
-/* Typography & Links */
-strong a:link,
-strong a:visited,
-strong a:hover,
-strong a:active {
+strong a {
     color: black;
     font-weight: bold;
     text-decoration: none;
@@ -28,7 +21,6 @@ strong a:active {
     transition: color var(--metro-duration-fast) var(--metro-ease);
 }
 
-/* Base */
 body {
     font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
     margin: 0;
@@ -46,7 +38,6 @@ body {
     padding: 80px 20px 40px;
 }
 
-/* Page Exit Animation */
 body.page-exit .profile-container {
     animation: slideInFromLeft var(--metro-duration) var(--metro-ease) reverse;
 }

@@ -1,13 +1,12 @@
-// Global configuration for profile page
 const ProfileConfig = {
     username: null,
-    
+
     urls: {
         profile: null,
         uploadedAvatar: null,
         userPage: null
     },
-    
+
     elements: {
         form: null,
         submitBtn: null,
@@ -16,9 +15,8 @@ const ProfileConfig = {
         addSocialBtn: null,
         socialEntries: null
     },
-    
-    loadDataFromJSON: function() {
-        // Load data from JSON script tag
+
+    loadDataFromJSON() {
         const dataElement = document.getElementById('profile-data');
         if (dataElement) {
             try {
@@ -30,17 +28,18 @@ const ProfileConfig = {
             }
         }
     },
-    
-    init: function() {
-        // Load data from JSON
+
+    init() {
         this.loadDataFromJSON();
-        
-        // Initialize DOM elements
-        this.elements.form = document.getElementById('profile-form');
-        this.elements.submitBtn = document.getElementById('submit-btn');
-        this.elements.fileInput = document.getElementById('avatar-upload');
-        this.elements.fileNameText = document.getElementById('file-name');
-        this.elements.addSocialBtn = document.getElementById('add-social-btn');
-        this.elements.socialEntries = document.querySelectorAll('.social-entry');
+
+        const $ = id => document.getElementById(id);
+        const el = this.elements;
+
+        el.form = $('profile-form');
+        el.submitBtn = $('submit-btn');
+        el.fileInput = $('avatar-upload');
+        el.fileNameText = $('file-name');
+        el.addSocialBtn = $('add-social-btn');
+        el.socialEntries = document.querySelectorAll('.social-entry');
     }
 };

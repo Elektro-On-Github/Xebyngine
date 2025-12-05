@@ -1,4 +1,3 @@
-/* Comment input and search styles */
 .comment-input {
     width: 100%;
     padding: 10px 12px;
@@ -12,32 +11,15 @@
     transition: border-color 120ms ease, box-shadow 120ms ease;
 }
 
+.comment-input:focus {
+    border-color: #901010;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
 .comment-row {
     display: flex;
     gap: 8px;
     align-items: center;
-}
-
-.bottom-comment-form {
-    position: fixed;
-    bottom: 76px;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    z-index: 110;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    background: rgba(255,255,255,0.95);
-    padding: 12px;
-    border-radius: 24px;
-    box-shadow: 0 -2px 16px 2px rgba(0,0,0,0.10);
-    max-width: min(920px, calc(100vw - 32px));
-    width: calc(100% - 32px);
-    box-sizing: border-box;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    animation: slideInFromLeft 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) 0.2s both;
 }
 
 .comment-row .comment-text {
@@ -62,8 +44,8 @@
     white-space: normal;
 }
 
-.comment-form,
-.bottom-comment-form {
+.bottom-comment-form,
+.comment-form {
     border-radius: 100px !important;
     background: rgba(255,255,255,0.7) !important;
     backdrop-filter: blur(6px) !important;
@@ -71,9 +53,26 @@
     box-shadow: 0 -2px 16px 2px rgba(0,0,0,0.10) !important;
 }
 
-.comment-input:focus {
-    border-color: #901010;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+.bottom-comment-form {
+    position: fixed;
+    bottom: 76px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 110;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: rgba(255,255,255,0.95);
+    padding: 12px;
+    border-radius: 24px;
+    box-shadow: 0 -2px 16px 2px rgba(0,0,0,0.10);
+    max-width: min(920px, calc(100vw - 32px));
+    width: calc(100% - 32px);
+    box-sizing: border-box;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: slideInFromLeft 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) 0.2s both;
 }
 
 .comment-send-btn {

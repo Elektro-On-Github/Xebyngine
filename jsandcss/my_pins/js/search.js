@@ -1,10 +1,7 @@
-// Search/filter functionality
-
 function initSearch() {
-    const input = MyPinsConfig.elements.searchInput;
-    const list = MyPinsConfig.elements.userList;
+    const { searchInput: input, userList: list } = MyPinsConfig.elements;
 
-    const filter = (query) => {
+    const filter = query => {
         const s = (query || '').trim().toLowerCase();
         list.forEach(li => {
             const name = (li.dataset.username || li.textContent || '').toLowerCase();
@@ -14,7 +11,6 @@ function initSearch() {
 
     if (input) {
         input.addEventListener('input', e => filter(e.target.value));
-        
         input.addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                 e.preventDefault();

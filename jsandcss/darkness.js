@@ -33,7 +33,11 @@
         .timeline-thumb,
         .header-btn,
         .fa-clock,
-        .unread-dot
+        .unread-dot,
+        .custom-file-btn,
+        .submit-btn,
+        .form-label,
+        .profile-username
 
         
         { 

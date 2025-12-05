@@ -1,11 +1,10 @@
-// Global configuration for my_pins page
 const MyPinsConfig = {
     urls: {
         profile: null,
         pinToggle: null,
         uploadedAvatar: null
     },
-    
+
     elements: {
         userList: null,
         searchInput: null,
@@ -14,30 +13,27 @@ const MyPinsConfig = {
         confirmOk: null,
         confirmCancel: null
     },
-    
-    loadDataFromJSON: function() {
-        // Load URLs from JSON script tag
+
+    loadDataFromJSON() {
         const dataElement = document.getElementById('my-pins-data');
         if (dataElement) {
             try {
-                const data = JSON.parse(dataElement.textContent);
-                this.urls = data.urls || {};
+                this.urls = JSON.parse(dataElement.textContent).urls || {};
             } catch (e) {
                 console.error('Error parsing my_pins data:', e);
             }
         }
     },
-    
-    init: function() {
-        // Load data from JSON
+
+    init() {
         this.loadDataFromJSON();
-        
-        // Initialize DOM elements
-        this.elements.userList = document.querySelectorAll('li.user-item');
-        this.elements.searchInput = document.getElementById('my-pins-comment-input');
-        this.elements.confirmOverlay = document.getElementById('confirmOverlay');
-        this.elements.confirmMessage = this.elements.confirmOverlay?.querySelector('.confirm-message');
-        this.elements.confirmOk = document.getElementById('confirmOk');
-        this.elements.confirmCancel = document.getElementById('confirmCancel');
+
+        const el = this.elements;
+        el.userList = document.querySelectorAll('li.user-item');
+        el.searchInput = document.getElementById('my-pins-comment-input');
+        el.confirmOverlay = document.getElementById('confirmOverlay');
+        el.confirmMessage = el.confirmOverlay?.querySelector('.confirm-message');
+        el.confirmOk = document.getElementById('confirmOk');
+        el.confirmCancel = document.getElementById('confirmCancel');
     }
 };

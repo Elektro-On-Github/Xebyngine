@@ -1,9 +1,8 @@
-/* Media Queries */
 @media (max-width: 700px) {
     .main {
         padding: 70px 12px 30px;
     }
-    
+
     .profile-container {
         padding: 28px 20px;
         border-radius: 14px;

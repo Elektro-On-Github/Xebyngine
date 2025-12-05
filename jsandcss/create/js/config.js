@@ -1,10 +1,9 @@
-// Global configuration for create post page
 const CreateConfig = {
     urls: {
         index: null,
         createPost: null
     },
-    
+
     elements: {
         form: null,
         photosInput: null,
@@ -19,9 +18,8 @@ const CreateConfig = {
         timelineTooltip: null,
         timelineTrack: null
     },
-    
-    loadDataFromJSON: function() {
-        // Load URLs from JSON script tag
+
+    loadDataFromJSON() {
         const dataElement = document.getElementById('create-data');
         if (dataElement) {
             try {
@@ -32,23 +30,24 @@ const CreateConfig = {
             }
         }
     },
-    
-    init: function() {
-        // Load data from JSON
+
+    init() {
         this.loadDataFromJSON();
-        
-        // Initialize DOM elements
-        this.elements.form = document.querySelector('form[enctype="multipart/form-data"]');
-        this.elements.photosInput = document.getElementById('photos-input');
-        this.elements.photosBrowse = document.getElementById('photos-browse');
-        this.elements.photosPreview = document.getElementById('photos-preview');
-        this.elements.pollOverlay = document.getElementById('poll-overlay');
-        this.elements.pollQuestion = document.getElementById('modal-poll-question');
-        this.elements.pollOptions = document.getElementById('modal-poll-options');
-        this.elements.timelineRange = document.getElementById('timeline-range');
-        this.elements.timelineThumb = document.getElementById('timeline-thumb');
-        this.elements.timelineFill = document.getElementById('timeline-fill');
-        this.elements.timelineTooltip = document.getElementById('timeline-tooltip');
-        this.elements.timelineTrack = document.querySelector('.timeline-track');
+
+        const $ = id => document.getElementById(id);
+        const el = this.elements;
+
+        el.form = document.querySelector('form[enctype="multipart/form-data"]');
+        el.photosInput = $('photos-input');
+        el.photosBrowse = $('photos-browse');
+        el.photosPreview = $('photos-preview');
+        el.pollOverlay = $('poll-overlay');
+        el.pollQuestion = $('modal-poll-question');
+        el.pollOptions = $('modal-poll-options');
+        el.timelineRange = $('timeline-range');
+        el.timelineThumb = $('timeline-thumb');
+        el.timelineFill = $('timeline-fill');
+        el.timelineTooltip = $('timeline-tooltip');
+        el.timelineTrack = document.querySelector('.timeline-track');
     }
 };
