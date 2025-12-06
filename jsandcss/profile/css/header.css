@@ -43,11 +43,6 @@
     will-change: transform, background;
 }
 
-.header-back-btn:hover {
-    background: rgba(144, 16, 16, 0.18);
-    transform: translateX(-4px) scale(1.05);
-}
-
 .header-back-btn:active {
     transform: translateX(-2px) scale(0.95);
     transition-duration: var(--metro-duration-fast);

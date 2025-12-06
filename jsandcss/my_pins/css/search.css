@@ -12,7 +12,7 @@
 }
 
 .comment-input:focus {
-    border-color: #901010;
+    border-color: rgba(144, 16, 16, 0.3);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 

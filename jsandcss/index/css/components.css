@@ -81,7 +81,7 @@
     border-radius: 100px;
     border: 1px solid #e3e3e3;
     box-sizing: border-box;
-    font-size: 0.98em;
+    font-size: 0.95em;
     background: rgba(255,255,255,0.4);
     color: #222;
     outline: none;
@@ -89,7 +89,7 @@
 }
 
 .comment-input:focus {
-    border-color: #901010;
+    border-color: rgba(144, 16, 16, 0.3);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 

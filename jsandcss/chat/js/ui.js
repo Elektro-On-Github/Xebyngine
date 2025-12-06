@@ -28,13 +28,17 @@ function updateChatHeader() {
 
 function showTypingIndicator(show) {
     let indicator = ChatConfig.elements.chatContainer.querySelector('.typing-indicator');
+    
     if (show && !indicator) {
         const template = document.getElementById('typing-template');
         indicator = template.content.cloneNode(true);
         ChatConfig.elements.chatContainer.appendChild(indicator);
         ChatConfig.elements.chatContainer.scrollTop = ChatConfig.elements.chatContainer.scrollHeight;
     } else if (!show && indicator) {
-        indicator.remove();
+        indicator.style.animation = 'none';           // reset
+        indicator.offsetHeight;                        // forza reflow
+        indicator.style.animation = 'easewriting 0.4s reverse forwards';
+        setTimeout(() => indicator.remove(), 400);
     }
 }
 

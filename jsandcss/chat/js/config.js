@@ -37,3 +37,16 @@ const ChatConfig = {
         this.elements.chatUserInfo = document.getElementById('chat-user-info');
     }
 };
+
+// Enable call buttons when chat is active
+function enableCallButtons() {
+    if (ChatConfig.activeChatId) {
+        document.getElementById('call-buttons').style.display = 'flex';
+        document.getElementById('voice-call-btn').disabled = false;
+        document.getElementById('video-call-btn').disabled = false;
+    } else {
+        document.getElementById('call-buttons').style.display = 'none';
+        document.getElementById('voice-call-btn').disabled = true;
+        document.getElementById('video-call-btn').disabled = true;
+    }
+}

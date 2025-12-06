@@ -41,7 +41,12 @@
         .modal-add-opt,
         .back-btn,
         .header-back-btn,
-        .back-btn-search
+        .back-btn-search,
+        .ready,
+        .header-call-btns,
+        .audio-only,
+        .call-info,
+        .call-username
 
         
         { 

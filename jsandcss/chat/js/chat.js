@@ -132,3 +132,21 @@ function loadUserList() {
         list.appendChild(item);
     });
 }
+
+function switchChat(userId, username, avatar) {
+    if (ChatConfig.activeChatId === userId) return;
+
+    ChatConfig.activeChatId = userId;
+    ChatConfig.activeChatUsername = username;
+    ChatConfig.activeChatAvatar = avatar || '/static/default.png';
+
+    updateChatHeader();
+    enableCallButtons(); // <-- AGGIUNGI QUESTA RIGA
+    
+    document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
+    const active = document.querySelector(`[data-userid="${userId}"]`);
+    if (active) active.classList.add('active');
+
+    loadHistory();
+    markChatAsRead(userId);
+}

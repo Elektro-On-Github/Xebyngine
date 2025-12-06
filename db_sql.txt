@@ -87,8 +87,15 @@ CREATE TABLE messages (
     receiver_id VARCHAR(64) NOT NULL,
     content VARCHAR(65536) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    is_read TYPE boolean
 );
 
+/// se qualcosa non va con "is_read" fai cosi:
+ALTER TABLE messages
+ALTER COLUMN is_read TYPE boolean
+USING (is_read::boolean)
+
+lo passa a booleano in parole povere
 
 ========================================================
 voti sondaggi e sondaggi stuff

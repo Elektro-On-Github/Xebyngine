@@ -2,22 +2,22 @@
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 24px;
     z-index: 11000;
     display: flex;
     gap: 8px;
     align-items: center;
-    background: rgba(255,255,255,.7);
+    background: rgba(255,255,255,.5);
     padding: 12px;
     border-radius: 50px;
     box-shadow: 0 -2px 8px 2px rgba(0,0,0,.05);
     max-width: min(920px, 96vw);
-    width: calc(100% - 48px);
+    width: calc(100% - 28px);
     box-sizing: border-box;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     opacity: 1;
     transition: opacity 367ms var(--ease), transform 367ms var(--ease);
+    bottom: 82px;
 }
 
 #input-container.hiding { opacity: 0; transform: translateX(-50%) translateY(20px); pointer-events: none; }
