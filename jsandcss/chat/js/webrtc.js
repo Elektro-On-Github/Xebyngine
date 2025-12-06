@@ -179,11 +179,21 @@ const CallManager = {
 
         // Track event (receive remote stream)
         this.peerConnection.ontrack = (event) => {
+            // DEBUG AGGIUNTO
+            console.log('Track received:', event.track.kind, event.track.enabled);
+            
             if (!this.remoteStream) {
                 this.remoteStream = new MediaStream();
                 this.elements.remoteVideo.srcObject = this.remoteStream;
             }
             this.remoteStream.addTrack(event.track);
+            
+            // VERIFICA AUDIO AGGIUNTA
+            const audioTracks = this.remoteStream.getAudioTracks();
+            console.log('Remote audio tracks:', audioTracks.length);
+            audioTracks.forEach(track => {
+                console.log('Audio track:', track.label, 'enabled:', track.enabled);
+            });
             
             // Hide call info, show video
             this.elements.callInfo.style.display = 'none';
@@ -197,6 +207,11 @@ const CallManager = {
                 this.peerConnection.connectionState === 'failed') {
                 this.endCall();
             }
+        };
+        
+        //  NUOVO: Monitora stato ICE (era mancante!)
+        this.peerConnection.oniceconnectionstatechange = () => {
+            console.log('ICE state:', this.peerConnection.iceConnectionState);
         };
     },
 
@@ -425,55 +440,5 @@ if (document.readyState === 'loading') {
     CallManager.init();
 }
 
-// Create WebRTC peer connection
-createPeerConnection(); {
-    this.peerConnection = new RTCPeerConnection(this.iceServers);
-
-    // ICE candidate event
-    this.peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-            this.sendSignal('ice-candidate', {
-                to: this.remoteUserId,
-                candidate: event.candidate
-            });
-        }
-    };
-
-    // Track event (receive remote stream)
-    this.peerConnection.ontrack = (event) => {
-        console.log('Track received:', event.track.kind, event.track.enabled); // DEBUG
-        
-        if (!this.remoteStream) {
-            this.remoteStream = new MediaStream();
-            this.elements.remoteVideo.srcObject = this.remoteStream;
-        }
-        this.remoteStream.addTrack(event.track);
-        
-        // IMPORTANTE: Verifica che l'audio sia abilitato
-        const audioTracks = this.remoteStream.getAudioTracks();
-        console.log('Remote audio tracks:', audioTracks.length); // DEBUG
-        audioTracks.forEach(track => {
-            console.log('Audio track:', track.label, 'enabled:', track.enabled);
-        });
-        
-        // Hide call info, show video
-        this.elements.callInfo.style.display = 'none';
-        this.elements.callStatus.textContent = 'Connesso';
-    };
-
-    // Connection state change
-    this.peerConnection.onconnectionstatechange = () => {
-        console.log('Connection state:', this.peerConnection.connectionState);
-        if (this.peerConnection.connectionState === 'disconnected' || 
-            this.peerConnection.connectionState === 'failed') {
-            this.endCall();
-        }
-    };
-    
-    // NUOVO: Monitora stato ICE
-    this.peerConnection.oniceconnectionstatechange = () => {
-        console.log('ICE state:', this.peerConnection.iceConnectionState);
-    };
-}
 
 
