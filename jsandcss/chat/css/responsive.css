@@ -4,7 +4,7 @@
     #chat { padding: 68px 12px 110px 12px; }
     #users-list { padding: 68px 12px 24px 12px; }
     .me span, .other span { max-width: 85%; font-size: 15px; }
-    #input-container { width: calc(100% - 24px); bottom: 16px; }
+    #input-container { width: calc(100% - 24px); bottom: 82px; }
     #message-input { font-size: 14px; }
     #send-btn { padding: 10px 16px; font-size: .95em; }
     .user-avatar { width: 48px; height: 48px; }

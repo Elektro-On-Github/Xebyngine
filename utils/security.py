@@ -5,7 +5,7 @@ from threading import Lock
 import time
 import secrets
 import re
-from html import escape
+import unicodedata
 import imghdr
 import config
 
@@ -21,10 +21,14 @@ def sanitize_input(text, max_length=None):
     """Sanitizza input: strip, escape HTML, limita lunghezza."""
     if not text:
         return ""
-    text = str(text).strip()
+    text = str(text)
+    text = unicodedata.normalize('NFKC', text)
+    text = text.replace('\x00', '')
+    text = text.strip()
     if max_length:
         text = text[:max_length]
-    return escape(text)
+    text = re.sub(r'\s+', ' ', text)
+    return text
 
 # ============================================================================
 # VALIDATION

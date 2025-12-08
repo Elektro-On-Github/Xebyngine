@@ -53,8 +53,8 @@
         <button class="header-btn" onclick="handleBackButton()">
             <i class="fa-solid fa-arrow-left"></i>
         </button>
-        <div class="chat-user-info" id="chat-user-info" onclick="ChatConfig.activeChatId && (window.location.href='/profile/'+ChatConfig.activeChatId)">
-            <img class="chat-user-avatar" src="/static/default.png" alt="avatar">
+        <div class="chat-user-info" id="chat-user-info" onclick="ChatConfig.activeChatId && (window.location.href='/user/'+ChatConfig.activeChatUsername)">
+            <img class="chat-user-avatar" src="/uploads/avatars/default.png" alt="avatar">
             <span class="chat-user-name"></span>
         </div>
     </div>
@@ -80,7 +80,7 @@
         
         <!-- Call info (mostrato durante squillo) -->
         <div class="call-info" id="call-info">
-            <img class="call-avatar" id="call-avatar" src="/static/default.png" alt="avatar">
+            <img class="call-avatar" id="call-avatar" src="/uploads/avatars/default.png" alt="avatar">
             <h2 class="call-username" id="call-username"></h2>
             <p class="call-status" id="call-status">Chiamata in corso...</p>
         </div>
@@ -105,7 +105,7 @@
 
 <!-- CALL IN ARRIVO -->
  <div class="incoming-call" id="incoming-call">
-    <img class="incoming-call-avatar" id="incoming-avatar" src="/static/default.png" alt="avatar">
+    <img class="incoming-call-avatar" id="incoming-avatar" src="/uploads/avatars/default.png" alt="avatar">
     <div class="incoming-call-info">
         <strong id="incoming-username">Username</strong>
         <span id="incoming-type">Chiamata vocale...</span>
