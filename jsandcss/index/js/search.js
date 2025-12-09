@@ -246,14 +246,16 @@ function renderUsersSection(users) {
 
 function renderPostsSection(posts, query) {
     if (!posts.length) return '';
-    
+
     return `
         <div style="height:18px;"></div>
         <section class="search-section">
             <h3 class="section-title">Post</h3>
             <div class="posts-list">
                 ${posts.slice(0, 20).map(post => `
-                    <div class="post-result" data-post-id="${post.id}">
+                    <div class="post-result" 
+                         data-post-id="${post.id}"
+                         data-full-content="${escapeHtml(post.content || '')}">
                         <div class="post-title">
                             ${post.title || post.content?.substring(0, 60) || `Post ${post.id}`}
                         </div>
@@ -284,13 +286,15 @@ function attachUserHandlers() {
 function attachPostHandlers() {
     document.querySelectorAll('.post-result').forEach(postEl => {
         postEl.addEventListener('click', () => {
-            const qInput = document.getElementById('overlay-search-input');
-            let query = qInput?.value?.trim();
-            if (!query) {
-                const snippet = postEl.querySelector('.post-snippet')?.textContent || '';
-                query = snippet.split(/\s+/).filter(Boolean)[0] || '';
+            // Prendi il contenuto del post come query
+            const query = postEl.dataset.fullContent || 
+                         postEl.querySelector('.post-snippet')?.textContent?.trim() || 
+                         postEl.querySelector('.post-title')?.textContent?.trim() || '';
+            
+            if (query) {
+                // Esegui la stessa azione del send-btn
+                performSearch(query);
             }
-            if (query) startFilteredFeed(query);
         });
     });
 }
