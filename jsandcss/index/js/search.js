@@ -257,10 +257,7 @@ function renderPostsSection(posts, query) {
                          data-post-id="${post.id}"
                          data-full-content="${escapeHtml(post.content || '')}">
                         <div class="post-title">
-                            ${post.title || post.content?.substring(0, 60) || `Post ${post.id}`}
-                        </div>
-                        <div class="post-snippet">
-                            ${post.content?.substring(0, 140) || ''}
+                            ${post.title || post.content?.substring(0, 30) || `Post ${post.id}`}
                         </div>
                     </div>
                 `).join('')}
@@ -288,8 +285,7 @@ function attachPostHandlers() {
         postEl.addEventListener('click', () => {
             // Prendi il contenuto del post come query
             const query = postEl.dataset.fullContent || 
-                         postEl.querySelector('.post-snippet')?.textContent?.trim() || 
-                         postEl.querySelector('.post-title')?.textContent?.trim() || '';
+                         postEl.querySelector('.post-title')?.textContent?.trim();
             
             if (query) {
                 // Esegui la stessa azione del send-btn
@@ -297,49 +293,6 @@ function attachPostHandlers() {
             }
         });
     });
-}
-
-function startFilteredFeed(query) {
-    if (!query) return;
-    query = query.trim();
-    try { hideOverlay(); } catch(_) {}
-
-    const feed = document.getElementById('post-feed');
-    if (!feed) return;
-
-    window.FILTERING = true;
-    window.FILTER_QUERY = query;
-    window.FILTERED_RESULTS = [];
-    window.FILTER_INDEX = 0;
-    window.FILTER_EXHAUSTED = false;
-
-    feed.innerHTML = `<div id="filter-bar" style="padding:12px; text-align:center; background:rgba(255,255,255,0.98); box-shadow:0 2px 8px rgba(0,0,0,0.04);">
-        <strong>Filtrando per:</strong> "${escapeHtml(query)}" &nbsp;
-        <button id="clear-filter-btn" style="background:#901010;color:#fff;border:none;padding:6px 12px;border-radius:20px;cursor:pointer;">Mostra tutti i post</button>
-    </div>`;
-
-    document.getElementById('clear-filter-btn')?.addEventListener('click', clearFilterMode);
-
-    (async () => {
-        try {
-            const resp = await fetch(`/search_posts?q=${encodeURIComponent(query)}&limit=200`);
-            const data = resp.ok ? await resp.json() : null;
-            const posts = (data && data.posts) ? data.posts : [];
-            window.FILTERED_RESULTS = (posts.length ? posts : searchLocalPosts(query)) || [];
-        } catch (e) {
-            window.FILTERED_RESULTS = searchLocalPosts(query) || [];
-        }
-
-        if (!window.FILTERED_RESULTS.length) {
-            feed.innerHTML += `<p style="padding:18px; text-align:center; color:var(--muted);">Nessun post filtrato trovato. Verranno mostrati i post normali.</p>`;
-            window.FILTER_EXHAUSTED = true;
-            window.FILTERING = false;
-            loadMorePosts();
-            return;
-        }
-
-        appendFilteredBatch();
-    })();
 }
 
 function appendFilteredBatch(batchSize = 8) {

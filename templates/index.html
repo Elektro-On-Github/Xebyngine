@@ -53,16 +53,16 @@
             </div>
             {% if is_owner %}
             <div class="profile-actions">
-                <a href="{{ url_for('profile_bp.profile') }}" class="profile-action-btn" style="background:#901010;color:#fff;padding:8px 12px;border-radius:50px;text-decoration:none;">Personalizza profilo</a>
-                <button id="qr-me-btn" class="profile-action-btn" style="background:#e0e0e0;color:#222;padding:8px 12px;border-radius:50px;border:none;">Fatti conoscere</button>
+                <a href="{{ url_for('profile_bp.profile') }}" class="profile-action-btn">Personalizza profilo</a>
+                <button id="qr-me-btn" class="profile-action-btn">Fatti conoscere</button>
             </div>
             {% else %}
             <div class="profile-actions">
-                <a href="{{ url_for('chat_bp.chat_page') }}{% if user_id %}?user_id={{ user_id }}{% endif %}" class="profile-action-btn" style="background:#901010;color:#fff;padding:8px 12px;border-radius:50px;text-decoration:none;">Messaggia</a>
+                <a href="{{ url_for('chat_bp.chat_page') }}{% if user_id %}?user_id={{ user_id }}{% endif %}" class="profile-action-btn">Messaggia</a>
                 {% if contacts and contacts|length %}
-                <button id="open-contacts-btn" class="profile-action-btn" style="background:#e0e0e0;color:#222;padding:8px 12px;border-radius:50px;border:none;">Contatti</button>
+                <button id="open-contacts-btn" class="profile-action-btn">Contatti</button>
                 {% endif %}
-                <button id="pin-toggle-btn" class="profile-action-btn" data-username="{{ username|e }}" data-initial-pinned="{{ (pinned_status|default(false))|tojson }}" style="background:#fff;border:1px solid #e0e0e0;color:#222;padding:8px 12px;border-radius:50px;border:none;">Metti in lista</button>
+                <button id="pin-toggle-btn" class="profile-action-btn" data-username="{{ username|e }}" data-initial-pinned="{{ (pinned_status|default(false))|tojson }}">Metti in lista</button>
             </div>
             {% endif %}
         </div>
@@ -123,26 +123,6 @@
             <button id="fab-create" type="submit" class="nav-btn" title="Crea post"><i class="fa-solid fa-plus"></i></button>
         </form>
     </nav>
-
-    <!-- Create Overlay -->
-    <div id="create-overlay" class="create-overlay" aria-hidden="true">
-        <div class="create-panel" id="create-overlay-panel">
-            <form class="create-post" action="{{ url_for('posts_bp.create_post') }}" method="post" enctype="multipart/form-data" id="create-post-form">
-                <div class="create-pages" style="display:block;">
-                    <div class="create-page page-active" data-page="1">
-                        <div class="overlay-top">
-                            <div class="create-textbox">
-                                <textarea name="content" required placeholder="Scrivi qualcosa..."></textarea>
-                            </div>
-                        </div>
-                        <div class="btn-row" style="display:flex; gap:10px; margin-top:12px; align-items:center;">
-                            <button type="submit" class="custom-file-btn" style="flex:1;border-radius: 100px;">Pubblica</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- Voters Modal -->
     <div id="voters-modal-overlay" data-current-user="{{ username if username else '' }}" data-default-avatar="{{ url_for('uploaded_avatar', filename='default.png') }}" style="display:none; position:fixed; inset:0; z-index:200000; align-items:center; justify-content:center;">

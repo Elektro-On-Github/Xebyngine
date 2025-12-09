@@ -146,7 +146,7 @@ function showLikers(postId) {
             });
             modal.innerHTML = `
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-                    <button id="likers-back-btn" style="background:rgba(144, 16, 16, 0.1);border:none;font-size:22px;cursor:pointer;width:44px;height:44px;color:rgba(144, 16, 16, 1);border-radius:50px;">
+                    <button id="likers-back-btn" style="background:none;border:none;font-size:22px;cursor:pointer;width:40px;height:40px;color:rgba(144, 16, 16, 1);border-radius:50px;">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
                     <div style="position:relative; flex:1;">

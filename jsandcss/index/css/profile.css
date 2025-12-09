@@ -6,25 +6,21 @@
     gap: 10px;
     margin: 18px 0;
     text-align: center;
+    padding-left: 12px;
+    padding-right: 12px;
 }
 
 .profile-header {
+    flex-direction: column;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
     justify-content: center;
 }
 
-.profile-header .meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-}
-
 .profile-stack .avatar {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -41,8 +37,8 @@
     gap: 8px !important;
     justify-content: space-between;
     align-items: center;
-    padding-left: 8pc;
-    padding-right: 8pc;
+    padding-left: 1px;
+    padding-right: 1px;
     box-sizing: border-box;
     margin-top: 6px;
     flex-wrap: wrap;
@@ -59,7 +55,19 @@
     transition: flex 420ms cubic-bezier(.2,.9,.2,1), opacity 320ms ease, padding 320ms ease, margin 320ms ease, transform 320ms ease;
     line-height: 1;
     vertical-align: middle;
-    border: 1px solid transparent;
+    border: none;
+    background: #901010;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .profile-action-btn,
@@ -133,7 +141,7 @@
 }
 
 .profile-actions .profile-action-btn.expanded {
-    flex: 2 1 0%;
+    flex: 2 1 0% !important;
 }
 
 .profile-actions .profile-action-btn.shrinking {
@@ -158,12 +166,111 @@
 
 @media (max-width: 800px) {
     .profile-actions {
-        padding-left: 16px;
-        padding-right: 16px;
+        padding-left: 12px;
+        padding-right: 12px;
     }
     
     .profile-actions .profile-action-btn {
         padding: 12px 0 !important;
         font-size: 0.95em;
     }
+}
+
+/* Overlay */
+.site-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.26s ease;
+}
+
+.site-overlay.open {
+    opacity: 1;
+}
+
+.site-overlay.overlay-win-closing {
+    opacity: 0;
+}
+
+/* Panel */
+.overlay-panel {
+    background: #fff;
+    padding: 24px;
+    border-radius: 24px;
+    text-align: center;
+    max-width: 90%;
+    transform: scale(0.8);
+    opacity: 0;
+    transition: transform 0.26s ease, opacity 0.26s ease;
+}
+
+#search-overlay-panel {
+    padding: 0;
+}
+
+.overlay-panel.bio-open {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.overlay-panel.bio-closing {
+    transform: scale(0.8);
+    opacity: 0;
+}
+
+/* QR Modal */
+.qr-modal-title {
+    margin-top: 0;
+    font-family: Roboto, Arial, sans-serif;
+    font-weight: 700;
+}
+
+.qr-modal-image {
+    width: 240px;
+    height: 240px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.qr-modal-link {
+    display: inline-block;
+    margin: 12px 8px;
+    padding: 8px 12px;
+    background: #901010;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.qr-modal-link:hover {
+    background: #a01515;
+}
+
+.qr-modal-copy-btn {
+    margin: 12px 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: none;
+    background: #e0e0e0;
+    cursor: pointer;
+}
+
+.qr-modal-copy-btn:hover {
+    background: #d0d0d0;
+}
+
+.qr-modal-url-text {
+    word-break: break-all;
+}
+
+.qr-hidden-textarea {
+    position: fixed;
+    left: -9999px;
+    top: 0;
 }

@@ -217,7 +217,7 @@
         }
     });
 
-    function showQrModal(srcOrUrl, blob, isLinkOnly=false) {
+    function showQrModal(srcOrUrl, blob, isLinkOnly = false) {
         const overlay = document.createElement('div');
         overlay.className = 'site-overlay overlay-win-open';
 
@@ -226,63 +226,51 @@
 
         const h = document.createElement('h3');
         h.textContent = 'Il tuo QR code';
-        h.style.marginTop = '0';
-        h.style.fontFamily = "Roboto, Arial, sans-serif";
-        h.style.fontWeight = '700';
+        h.className = 'qr-modal-title';
         panel.appendChild(h);
 
         if (!isLinkOnly) {
             const img = document.createElement('img');
             img.src = srcOrUrl;
             img.alt = 'QR code';
-            img.style.width = '240px';
-            img.style.height = '240px';
-            img.style.objectFit = 'contain';
-            img.style.background = '#fff';
-            img.style.borderRadius = '8px';
+            img.className = 'qr-modal-image';
             panel.appendChild(img);
             panel.appendChild(document.createElement('br'));
-            
+
             const dl = document.createElement('a');
             dl.href = srcOrUrl;
-            dl.download = `qr_${(window.LOGGED_USERNAME||'me')}.png`;
+            dl.download = `qr_${(window.LOGGED_USERNAME || 'me')}.png`;
             dl.textContent = 'Scarica QR';
-            dl.style.display = 'inline-block';
-            dl.style.margin = '12px 8px';
-            dl.style.padding = '8px 12px';
-            dl.style.background = '#901010';
-            dl.style.color = '#fff';
-            dl.style.borderRadius = '8px';
-            dl.style.textDecoration = 'none';
+            dl.className = 'qr-modal-link';
             panel.appendChild(dl);
-            
+
             const copyBtn = document.createElement('button');
             copyBtn.textContent = 'Copia link profilo';
-            copyBtn.style.margin = '12px 8px';
-            copyBtn.style.padding = '8px 10px';
-            copyBtn.style.borderRadius = '8px';
-            copyBtn.style.border = 'none';
-            copyBtn.style.background = '#e0e0e0';
+            copyBtn.className = 'qr-modal-copy-btn';
             copyBtn.addEventListener('click', async () => {
                 try {
-                    const profileLink = await fetch('/qr_me').then(r => r.headers.get('Content-Type').startsWith('image/') ? null : r.json().then(j=>j.url).catch(()=>null)).catch(()=>null);
+                    const profileLink = await fetch('/qr_me')
+                        .then(r => r.headers.get('Content-Type').startsWith('image/') 
+                            ? null 
+                            : r.json().then(j => j.url).catch(() => null))
+                        .catch(() => null);
+                    
                     const toCopy = profileLink || (window.location.origin + '/user/' + encodeURIComponent(window.LOGGED_USERNAME || ''));
 
                     if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
                         await navigator.clipboard.writeText(toCopy);
                         copyBtn.textContent = 'Copiato!';
-                        setTimeout(()=> copyBtn.textContent = 'Copia link profilo', 1300);
+                        setTimeout(() => copyBtn.textContent = 'Copia link profilo', 1300);
                         return;
                     }
 
                     const ta = document.createElement('textarea');
-                    ta.style.position = 'fixed';
-                    ta.style.left = '-9999px';
-                    ta.style.top = '0';
+                    ta.className = 'qr-hidden-textarea';
                     ta.value = toCopy;
                     document.body.appendChild(ta);
                     ta.focus();
                     ta.select();
+                    
                     let ok = false;
                     try {
                         ok = document.execCommand('copy');
@@ -291,9 +279,10 @@
                         ok = false;
                     }
                     ta.remove();
+                    
                     if (ok) {
                         copyBtn.textContent = 'Copiato!';
-                        setTimeout(()=> copyBtn.textContent = 'Copia link profilo', 1300);
+                        setTimeout(() => copyBtn.textContent = 'Copia link profilo', 1300);
                     } else {
                         throw new Error('copy failed');
                     }
@@ -305,29 +294,29 @@
             panel.appendChild(copyBtn);
         } else {
             const p = document.createElement('p');
-            p.style.wordBreak = 'break-all';
+            p.className = 'qr-modal-url-text';
             p.textContent = srcOrUrl;
             panel.appendChild(p);
+
             const open = document.createElement('a');
             open.href = srcOrUrl;
             open.textContent = 'Apri profilo';
             open.target = '_blank';
             open.rel = 'noopener noreferrer';
-            open.style.display = 'inline-block';
-            open.style.margin = '12px 8px';
-            open.style.padding = '8px 12px';
-            open.style.background = '#901010';
-            open.style.color = '#fff';
-            open.style.borderRadius = '8px';
-            open.style.textDecoration = 'none';
+            open.className = 'qr-modal-link';
             panel.appendChild(open);
         }
 
-        panel.addEventListener('click', (ev) => { ev.stopPropagation(); });
+        panel.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+        });
 
         overlay.appendChild(panel);
         document.body.appendChild(overlay);
-        requestAnimationFrame(() => { overlay.classList.add('open'); });
+        
+        requestAnimationFrame(() => {
+            overlay.classList.add('open');
+        });
 
         overlay.addEventListener('click', (ev) => {
             if (ev.target === overlay) {

@@ -46,7 +46,10 @@
         .header-call-btns,
         .audio-only,
         .call-info,
-        .call-username
+        .call-username,
+        .qr-modal-link,
+        .section-title,
+        #likers-back-btn
 
         
         { 

@@ -258,16 +258,14 @@
     color: #000;
     border: none;
     border-radius: 50px;
-    padding: 8px 12px;
     font-weight: 700;
     cursor: pointer;
     transition: transform 160ms cubic-bezier(.2,.9,.3,1), box-shadow 160ms ease, opacity 160ms ease;
     will-change: transform, box-shadow, opacity;
     outline: none;
     -webkit-tap-highlight-color: transparent;
-    font-size: 0.98em;
+    font-size: 14px;
     vertical-align: middle;
-    margin-left: 8px;
 }
 
 .bio-show-more:hover {
