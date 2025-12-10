@@ -13,11 +13,26 @@ function initializeChat() {
     });
 
     // Typing indicator
-    let typingTimer;
+    let typingTimer;       // Timer per lo stop
+    let lastTypingTime = 0; // Timestamp dell'ultimo invio "true"
+
     ChatConfig.elements.input.addEventListener('input', () => {
+        const now = Date.now();
+
+        // 1. THROTTLE: Invia "sta scrivendo" (true) al massimo una volta ogni 2 secondi
+        if (now - lastTypingTime > 2000) {
+            sendTypingStatus(true);
+            lastTypingTime = now;
+        }
+
+        // 2. DEBOUNCE: Gestisce quando smetti di scrivere
         clearTimeout(typingTimer);
-        sendTypingStatus(true);
-        typingTimer = setTimeout(() => sendTypingStatus(false), 3000);
+        
+        // Se l'utente non scrive per 1 secondo, inviamo "false"
+        typingTimer = setTimeout(() => {
+            sendTypingStatus(false);
+            lastTypingTime = 0; // Resetta il timer così al prossimo tasto parte subito
+        }, 1000);
     });
     
     loadUserList();

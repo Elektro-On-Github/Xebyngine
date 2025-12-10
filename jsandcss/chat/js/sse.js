@@ -1,68 +1,64 @@
+const DEFAULT_AVATAR = '/static/default.png';
+
 function initializeSSE() {
     const evtSource = new EventSource(`/stream/messages?user_id=${ChatConfig.myId}`);
 
     evtSource.addEventListener('message', e => {
         const data = JSON.parse(e.data);
-        if (ChatConfig.activeChatId && String(data.sender) === String(ChatConfig.activeChatId)) {
-            const avatar = ChatConfig.pinnedUsers.find(u => String(u.id) === String(data.sender))?.avatar_url || '/static/default.png';
-            appendMessage(data.sender, data.content, avatar);
+        const senderId = String(data.sender);
+        const isActiveChat = ChatConfig.activeChatId && 
+                             senderId === String(ChatConfig.activeChatId);
+        
+        // Ricerca singola invece di due separate
+        const pinnedUser = ChatConfig.pinnedUsers.find(u => String(u.id) === senderId);
+        
+        if (isActiveChat) {
+            appendMessage(data.sender, data.content, pinnedUser?.avatar_url || DEFAULT_AVATAR);
             markChatAsRead(data.sender);
-        } else {
-            const pu = ChatConfig.pinnedUsers.find(u => String(u.id) === String(data.sender));
-            if (pu) {
-                pu.unread_count = (Number(pu.unread_count) || 0) + 1;
-                pu.last_message = data.content;
-                pu.last_at = new Date().toISOString();
-            } else {
-                ChatConfig.pinnedUsers.unshift({
-                    id: data.sender,
-                    username: data.sender,
-                    avatar_url: data.avatar || '/static/default.png',
-                    last_message: data.content,
-                    last_at: new Date().toISOString(),
-                    unread_count: 1
-                });
-            }
-            loadUserList();
+            return; // Early return evita else nesting
         }
+        
+        const now = new Date().toISOString(); // Calcolato una sola volta
+        
+        if (pinnedUser) {
+            pinnedUser.unread_count = (Number(pinnedUser.unread_count) || 0) + 1;
+            pinnedUser.last_message = data.content;
+            pinnedUser.last_at = now;
+        } else {
+            ChatConfig.pinnedUsers.unshift({
+                id: data.sender,
+                username: data.sender,
+                avatar_url: data.avatar || DEFAULT_AVATAR,
+                last_message: data.content,
+                last_at: now,
+                unread_count: 1
+            });
+        }
+        loadUserList();
     });
 
     evtSource.addEventListener('typing', e => {
-        const data = JSON.parse(e.data);
-        if (String(data.user_id) === String(ChatConfig.activeChatId)) {
-            showTypingIndicator(data.is_typing);
+        const { user_id, is_typing } = JSON.parse(e.data);
+        if (String(user_id) === String(ChatConfig.activeChatId)) {
+            showTypingIndicator(is_typing);
         }
     });
 
-    // NUOVO: Gestione segnali chiamata WebRTC
     evtSource.addEventListener('call-signal', e => {
-        const signal = JSON.parse(e.data);
-        handleCallSignal(signal);
+        handleCallSignal(JSON.parse(e.data));
     });
 
     evtSource.onerror = console.error;
 }
 
-// NUOVA FUNZIONE: Gestisce i segnali di chiamata
-function handleCallSignal(signal) {
-    const { type, data } = signal;
-    
-    switch (type) {
-        case 'offer':
-            CallManager.handleIncomingCall(data);
-            break;
-        case 'answer':
-            CallManager.handleAnswer(data);
-            break;
-        case 'ice-candidate':
-            CallManager.handleIceCandidate(data);
-            break;
-        case 'hangup':
-            CallManager.endCall();
-            break;
-        case 'reject':
-            CallManager.endCall();
-            alert('Chiamata rifiutata');
-            break;
-    }
+const CALL_HANDLERS = {
+    offer:          data => CallManager.handleIncomingCall(data),
+    answer:         data => CallManager.handleAnswer(data),
+    'ice-candidate': data => CallManager.handleIceCandidate(data),
+    hangup:         () => CallManager.endCall(),
+    reject:         () => { CallManager.endCall(); alert('Chiamata rifiutata'); }
+};
+
+function handleCallSignal({ type, data }) {
+    CALL_HANDLERS[type]?.(data);
 }

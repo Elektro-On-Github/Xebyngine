@@ -4,7 +4,7 @@ function switchChat(userId, username, avatar) {
 
     ChatConfig.activeChatId = userId;
     ChatConfig.activeChatUsername = username;
-    ChatConfig.activeChatAvatar = avatar || '/static/default.png';
+    ChatConfig.activeChatAvatar = avatar || '/uploads/avatars/default.png';
 
     updateChatHeader();
     document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
@@ -141,7 +141,7 @@ function switchChat(userId, username, avatar) {
     ChatConfig.activeChatAvatar = avatar || '/static/default.png';
 
     updateChatHeader();
-    enableCallButtons(); // <-- AGGIUNGI QUESTA RIGA
+    enableCallButtons();
     
     document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
     const active = document.querySelector(`[data-userid="${userId}"]`);
