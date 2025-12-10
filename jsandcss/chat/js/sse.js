@@ -13,23 +13,39 @@ function initializeSSE() {
         const pinnedUser = ChatConfig.pinnedUsers.find(u => String(u.id) === senderId);
         
         if (isActiveChat) {
-            appendMessage(data.sender, data.content, pinnedUser?.avatar_url || DEFAULT_AVATAR);
+            // Gestisci post condivisi o messaggi normali
+            if (data.message_type === 'post_share') {
+                appendPostShareMessage(data.sender, data.content, pinnedUser?.avatar_url || DEFAULT_AVATAR);
+            } else {
+                appendMessage(data.sender, data.content, pinnedUser?.avatar_url || DEFAULT_AVATAR);
+            }
             markChatAsRead(data.sender);
             return; // Early return evita else nesting
         }
         
         const now = new Date().toISOString(); // Calcolato una sola volta
         
+        // Estrai preview dal messaggio per la lista (non mostri JSON)
+        let previewText = data.content;
+        if (data.message_type === 'post_share') {
+            try {
+                const payload = JSON.parse(data.content);
+                previewText = `📌 Post di ${payload.author}: ${payload.content_preview}`;
+            } catch (e) {
+                previewText = '📌 Post condiviso';
+            }
+        }
+        
         if (pinnedUser) {
             pinnedUser.unread_count = (Number(pinnedUser.unread_count) || 0) + 1;
-            pinnedUser.last_message = data.content;
+            pinnedUser.last_message = previewText;
             pinnedUser.last_at = now;
         } else {
             ChatConfig.pinnedUsers.unshift({
                 id: data.sender,
                 username: data.sender,
                 avatar_url: data.avatar || DEFAULT_AVATAR,
-                last_message: data.content,
+                last_message: previewText,
                 last_at: now,
                 unread_count: 1
             });

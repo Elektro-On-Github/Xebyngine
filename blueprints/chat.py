@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, Response, url_for
+from flask import Blueprint, render_template, request, session, Response, url_for, jsonify
 from threading import Lock
 from html import escape
 import queue
@@ -144,7 +144,7 @@ def chat_history(other_user_id):
     try:
         with conn.cursor() as c:
             c.execute("""
-                SELECT sender_id, content FROM messages
+                SELECT sender_id, content, message_type FROM messages
                 WHERE (sender_id=%s AND receiver_id=%s) OR (sender_id=%s AND receiver_id=%s)
                 ORDER BY created_at ASC
             """, (my_id, other_user_id, other_user_id, my_id))
@@ -159,12 +159,46 @@ def chat_history(other_user_id):
     avatar_rows.setdefault(my_id, default)
     avatar_rows.setdefault(other_user_id, default)
 
-    return "".join(
-        f'<div class="message {"me" if sid == my_id else "other"}">'
-        f'{"" if sid == my_id else f"<img class=\"message-avatar\" src=\"{avatar_rows.get(sid)}\" alt=\"\">"}'
-        f'<span>{escape(content or "")}</span></div>'
-        for sid, content in rows
-    )
+    html_parts = []
+    for sid, content, message_type in rows:
+        is_mine = sid == my_id
+        avatar = avatar_rows.get(sid)
+        
+        if message_type == 'post_share':
+            # Renderizza il post condiviso come card
+            try:
+                payload = json.loads(content)
+                post_card_html = f'''
+                <div class="message {"me" if is_mine else "other"}">
+                    {"" if is_mine else f'<img class="message-avatar" src="{avatar}" alt="">'}
+                    <div class="post-share-card">
+                        <div class="post-share-header"><strong>📌 Post di {escape(payload.get('author', 'Sconosciuto'))}</strong></div>
+                        {f'<img src="{payload.get("first_image")}" alt="Post" class="post-share-thumbnail">' if payload.get('first_image') else ''}
+                        <div class="post-share-content">
+                            <p class="post-share-text">{escape(payload.get('message_text', 'Ti ho condiviso un post'))}</p>
+                            <p class="post-share-preview">{escape(payload.get('content_preview', ''))}</p>
+                            <a href="/?post={payload.get('post_id')}" class="post-share-link" target="_blank">📖 Apri Post nell'Index →</a>
+                        </div>
+                    </div>
+                </div>
+                '''
+                html_parts.append(post_card_html)
+            except:
+                # Fallback se il JSON non è valido
+                html_parts.append(
+                    f'<div class="message {"me" if is_mine else "other"}">'
+                    f'{"" if is_mine else f"<img class=\"message-avatar\" src=\"{avatar}\" alt=\"\">"}'
+                    f'<span>📌 Post condiviso</span></div>'
+                )
+        else:
+            # Messaggio di testo normale
+            html_parts.append(
+                f'<div class="message {"me" if is_mine else "other"}">'
+                f'{"" if is_mine else f"<img class=\"message-avatar\" src=\"{avatar}\" alt=\"\">"}'
+                f'<span>{escape(content or "")}</span></div>'
+            )
+    
+    return "".join(html_parts)
 
 
 # === MARK READ ===
@@ -237,6 +271,96 @@ def send_message():
         'avatar': get_avatar_url(row[0] if row else None)
     })
 
+    return "OK", 200
+
+
+# === SHARE POST IN CHAT ===
+@chat_bp.route('/share_post', methods=['POST'])
+@require_csrf
+@rate_limit(*config.RATE_LIMIT_MESSAGE)
+def share_post():
+    if "user_id" not in session:
+        return "Unauthorized", 401
+    
+    sender = session["user_id"]
+    receiver = request.form.get('receiver_id')
+    post_id = request.form.get('post_id')
+    message_text = sanitize_input(request.form.get('message_text', 'Ti ho condiviso un post'), 100)
+    
+    if not all([receiver, post_id]):
+        return "Missing parameters", 400
+    
+    conn = get_conn()
+    try:
+        with conn.cursor() as c:
+            # Verifica che il post esista
+            c.execute("""
+                SELECT p.id, p.image_path, p.content, p.user_id, u.username
+                FROM posts p
+                JOIN users u ON p.user_id = u.id
+                WHERE p.id = %s AND p.expires_at > EXTRACT(EPOCH FROM NOW())
+            """, (post_id,))
+            post = c.fetchone()
+            
+            if not post:
+                return "Post not found", 404
+            
+            post_id_db, image_paths_json, content, author_id, author_username = post
+            
+            # Verifica che il receiver esista
+            c.execute("SELECT id FROM users WHERE id = %s", (receiver,))
+            if not c.fetchone():
+                return "User not found", 404
+            
+            # Estrai la prima immagine
+            first_image = None
+            if image_paths_json:
+                try:
+                    image_list = json.loads(image_paths_json)
+                    if image_list:
+                        first_image = url_for('uploaded_post_image', filename=image_list[0])
+                except:
+                    pass
+            
+            # Crea payload JSON per il messaggio
+            post_payload = {
+                'type': 'post_share',
+                'post_id': int(post_id_db),
+                'author': author_username,
+                'author_id': str(author_id),
+                'first_image': first_image,
+                'content_preview': content[:100] + ('...' if len(content) > 100 else ''),
+                'message_text': message_text
+            }
+            
+            message_content = json.dumps(post_payload)
+            
+            # Salva il messaggio con tipo speciale
+            c.execute(
+                "INSERT INTO messages (sender_id, receiver_id, content, message_type) VALUES (%s, %s, %s, %s)",
+                (sender, receiver, message_content, 'post_share')
+            )
+            conn.commit()
+    finally:
+        release_conn(conn)
+    
+    # Avatar mittente
+    conn = get_conn()
+    try:
+        with conn.cursor() as c:
+            c.execute("SELECT avatar_path FROM profile WHERE user_id=%s", (sender,))
+            row = c.fetchone()
+    finally:
+        release_conn(conn)
+    
+    # Invia SSE
+    send_to_user(receiver, 'message', {
+        'sender': sender,
+        'content': message_content,
+        'message_type': 'post_share',
+        'avatar': get_avatar_url(row[0] if row else None)
+    })
+    
     return "OK", 200
 
 
@@ -325,3 +449,51 @@ def call_signal():
     
     return '', 204
 
+
+# === GET CHAT USERS (JSON) ===
+@chat_bp.route('/get_chat_users')
+def get_chat_users_json():
+    if "user_id" not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    my_id = session["user_id"]
+    
+    conn = get_conn()
+    try:
+        with conn.cursor() as c:
+            # Ottieni tutti gli utenti con cui hai chattato
+            c.execute("""
+                SELECT DISTINCT CASE
+                    WHEN sender_id=%s THEN receiver_id
+                    ELSE sender_id
+                END as user_id
+                FROM messages
+                WHERE sender_id=%s OR receiver_id=%s
+                ORDER BY user_id
+            """, (my_id, my_id, my_id))
+            
+            user_ids = [row[0] for row in c.fetchall()]
+            
+            if not user_ids:
+                return jsonify({'users': []})
+            
+            # Recupera info utenti
+            c.execute("""
+                SELECT u.id, u.username, p.avatar_path
+                FROM users u
+                LEFT JOIN profile p ON p.user_id = u.id
+                WHERE u.id = ANY(%s)
+                ORDER BY u.username
+            """, (user_ids,))
+            
+            users = []
+            for uid, username, avatar_path in c.fetchall():
+                users.append({
+                    'id': str(uid),
+                    'username': username,
+                    'avatar_url': get_avatar_url(avatar_path)
+                })
+            
+            return jsonify({'users': users})
+    finally:
+        release_conn(conn)

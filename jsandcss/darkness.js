@@ -49,7 +49,8 @@
         .call-username,
         .qr-modal-link,
         .section-title,
-        #likers-back-btn
+        #likers-back-btn,
+        .post-share-link
 
         
         { 

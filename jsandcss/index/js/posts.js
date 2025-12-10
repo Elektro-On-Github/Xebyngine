@@ -183,6 +183,9 @@ const renderPostActions = (p) => `
         <span class="view-count-modern" style="display:flex; align-items:center; gap:6px; font-size:1.1em; color:#9B2727;">
             <i class="fa-solid fa-eye"></i> <span class="post-views" data-post-id="${p.id}">${p.views || 0}</span>
         </span>
+        <button class="share-post-btn" data-post-id="${p.id}" onclick="openShareModal(${p.id})" style="all:unset; width:38px; height:38px; border-radius:50%; background:none; display:flex; align-items:center; justify-content:center; color:#9B2727; font-size:1.3em; cursor:pointer; transition:all 0.2s;" title="Condividi in chat">
+            <i class="fa-solid fa-share"></i>
+        </button>
     </div>
 `;
 

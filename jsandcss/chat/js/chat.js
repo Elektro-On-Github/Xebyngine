@@ -67,6 +67,76 @@ function appendMessage(sender, text, avatar = null) {
     ChatConfig.elements.chatContainer.scrollTop = ChatConfig.elements.chatContainer.scrollHeight;
 }
 
+function appendPostShareMessage(sender, jsonContent, avatar = null) {
+    const empty = ChatConfig.elements.chatContainer.querySelector('.empty-chat');
+    if (empty) empty.remove();
+
+    const isMine = sender === ChatConfig.myId;
+    const msg = document.createElement('div');
+    msg.className = `message ${isMine ? 'me' : 'other'}`;
+
+    if (!isMine) {
+        const img = document.createElement('img');
+        img.className = 'message-avatar';
+        img.src = avatar || '/static/default.png';
+        msg.appendChild(img);
+    }
+
+    try {
+        const payload = JSON.parse(jsonContent);
+        
+        const card = document.createElement('div');
+        card.className = 'post-share-card';
+        
+        // Header con autore
+        const header = document.createElement('div');
+        header.className = 'post-share-header';
+        header.innerHTML = `<strong>📌 Post di ${payload.author}</strong>`;
+        card.appendChild(header);
+        
+        // Immagine se disponibile
+        if (payload.first_image) {
+            const img = document.createElement('img');
+            img.src = payload.first_image;
+            img.alt = 'Post image';
+            img.className = 'post-share-thumbnail';
+            card.appendChild(img);
+        }
+        
+        // Contenuto
+        const content = document.createElement('div');
+        content.className = 'post-share-content';
+        
+        const text = document.createElement('p');
+        text.className = 'post-share-text';
+        text.textContent = payload.message_text || 'Ti ho condiviso un post';
+        content.appendChild(text);
+        
+        const preview = document.createElement('p');
+        preview.className = 'post-share-preview';
+        preview.textContent = payload.content_preview;
+        content.appendChild(preview);
+        
+        // Link per aprire il post
+        const link = document.createElement('a');
+        link.href = `/?post=${payload.post_id}`;
+        link.className = 'post-share-link';
+        link.textContent = '📖 Apri Post nell\'Index →';
+        link.target = '_blank';
+        content.appendChild(link);
+        
+        card.appendChild(content);
+        msg.appendChild(card);
+    } catch (e) {
+        const span = document.createElement('span');
+        span.textContent = '📌 Post condiviso (errore nel caricamento)';
+        msg.appendChild(span);
+    }
+
+    ChatConfig.elements.chatContainer.appendChild(msg);
+    ChatConfig.elements.chatContainer.scrollTop = ChatConfig.elements.chatContainer.scrollHeight;
+}
+
 function sendMessage() {
     if (!ChatConfig.activeChatId) return alert('Seleziona un contatto');
     
