@@ -241,28 +241,12 @@
 .qr-modal-link {
     display: inline-block;
     margin: 12px 8px;
-    padding: 8px 12px;
+    padding: 12px 24px;
     background: #901010;
     color: #fff;
-    border-radius: 8px;
-    text-decoration: none;
-}
-
-.qr-modal-link:hover {
-    background: #a01515;
-}
-
-.qr-modal-copy-btn {
-    margin: 12px 8px;
-    padding: 8px 10px;
-    border-radius: 8px;
     border: none;
-    background: #e0e0e0;
-    cursor: pointer;
-}
-
-.qr-modal-copy-btn:hover {
-    background: #d0d0d0;
+    border-radius: 50px;
+    text-decoration: none;
 }
 
 .qr-modal-url-text {

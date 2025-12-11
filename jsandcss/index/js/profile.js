@@ -245,8 +245,8 @@
             panel.appendChild(dl);
 
             const copyBtn = document.createElement('button');
-            copyBtn.textContent = 'Copia link profilo';
-            copyBtn.className = 'qr-modal-copy-btn';
+            copyBtn.textContent = 'Copia';
+            copyBtn.className = 'qr-modal-link';
             copyBtn.addEventListener('click', async () => {
                 try {
                     const profileLink = await fetch('/qr_me')
@@ -260,7 +260,7 @@
                     if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
                         await navigator.clipboard.writeText(toCopy);
                         copyBtn.textContent = 'Copiato!';
-                        setTimeout(() => copyBtn.textContent = 'Copia link profilo', 1300);
+                        setTimeout(() => copyBtn.textContent = 'Copia', 1300);
                         return;
                     }
 

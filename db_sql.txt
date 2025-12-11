@@ -88,6 +88,7 @@ CREATE TABLE messages (
     content VARCHAR(65536) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     is_read TYPE boolean
+    message_type VARCHAR(20)
 );
 
 /// se qualcosa non va con "is_read" fai cosi:
@@ -95,7 +96,12 @@ ALTER TABLE messages
 ALTER COLUMN is_read TYPE boolean
 USING (is_read::boolean)
 
-lo passa a booleano in parole povere
+/// lo passa a booleano in parole povere
+
+/// se non va il message_type fai cosi:
+ALTER TABLE messages
+ADD COLUMN message_type VARCHAR(20);
+
 
 ========================================================
 voti sondaggi e sondaggi stuff
