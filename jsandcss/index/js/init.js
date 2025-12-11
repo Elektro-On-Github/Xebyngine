@@ -92,16 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // === POST SHARING ===
 function openShareModal(postId) {
-    const modal = document.getElementById('share-post-modal');
+    let modal = document.getElementById('share-post-modal');
+    
     if (!modal) {
         createShareModal();
+        modal = document.getElementById('share-post-modal');
     }
     
-    const existingModal = document.getElementById('share-post-modal');
-    existingModal.dataset.postId = postId;
-    existingModal.style.display = 'flex';
-    
-    // Carica lista contatti
+    modal.dataset.postId = postId;
+    showShareModal();
     loadShareContacts();
 }
 
@@ -115,42 +114,52 @@ function createShareModal() {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0,0,0,0.5);
+        background: rgba(255,255,255,0);
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
         z-index: 9999;
-        align-items: center;
-        justify-content: center;
+        transition: background 0.4s cubic-bezier(0.1, 0.9, 0.2, 1), backdrop-filter 0.4s cubic-bezier(0.1, 0.9, 0.2, 1), -webkit-backdrop-filter 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
     `;
     
     modal.innerHTML = `
-        <div style="background: white; border-radius: 12px; padding: 20px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h2 style="margin: 0;">Condividi Post</h2>
-                <button onclick="document.getElementById('share-post-modal').style.display='none'" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">×</button>
+        <div id="share-modal-content" style="
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+        ">
+            <div style="display: flex; justify-content:center; align-items: center; margin-bottom: 16px;">
+                <h2 style="margin: 0; font-size: 18px; padding: 6px; text-align: center;">Condividi Post</h2>
             </div>
             
             <div style="margin-bottom: 12px;">
-                <input type="text" id="share-search-input" placeholder="Cerca contatti..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+                <input type="text" id="share-search-input" placeholder="Cerca contatti..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 50px; box-sizing: border-box;">
             </div>
             
             <div id="share-contacts-list" style="max-height: 400px; overflow-y: auto;"></div>
             
             <div style="margin-top: 16px;">
                 <label style="display: block; margin-bottom: 8px;">Messaggio (opzionale):</label>
-                <input type="text" id="share-message-input" placeholder="Es: Guarda questo post!" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; max-length: 100;">
+                <input type="text" id="share-message-input" placeholder="Es: Guarda questo post!" maxlength="100" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 50px; box-sizing: border-box;">
             </div>
         </div>
     `;
     
     document.body.appendChild(modal);
     
-    // Chiudi il modal cliccando fuori
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
+        if (e.target === modal) closeShareModal();
     });
     
-    // Cerca
     document.getElementById('share-search-input').addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
         const items = document.querySelectorAll('.share-contact-item');
@@ -159,6 +168,40 @@ function createShareModal() {
             item.style.display = name.includes(query) ? '' : 'none';
         });
     });
+}
+
+function showShareModal() {
+    const modal = document.getElementById('share-post-modal');
+    const content = document.getElementById('share-modal-content');
+    
+    modal.style.display = 'block';
+    modal.style.background = 'rgba(255,255,255,0)';
+    modal.style.backdropFilter = 'blur(0px)';
+    modal.style.webkitBackdropFilter = 'blur(0px)';
+    content.style.transform = 'translateX(-50%) translateY(100%)';
+    
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            modal.style.background = 'rgba(255,255,255,0.1)';
+            modal.style.backdropFilter = 'blur(8px)';
+            modal.style.webkitBackdropFilter = 'blur(8px)';
+            content.style.transform = 'translateX(-50%) translateY(0)';
+        });
+    });
+}
+
+function closeShareModal() {
+    const modal = document.getElementById('share-post-modal');
+    const content = document.getElementById('share-modal-content');
+    
+    modal.style.background = 'rgba(255,255,255,0)';
+    modal.style.backdropFilter = 'blur(0px)';
+    modal.style.webkitBackdropFilter = 'blur(0px)';
+    content.style.transform = 'translateX(-50%) translateY(100%)';
+    
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 400);
 }
 
 function loadShareContacts() {
@@ -229,11 +272,11 @@ function sharePostToUser(userId, username) {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         
         modal.style.display = 'none';
-        alert(`✅ Post condiviso con ${username}!`);
+        alert(`Post condiviso con ${username}!`);
     })
     .catch(err => {
         console.error('Errore sharing:', err);
-        alert('❌ Errore nella condivisione. Riprova.');
+        alert('Errore nella condivisione. Riprova.');
     });
 }
 
