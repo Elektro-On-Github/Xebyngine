@@ -121,7 +121,7 @@ function appendPostShareMessage(sender, jsonContent, avatar = null) {
         const link = document.createElement('a');
         link.href = `/?post=${payload.post_id}`;
         link.className = 'post-share-link';
-        link.textContent = '📖 Apri Post nell\'Index →';
+        link.textContent = 'Apri Post';
         link.target = '_blank';
         content.appendChild(link);
         
@@ -129,7 +129,7 @@ function appendPostShareMessage(sender, jsonContent, avatar = null) {
         msg.appendChild(card);
     } catch (e) {
         const span = document.createElement('span');
-        span.textContent = '📌 Post condiviso (errore nel caricamento)';
+        span.textContent = 'Post condiviso (errore nel caricamento)';
         msg.appendChild(span);
     }
 

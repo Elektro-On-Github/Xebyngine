@@ -250,7 +250,7 @@ function scrollToPost(postId) {
     }
     
     // Post non trovato, carica post fino a trovarlo
-    const maxAttempts = 50;
+    const maxAttempts = 2;
     let attempts = 0;
     
     const checkAndScroll = () => {
@@ -271,7 +271,6 @@ function scrollToPost(postId) {
             setTimeout(checkAndScroll, 500);
         } else {
             console.warn(`Post ${postId} non trovato dopo ${maxAttempts} tentativi`);
-            alert(`⚠️ Post #${postId} non trovato`);
         }
     };
     

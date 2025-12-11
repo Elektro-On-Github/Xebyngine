@@ -50,7 +50,7 @@
         .qr-modal-link,
         .section-title,
         #likers-back-btn,
-        .post-share-link
+        .post-share-card
 
         
         { 

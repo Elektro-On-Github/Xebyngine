@@ -177,7 +177,7 @@ def chat_history(other_user_id):
                         <div class="post-share-content">
                             <p class="post-share-text">{escape(payload.get('message_text', 'Ti ho condiviso un post'))}</p>
                             <p class="post-share-preview">{escape(payload.get('content_preview', ''))}</p>
-                            <a href="/?post={payload.get('post_id')}" class="post-share-link" target="_blank">📖 Apri Post nell'Index →</a>
+                            <a href="/?post={payload.get('post_id')}" class="post-share-link" target="_blank">Apri Post</a>
                         </div>
                     </div>
                 </div>
@@ -188,7 +188,7 @@ def chat_history(other_user_id):
                 html_parts.append(
                     f'<div class="message {"me" if is_mine else "other"}">'
                     f'{"" if is_mine else f"<img class=\"message-avatar\" src=\"{avatar}\" alt=\"\">"}'
-                    f'<span>📌 Post condiviso</span></div>'
+                    f'<span>Post condiviso</span></div>'
                 )
         else:
             # Messaggio di testo normale

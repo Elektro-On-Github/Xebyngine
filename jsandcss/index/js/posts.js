@@ -177,9 +177,6 @@ const renderPostActions = (p) => `
         <button class="show-likers-btn" onclick="showLikers(${p.id})" style="all:unset; width:38px; height:38px; border-radius:50%; background:none; display:flex; align-items:center; justify-content:center; color:#9B2727; font-size:1.3em; cursor:pointer; transition:all 0.2s;">
             <i class="fa-solid fa-users"></i>
         </button>
-        <span class="comment-count-modern" style="display:flex; align-items:center; gap:6px; font-size:1.1em; color:#9B2727;">
-            <i class="fa-solid fa-comment"></i> ${p.comment_count}
-        </span>
         <span class="view-count-modern" style="display:flex; align-items:center; gap:6px; font-size:1.1em; color:#9B2727;">
             <i class="fa-solid fa-eye"></i> <span class="post-views" data-post-id="${p.id}">${p.views || 0}</span>
         </span>
