@@ -30,9 +30,9 @@ function initializeSSE() {
         if (data.message_type === 'post_share') {
             try {
                 const payload = JSON.parse(data.content);
-                previewText = `📌 Post di ${payload.author}: ${payload.content_preview}`;
+                previewText = `Post di ${payload.author}: ${payload.content_preview}`;
             } catch (e) {
-                previewText = '📌 Post condiviso';
+                previewText = 'Post condiviso';
             }
         }
         

@@ -142,14 +142,14 @@ function createShareModal() {
             </div>
             
             <div style="margin-bottom: 12px;">
-                <input type="text" id="share-search-input" placeholder="Cerca contatti..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 50px; box-sizing: border-box;">
+                <input type="text" id="share-search-input" placeholder="Cerca contatti..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 50px; box-sizing: border-box; outline:none;">
             </div>
             
             <div id="share-contacts-list" style="max-height: 400px; overflow-y: auto;"></div>
             
             <div style="margin-top: 16px;">
                 <label style="display: block; margin-bottom: 8px;">Messaggio (opzionale):</label>
-                <input type="text" id="share-message-input" placeholder="Es: Guarda questo post!" maxlength="100" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 50px; box-sizing: border-box;">
+                <input type="text" id="share-message-input" placeholder="Es: Guarda questo post!" maxlength="100" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 50px; box-sizing: border-box; outline:none;">
             </div>
         </div>
     `;

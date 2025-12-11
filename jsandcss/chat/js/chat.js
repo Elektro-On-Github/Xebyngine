@@ -91,7 +91,7 @@ function appendPostShareMessage(sender, jsonContent, avatar = null) {
         // Header con autore
         const header = document.createElement('div');
         header.className = 'post-share-header';
-        header.innerHTML = `<strong>📌 Post di ${payload.author}</strong>`;
+        header.innerHTML = `<strong>Post di ${payload.author}</strong>`;
         card.appendChild(header);
         
         // Immagine se disponibile
@@ -181,7 +181,7 @@ function loadUserList() {
         const div = item.querySelector('.user-item');
         
         div.dataset.userid = user.id;
-        div.querySelector('.user-avatar').src = user.avatar_url || '/static/default.png';
+        div.querySelector('.user-avatar').src = user.avatar_url || '/uploads/avatars/default.png';
         div.querySelector('.user-name').textContent = user.username;
         div.querySelector('.user-time').textContent = user.last_at ? 
             new Date(user.last_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
@@ -208,7 +208,7 @@ function switchChat(userId, username, avatar) {
 
     ChatConfig.activeChatId = userId;
     ChatConfig.activeChatUsername = username;
-    ChatConfig.activeChatAvatar = avatar || '/static/default.png';
+    ChatConfig.activeChatAvatar = avatar || '/uploads/avatars/default.png';
 
     updateChatHeader();
     enableCallButtons();

@@ -172,7 +172,7 @@ def chat_history(other_user_id):
                 <div class="message {"me" if is_mine else "other"}">
                     {"" if is_mine else f'<img class="message-avatar" src="{avatar}" alt="">'}
                     <div class="post-share-card">
-                        <div class="post-share-header"><strong>📌 Post di {escape(payload.get('author', 'Sconosciuto'))}</strong></div>
+                        <div class="post-share-header"><strong>Post di {escape(payload.get('author', 'Sconosciuto'))}</strong></div>
                         {f'<img src="{payload.get("first_image")}" alt="Post" class="post-share-thumbnail">' if payload.get('first_image') else ''}
                         <div class="post-share-content">
                             <p class="post-share-text">{escape(payload.get('message_text', 'Ti ho condiviso un post'))}</p>
