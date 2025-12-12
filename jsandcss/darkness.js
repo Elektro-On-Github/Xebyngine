@@ -52,7 +52,8 @@
         #likers-back-btn,
         .post-share-card,
         .fa-share,
-        .share-post-modal
+        .share-post-modal,
+        .scroller-dot.active
 
         
         { 
