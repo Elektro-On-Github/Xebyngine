@@ -1,7 +1,3 @@
-"""
-Blueprint Flask per le routes del sistema Dirty Account.
-"""
-
 from flask import Blueprint, jsonify, session
 from utils.dirty_manager import (
     get_dirty_status, 

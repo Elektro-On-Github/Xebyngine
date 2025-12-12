@@ -1,8 +1,3 @@
-"""
-📝 POSTS ROUTES
-Post, like, commenti, sondaggi
-"""
-
 from flask import Blueprint, render_template, request, redirect, session, url_for, jsonify, send_from_directory, flash
 from psycopg2.errors import UniqueViolation
 import json
