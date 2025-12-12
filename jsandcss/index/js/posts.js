@@ -174,13 +174,13 @@ const renderPostActions = (p) => `
             </button>
             <span class="like-count" style="font-size:1.1em; color:#222; font-weight:500; margin-left:8px; user-select:none;">${p.like_count}</span>
         </form>
-        <button class="show-likers-btn" onclick="showLikers(${p.id})" style="all:unset; width:38px; height:38px; border-radius:50%; background:none; display:flex; align-items:center; justify-content:center; color:#9B2727; font-size:1.3em; cursor:pointer; transition:all 0.2s;">
+        <button class="show-likers-btn" onclick="showLikers(${p.id})" style="all:unset; width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,0.15); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; color:#e53935; font-size:1.3em; box-shadow:0 2px 10px rgba(0,0,0,0.05); cursor:pointer; transition:all 0.2s ease;">
             <i class="fa-solid fa-users"></i>
         </button>
         <span class="view-count-modern" style="display:flex; align-items:center; gap:6px; font-size:1.1em; color:#9B2727;">
             <i class="fa-solid fa-eye"></i> <span class="post-views" data-post-id="${p.id}">${p.views || 0}</span>
         </span>
-        <button class="share-post-btn" data-post-id="${p.id}" onclick="openShareModal(${p.id})" style="all:unset; width:38px; height:38px; border-radius:50%; background:none; display:flex; align-items:center; justify-content:center; color:#9B2727; font-size:1.3em; cursor:pointer; transition:all 0.2s;" title="Condividi in chat">
+        <button class="share-post-btn" data-post-id="${p.id}" onclick="openShareModal(${p.id})" style="all:unset; width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,0.15); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; color:#e53935; font-size:1.3em; box-shadow:0 2px 10px rgba(0,0,0,0.15); cursor:pointer; transition:all 0.2s ease;" title="Condividi in chat">
             <i class="fa-solid fa-share"></i>
         </button>
     </div>
