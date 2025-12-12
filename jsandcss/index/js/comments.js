@@ -49,7 +49,7 @@ function createModal(id, postId) {
         left: '0',
         right: '0',
         bottom: '-100%',
-        height: '50vh',
+        height: '75vh',
         background: '#ffffff',
         borderTopLeftRadius: '18px',
         borderTopRightRadius: '18px',
