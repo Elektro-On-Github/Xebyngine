@@ -2,7 +2,6 @@ togliere lo schifo da: "/jsandcss/index/js/**" (dividendo in altri file e toglie
 implementare algoritmo per comprimere foto
 implementare video sui post (penso max 600 secs)
 completare dirty
-fare in modo che search cerchi solo nei post che sono visualizzati non scaduti (non in tutto il db)
 fare in modo che le calls arrivano anche sull'index o su altre pages
 implementare l'anti NSFW 
 commentare e capire TUTTO (A POCO A POCO)

@@ -1,8 +1,3 @@
-"""
-Gestione della tabella 'dirty' per tracciare l'inattività degli utenti.
-Si integra con il connection pool esistente.
-"""
-
 from datetime import datetime, timedelta
 from .db import get_conn, release_conn
 
@@ -10,7 +5,6 @@ INACTIVITY_DAYS = 7  # Giorni prima che l'account diventi "dirty"
 
 
 def ensure_dirty_table():
-    """Crea la tabella dirty se non esiste."""
     conn = None
     try:
         conn = get_conn()
@@ -41,7 +35,6 @@ def ensure_dirty_table():
             release_conn(conn)
 
 def ensure_user_in_dirty(user_id):
-    """Assicura che l'utente abbia un record nella tabella dirty."""
     conn = None
     try:
         conn = get_conn()
@@ -64,10 +57,6 @@ def ensure_user_in_dirty(user_id):
 
 
 def get_dirty_status(user_id):
-    """
-    Controlla e ritorna lo stato dirty di un utente.
-    Aggiorna automaticamente a 'yes' se inattivo per 7+ giorni.
-    """
     conn = None
     try:
         conn = get_conn()
@@ -130,10 +119,6 @@ def get_dirty_status(user_id):
 
 
 def update_last_activity(user_id):
-    """
-    Aggiorna l'ultima attività dell'utente.
-    ⚠️ CHIAMARE AD OGNI LOGIN!
-    """
     conn = None
     try:
         conn = get_conn()
@@ -157,10 +142,6 @@ def update_last_activity(user_id):
 
 
 def clean_account(user_id):
-    """
-    Pulisce lo stato dirty e RESETTA il timer.
-    Chiamato quando l'utente clicca 'Clean'.
-    """
     conn = None
     try:
         conn = get_conn()
@@ -184,7 +165,6 @@ def clean_account(user_id):
 
 
 def get_all_dirty_users():
-    """Ritorna tutti gli utenti con status 'dirty' (per admin)."""
     conn = None
     try:
         conn = get_conn()
@@ -216,10 +196,6 @@ def get_all_dirty_users():
 
 
 def check_and_update_all_dirty():
-    """
-    Job schedulato: controlla TUTTI gli utenti e aggiorna lo status.
-    Utile per cron job o scheduler.
-    """
     conn = None
     try:
         conn = get_conn()
@@ -237,7 +213,7 @@ def check_and_update_all_dirty():
         conn.commit()
         cur.close()
         
-        print(f"✅ Aggiornati {updated} account a status 'dirty'")
+        print(f"Aggiornati {updated} account a status 'dirty'")
         return updated
     
     finally:
