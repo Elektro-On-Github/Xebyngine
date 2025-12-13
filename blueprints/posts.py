@@ -3,7 +3,6 @@ from psycopg2.errors import UniqueViolation
 import json
 import time
 import os
-from PIL import Image
 import config
 from utils.security import sanitize_input, validate_image_file, rate_limit, require_csrf
 from utils.helpers import generate_filename, remove_files_for_image_path, ensure_viewer_token
@@ -383,14 +382,6 @@ def post_view():
     count = get_post_view_count(post_id_int)
     return jsonify({'post_id': post_id_int, 'views': count})
 
-@posts_bp.route('/admin/cleanup_expired', methods=['POST'])
-@require_csrf
-def admin_cleanup_expired():
-    if 'user_id' not in session:
-        return jsonify({'error': 'not logged in'}), 401
-    removed = cleanup_expired_posts()
-    return jsonify({'removed': removed}), 200
-
 @posts_bp.route("/load_posts")
 def load_posts():
     if "user_id" not in session:
@@ -501,8 +492,8 @@ def load_posts():
             "username": username,
             "remaining_seconds": remaining_seconds,
             "show_timer": True,
-            "comments": get_comments(post_id),
-            "comment_count": len(get_comments(post_id)),
+            "comments": comments,
+            "comment_count": len(comments),
             "poll": poll,
             "poll_data" : poll_data
         })

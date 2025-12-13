@@ -4,7 +4,7 @@ from datetime import timedelta
 import secrets
 import os
 import config
-
+from apscheduler.schedulers.background import BackgroundScheduler
 # Import utils per inizializzazione
 from utils.db import ensure_crono_table, ensure_post_views_table
 from utils.dirty_manager import ensure_dirty_table
@@ -135,6 +135,17 @@ def public_stuff_ico1():
 @app.route('/public_stuff/icon-512.png')
 def public_stuff_ico2():
     return send_from_directory(os.getcwd(), 'public_stuff/icon-512.png')
+
+
+# clean expired posts periodically
+from utils.db import auto_cleanup_expired_posts
+scheduler = BackgroundScheduler()
+scheduler.add_job(
+    func=auto_cleanup_expired_posts,
+    trigger='interval',
+    minutes=1  # minuti
+)
+scheduler.start()
 # ============================================================================
 # SERVER START
 # ============================================================================

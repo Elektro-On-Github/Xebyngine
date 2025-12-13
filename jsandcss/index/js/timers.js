@@ -1,14 +1,7 @@
-// Post Timers
-
 function startTimers(root = document) {
     root.querySelectorAll('.timer:not([data-timer-started])').forEach(timer => {
         timer.dataset.timerStarted = 'true';
         const expiry = getExpiryTime(timer);
-        
-        if (window.PROFILE_MODE) {
-            timer.textContent = Math.max(0, Math.ceil((expiry - Date.now()) / 1000));
-            return;
-        }
         
         const tick = () => {
             const remaining = Math.max(0, Math.ceil((expiry - Date.now()) / 1000));

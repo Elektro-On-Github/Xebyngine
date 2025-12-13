@@ -1,14 +1,10 @@
-"""
-🗄️ DATABASE MODULE
-Pool connessioni e query database
-"""
-
 from psycopg2 import pool
 from flask import session, url_for
 import json
 import time
 import os
 import config
+
 
 # ============================================================================
 # CONNECTION POOL
@@ -467,3 +463,60 @@ def cleanup_expired_posts():
         except Exception:
             pass
         release_conn(conn)
+
+
+# auto delete expired posts periodically
+def auto_cleanup_expired_posts():
+    now_secs = int(time.time())
+    
+    conn = get_conn()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT id, image_path 
+            FROM posts 
+            WHERE expires_at < %s
+        """, (now_secs,))
+        expired_posts = cur.fetchall()
+        
+        if not expired_posts:
+            cur.close()
+            release_conn(conn)
+            return 0
+        
+        expired_ids = [p[0] for p in expired_posts]
+        image_paths = [p[1] for p in expired_posts if p[1]]
+        
+        # Elimina dal DB
+        cur.execute("DELETE FROM poll_votes WHERE post_id = ANY(%s)", (expired_ids,))
+        cur.execute("DELETE FROM poll_options WHERE poll_id IN (SELECT id FROM polls WHERE post_id = ANY(%s))", (expired_ids,))
+        cur.execute("DELETE FROM polls WHERE post_id = ANY(%s)", (expired_ids,))
+        cur.execute("DELETE FROM comment_likes WHERE comment_id IN (SELECT id FROM comments WHERE post_id = ANY(%s))", (expired_ids,))
+        cur.execute("DELETE FROM comments WHERE post_id = ANY(%s)", (expired_ids,))
+        cur.execute("DELETE FROM likes WHERE post_id = ANY(%s)", (expired_ids,))
+        cur.execute("DELETE FROM post_views WHERE post_id = ANY(%s)", (expired_ids,))
+        cur.execute("DELETE FROM posts WHERE id = ANY(%s)", (expired_ids,))
+        
+        conn.commit()
+        
+        # Elimina file
+        for image_path in image_paths:
+            try:
+                paths_list = json.loads(image_path) if image_path.startswith('[') else [image_path]
+                for img in paths_list:
+                    file_path = os.path.join(config.UPLOAD_FOLDER, os.path.basename(img))
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+            except:
+                pass
+        
+        cur.close()
+        release_conn(conn)
+        return len(expired_ids)
+        
+    except Exception:
+        conn.rollback()
+        cur.close()
+        release_conn(conn)
+        return 0

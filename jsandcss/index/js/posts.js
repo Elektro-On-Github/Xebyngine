@@ -134,6 +134,7 @@ function appendPostToFeed(p) {
 
     feed.appendChild(div);
     initializePostComponents(div, p);
+    startTimers(div);
     
     return div;
 }
@@ -145,7 +146,7 @@ const renderPostMenu = (p) => `
     <div class="post-menu" style="position:absolute; top:12px; right:12px; z-index:2; display:flex; align-items:center; gap:8px;">
         <div class="post-timer-top" style="display:flex; align-items:center; gap:6px; color:#222; margin-right:6px;">
             <i class="fa-solid fa-clock fa-spin" style="color:#ff9800; font-size:calc(1em + 2px);"></i>
-            <span class="timer" data-seconds="${p.remaining_seconds}" data-expires-at="${p.expires_at || Math.floor(Date.now()/1000 + p.remaining_seconds)}" style="font-weight:700; font-size:calc(1em + 2px);">${p.remaining_seconds}</span>
+            <span class="timer" data-expires-at="${p.expires_at || Math.floor(Date.now()/1000 + p.remaining_seconds)}" style="font-weight:700; font-size:calc(1em + 2px);"></span>
         </div>
         <button class="post-menu-btn" title="Altro" style="background:none;border:none;cursor:pointer;font-size:18px;padding:6px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;">
             <i class="fa-solid fa-ellipsis-vertical"></i>
