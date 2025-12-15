@@ -1,4 +1,3 @@
-togliere lo schifo da: "/jsandcss/index/js/**" (dividendo in altri file e togliendo tutto quel css dentro js che fa schifo)
 implementare algoritmo per comprimere foto
 implementare video sui post (penso max 600 secs)
 completare dirty

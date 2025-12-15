@@ -1,5 +1,4 @@
-// Posts Loading and Rendering
-
+// === POSTS LOADING ===
 async function loadMorePosts() {
     if (window.PROFILE_MODE || loading) return;
     loading = true;
@@ -23,12 +22,9 @@ async function loadMorePosts() {
 
         if (!posts.length) {
             window.removeEventListener('scroll', onScroll);
-
             if (INDEX_SEARCH_MODE && INDEX_SEARCH_FOUND === 0) {
                 const feed = document.getElementById('post-feed');
-                if (feed) {
-                    feed.innerHTML = `<p style="text-align:center;color:#646464">Nessun post trovato per "${escapeHtml(INDEX_QUERY_RAW)}".</p>`;
-                }
+                if (feed) feed.innerHTML = `<p style="text-align:center;color:#646464">Nessun post trovato per "${escapeHtml(INDEX_QUERY_RAW)}".</p>`;
             }
             return;
         }
@@ -44,7 +40,6 @@ async function loadMorePosts() {
 
         applyCommentCollapse(document);
         applyPostCollapse(document);
-
     } catch (err) {
         console.error(err);
     } finally {
@@ -56,12 +51,9 @@ let scrollTick = false;
 function onScroll() {
     if (scrollTick) return;
     scrollTick = true;
-
     requestAnimationFrame(() => {
-        const nearBottom = innerHeight + scrollY >= document.body.offsetHeight - 500;
-        if (nearBottom) {
-            if (window.FILTERING) appendFilteredBatch();
-            else loadMorePosts();
+        if (innerHeight + scrollY >= document.body.offsetHeight - 500) {
+            window.FILTERING ? appendFilteredBatch() : loadMorePosts();
         }
         scrollTick = false;
     });
@@ -69,11 +61,9 @@ function onScroll() {
 window.addEventListener("scroll", onScroll, { passive: true });
 
 function appendPostToFeed(p) {
-    try {
-        window.POSTS_BY_ID = window.POSTS_BY_ID || {};
-        window.POSTS_BY_ID[p.id] = p;
-    } catch(_) {}
-    
+    window.POSTS_BY_ID = window.POSTS_BY_ID || {};
+    window.POSTS_BY_ID[p.id] = p;
+
     const feed = document.getElementById('post-feed');
     const div = document.createElement('div');
     div.classList.add('post');
@@ -85,7 +75,7 @@ function appendPostToFeed(p) {
     const renderComments = () => {
         const allComments = (p.comments || []).slice().reverse();
         const shown = allComments.slice(0, COMMENTS_PER_PAGE);
-        
+
         let html = shown.map(c => `
             <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:14px; position:relative;">
                 <img src="${chooseAvatar(c) || avatarSrc}" alt="avatar" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
@@ -97,7 +87,7 @@ function appendPostToFeed(p) {
                 </div>
                 <form method="POST" action="/comment/like/${c.id}" data-comment-id="${c.id}" class="like-comment-form-ajax" style="display:flex; align-items:center; gap:6px; position:absolute; right:8px; top:10px; background:transparent; border:none; padding:0; margin:0;">
                     <span class="comment-like-count">${c.like_count}</span>
-                    <button type="submit" class="like-btn-modern like-comment-btn" style="${likeBtnStyle}" onmouseover="this.style.background='rgba(255,255,255,0.3)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='scale(1)';">
+                    <button type="submit" class="like-btn-modern like-comment-btn" style="all:unset; width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,0.15); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; color:#e53935; font-size:1.3em; box-shadow:0 2px 10px rgba(0,0,0,0.15); cursor:pointer; transition:all 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='scale(1)';">
                         <i class='fa-solid fa-heart'></i>
                     </button>
                 </form>
@@ -107,7 +97,7 @@ function appendPostToFeed(p) {
         setTimeout(() => bindCommentLikeEvents(div), 0);
 
         if (shown.length < allComments.length) {
-            html += `<button class="show-more-comments-btn" data-post-id="${p.id}" type="button" style="${moreBtnStyle}">Mostra di più</button>`;
+            html += `<button class="show-more-comments-btn" data-post-id="${p.id}" type="button" style="margin:8px 0; background:#901010; color:#fff; border:none; border-radius:50px; padding:12px 32px; font-size:1em; cursor:pointer; width: 90vw">Mostra di più</button>`;
         }
         return html;
     };
@@ -135,12 +125,9 @@ function appendPostToFeed(p) {
     feed.appendChild(div);
     initializePostComponents(div, p);
     startTimers(div);
-    
+
     return div;
 }
-
-const likeBtnStyle = `all:unset; width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,0.15); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; color:#e53935; font-size:1.3em; box-shadow:0 2px 10px rgba(0,0,0,0.15); cursor:pointer; transition:all 0.2s ease;`;
-const moreBtnStyle = `margin:8px 0; background:#901010; color:#fff; border:none; border-radius:50px; padding:12px 32px; font-size:1em; cursor:pointer; width: 90vw`;
 
 const renderPostMenu = (p) => `
     <div class="post-menu" style="position:absolute; top:12px; right:12px; z-index:2; display:flex; align-items:center; gap:8px;">
@@ -170,7 +157,7 @@ const renderImages = (p) => {
 const renderPostActions = (p) => `
     <div class="post-actions-modern" style="display:flex; align-items:center; gap:18px; margin:12px 0;">
         <form class="like-form" data-post-id="${p.id}" style="margin:0; display:flex; align-items:center;">
-            <button type="submit" class="like-btn-modern" title="Mi piace" style="${likeBtnStyle}" onmouseover="this.style.background='rgba(255,255,255,0.3)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='scale(1)';">
+            <button type="submit" class="like-btn-modern" title="Mi piace" style="all:unset; width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,0.15); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; color:#e53935; font-size:1.3em; box-shadow:0 2px 10px rgba(0,0,0,0.15); cursor:pointer; transition:all 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='scale(1)';">
                 <i class="fa-solid fa-heart"></i>
             </button>
             <span class="like-count" style="font-size:1.1em; color:#222; font-weight:500; margin-left:8px; user-select:none;">${p.like_count}</span>
@@ -196,28 +183,19 @@ const renderCommentForm = (p) => `
 `;
 
 const renderPoll = (p) => {
-    let pollHTML = `<div class="poll"><br><strong>${escapeHtml(p.poll.question)}</strong><br>`;
-    
+    let html = `<div class="poll"><br><strong>${escapeHtml(p.poll.question)}</strong><br>`;
+
     p.poll_data.results.forEach((opt, idx) => {
-        const optionIndex = (opt.index ?? opt.id ?? idx);
+        const optionIndex = opt.index ?? opt.id ?? idx;
         const disabled = p.poll_data.is_creator ? 'disabled' : '';
         const optText = opt.text || opt.label || opt.choice || `Opzione ${idx+1}`;
         const votes = opt.votes ?? 0;
         const perc = opt.percentage ?? 0;
 
-        pollHTML += `
+        html += `
             <label class="poll-option">
-                <input type="radio"
-                    name="poll_${p.id}"
-                    value="${optionIndex}"
-                    id="poll${p.id}_${optionIndex}"
-                    data-option-index="${optionIndex}"
-                    ${disabled}
-                    onchange="
-                        document.querySelectorAll('[name=\\'poll_${p.id}\\']')
-                        .forEach(r => { if(!r.checked) r.disabled = true; });
-                    "
-                >
+                <input type="radio" name="poll_${p.id}" value="${optionIndex}" id="poll${p.id}_${optionIndex}" data-option-index="${optionIndex}" ${disabled}
+                    onchange="document.querySelectorAll('[name=\\'poll_${p.id}\\']').forEach(r => { if(!r.checked) r.disabled = true; });">
                 <div class="bar-container">
                     <div class="bar-fill" style="width:${perc}%;" data-votes="${votes}" data-orig-perc="${perc}"></div>
                     <span class="bar-label">${escapeHtml(optText)} — ${votes} ${votes !== 1 ? 'voti' : 'voto'} (${perc}%)</span>
@@ -227,12 +205,10 @@ const renderPoll = (p) => {
     });
 
     if (p.poll_data.is_creator && p.poll_data.results.some(r => Array.isArray(r.voters) && r.voters.length)) {
-        const votersPayload = encodeURIComponent(JSON.stringify(p.poll_data.results));
-        pollHTML += `<p><em></em></p><button class="show-more-comments-btn show-voters-btn" data-post-id="${p.id}" type="button" style="${moreBtnStyle}" data-poll-voters="${votersPayload}">Mostra votanti</button>`;
+        html += `<p><em></em></p><button class="show-more-comments-btn show-voters-btn" data-post-id="${p.id}" type="button" style="margin:8px 0; background:#901010; color:#fff; border:none; border-radius:50px; padding:12px 32px; font-size:1em; cursor:pointer; width: 90vw" data-poll-voters="${encodeURIComponent(JSON.stringify(p.poll_data.results))}">Mostra votanti</button>`;
     }
 
-    pollHTML += `</div>`;
-    return pollHTML;
+    return html + '</div>';
 };
 
 const bindCommentLikeEvents = (div) => {
@@ -243,22 +219,15 @@ const bindCommentLikeEvents = (div) => {
             e.preventDefault();
             if (form.classList.contains('liked')) return;
             form.classList.add('liked');
-            
+
             const btn = form.querySelector('button');
-            const countSpan = form.querySelector('.comment-like-count');
-            
-            try {
-                const postEl = form.closest('.post');
-                if (postEl && btn) {
-                    const btnRect = btn.getBoundingClientRect();
-                    const postRect = postEl.getBoundingClientRect();
-                    const cx = (btnRect.left + btnRect.width/2) - postRect.left;
-                    const cy = (btnRect.top + btnRect.height/2) - postRect.top;
-                    const heart = btn.querySelector('.fa-heart');
-                    const color = heart ? getComputedStyle(heart).color : '#e53935';
-                    try { spawnInkSplashFromElement(btn, postEl, color); } catch (e) {}
-                }
-            } catch (err) {}
+            const postEl = form.closest('.post');
+
+            if (postEl && btn) {
+                const heart = btn.querySelector('.fa-heart');
+                const color = heart ? getComputedStyle(heart).color : '#e53935';
+                try { spawnInkSplashFromElement(btn, postEl, color); } catch(_) {}
+            }
 
             fetch(form.action, { method: 'POST' })
                 .then(() => {
@@ -266,10 +235,8 @@ const bindCommentLikeEvents = (div) => {
                         btn.classList.add('heartbeat');
                         setTimeout(() => btn.classList.remove('heartbeat'), 520);
                     }
-                    if (countSpan) {
-                        let count = parseInt(countSpan.textContent) || 0;
-                        countSpan.textContent = count + 1;
-                    }
+                    const countSpan = form.querySelector('.comment-like-count');
+                    if (countSpan) countSpan.textContent = (parseInt(countSpan.textContent) || 0) + 1;
                 });
         });
     });
@@ -304,13 +271,11 @@ const setupScrollerDots = (div) => {
         });
         dots.appendChild(btn);
     });
-    
+
     scroller.parentNode.insertBefore(dots, scroller.nextSibling);
 
     const updateDots = () => {
-        const sLeft = scroller.scrollLeft || 0;
-        const sWidth = scroller.clientWidth || 1;
-        const idx = Math.round(sLeft / sWidth);
+        const idx = Math.round((scroller.scrollLeft || 0) / (scroller.clientWidth || 1));
         const active = Math.max(0, Math.min(imgs.length - 1, idx));
         dots.querySelectorAll('.scroller-dot').forEach((b, i) => b.classList.toggle('active', i === active));
     };
@@ -330,7 +295,7 @@ const setupPollEvents = (div, p) => {
             radio.addEventListener('change', function() {
                 div.querySelectorAll('.poll-option').forEach(opt => opt.classList.remove('selected'));
                 this.closest('label.poll-option')?.classList.add('selected');
-                setTimeout(() => votePoll(p.id, this.value, this), 10);
+                setTimeout(() => votePoll(p.id, this.value), 10);
             });
             if (radio.checked) radio.closest('label.poll-option')?.classList.add('selected');
         });
@@ -346,14 +311,9 @@ const setupCommentEvents = (div, p) => {
 };
 
 const hideMenuForNonOwner = (div, p) => {
-    try {
-        const loggedUser = window.LOGGED_USERNAME;
-        if (!loggedUser || loggedUser !== p.username) {
-            div.querySelector('.post-menu-btn')?.style.setProperty('display', 'none');
-            div.querySelector('.post-menu-popup')?.style.setProperty('display', 'none');
-        }
-    } catch (e) {
-        div.querySelector('.post-menu-btn')?.style.setProperty('display', 'none');
-        div.querySelector('.post-menu-popup')?.style.setProperty('display', 'none');
+    const loggedUser = window.LOGGED_USERNAME;
+    if (!loggedUser || loggedUser !== p.username) {
+        const menu = div.querySelector('.post-menu');
+        if (menu) menu.style.display = 'none';
     }
 };

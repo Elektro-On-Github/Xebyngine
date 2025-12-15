@@ -1,5 +1,3 @@
-// Like / Comment / Poll Handler
-
 function bindPostEvents(root = document) {
     const $ = sel => root.querySelectorAll(sel);
 
@@ -24,10 +22,7 @@ function bindPostEvents(root = document) {
             }
 
             try {
-                await fetch(`/like/${form.dataset.postId}`, {
-                    method: 'POST',
-                    credentials: 'include'
-                });
+                await fetch(`/like/${form.dataset.postId}`, { method: 'POST', credentials: 'include' });
 
                 if (btn) {
                     btn.classList.add('heartbeat', 'liked');
@@ -61,14 +56,9 @@ function bindPostEvents(root = document) {
             }
 
             try {
-                await fetch(form.action, {
-                    method: 'POST',
-                    credentials: 'include'
-                });
+                await fetch(form.action, { method: 'POST', credentials: 'include' });
 
-                const countSpan = root.querySelector(
-                    `.comment-like-count[data-comment-id="${form.dataset.commentId}"]`
-                );
+                const countSpan = root.querySelector(`.comment-like-count[data-comment-id="${form.dataset.commentId}"]`);
                 if (countSpan) countSpan.textContent = +countSpan.textContent + 1;
             } catch (err) {
                 console.error(err);
@@ -90,11 +80,10 @@ function bindPostEvents(root = document) {
             form.dataset.submitting = '1';
 
             const content = input.value.trim();
-            if (!content) return (form.dataset.submitting = '0');
+            if (!content) return void (form.dataset.submitting = '0');
 
-            const csrfToken =
-                document.querySelector('meta[name="csrf-token"]')?.content ||
-                document.querySelector('input[name="csrf_token"]')?.value;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content ||
+                              document.querySelector('input[name="csrf_token"]')?.value;
 
             if (!csrfToken) {
                 console.error('CSRF token non trovato');
@@ -102,28 +91,19 @@ function bindPostEvents(root = document) {
                 return;
             }
 
-            const body = new URLSearchParams({
-                content,
-                csrf_token: csrfToken
-            });
-
             try {
                 const resp = await fetch(`/comment/${postId}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': csrfToken
-                    },
-                    body,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrfToken },
+                    body: new URLSearchParams({ content, csrf_token: csrfToken }),
                     credentials: 'include'
                 });
 
                 if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
-                const commentsList =
-                    root.querySelector(`.post[data-post-id="${postId}"] .comments-list`) ||
-                    form.closest('.comments-list') ||
-                    document.getElementById(`comments-list-${postId}`);
+                const commentsList = root.querySelector(`.post[data-post-id="${postId}"] .comments-list`) ||
+                                     form.closest('.comments-list') ||
+                                     document.getElementById(`comments-list-${postId}`);
 
                 if (commentsList) {
                     const div = createCommentHTML(content);
@@ -137,13 +117,12 @@ function bindPostEvents(root = document) {
 
                     window.POSTS_BY_ID = window.POSTS_BY_ID || {};
                     window.POSTS_BY_ID[postId] = window.POSTS_BY_ID[postId] || { comments: [] };
-                    const avatar = chooseAvatar() || '/uploads/avatars/default.png';
                     window.POSTS_BY_ID[postId].comments.push({
                         id: 'local-' + Date.now(),
                         username: window.LOGGED_USERNAME || 'Tu',
                         content,
                         like_count: 0,
-                        avatar_url: avatar
+                        avatar_url: chooseAvatar() || '/uploads/avatars/default.png'
                     });
                 }
 
@@ -167,20 +146,22 @@ function bindPostEvents(root = document) {
             const selected = this.closest('label.poll-option');
             if (!poll || !selected) return;
 
+            const allBars = poll.querySelectorAll('.bar-fill');
+
             poll.querySelectorAll('.poll-option').forEach(opt => {
                 opt.classList.remove('selected');
                 const bar = opt.querySelector('.bar-fill');
                 if (bar) {
-                    bar.style.background = 'linear-gradient(90deg,#ff5f6d,#ffc371)';
-                    const orig = bar.dataset.origPerc;
-                    if (orig) bar.style.width = orig + '%';
+                    bar.classList.remove('voted');
+                    bar.classList.add('default');
+                    if (bar.dataset.origPerc) bar.style.setProperty('--w', bar.dataset.origPerc + '%');
                 }
             });
 
             selected.classList.add('selected');
             const bar = selected.querySelector('.bar-fill');
+
             if (bar) {
-                const allBars = poll.querySelectorAll('.bar-fill');
                 let total = 0, optionVotes = 0;
                 allBars.forEach(b => {
                     const v = +b.dataset.votes || 0;
@@ -191,121 +172,67 @@ function bindPostEvents(root = document) {
                 optionVotes++;
 
                 allBars.forEach(b => {
-                    const v = +b.dataset.votes || 0;
-                    b.style.width = (b === bar ? optionVotes / total : v / total) * 100 + '%';
+                    const v = (b === bar) ? optionVotes : (+b.dataset.votes || 0);
+                    b.style.setProperty('--w', (v / total * 100) + '%');
                 });
             }
 
-            votePoll(postId, this.value, this);
+            votePoll(postId, this.value);
         });
     });
 }
 
 function createCommentHTML(content) {
-    const div = document.createElement('div');
-    Object.assign(div.style, {
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: '10px',
-        marginBottom: '14px'
-    });
-
     const avatar = chooseAvatar() || '/uploads/avatars/default.png';
-    const img = document.createElement('img');
-    img.src = avatar;
-    img.alt = 'avatar';
-    img.className = 'avatar';
-    Object.assign(img.style, {
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        objectFit: 'cover'
-    });
-
-    const contentWrapper = document.createElement('div');
-    Object.assign(contentWrapper.style, {
-        flex: '1',
-        paddingRight: '60px',
-        minWidth: '0',
-        display: 'block'
-    });
-
-    const userDiv = document.createElement('div');
-    Object.assign(userDiv.style, {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px'
-    });
-    const strong = document.createElement('strong');
-    strong.textContent = 'Tu';
-    userDiv.appendChild(strong);
-
-    const textDiv = document.createElement('div');
-    textDiv.className = 'comment-text';
-    textDiv.style.marginTop = '8px';
-    const span = document.createElement('span');
-    span.className = 'comment-text-box';
-    span.textContent = content;
-    textDiv.appendChild(span);
-
-    contentWrapper.append(userDiv, textDiv);
-    div.append(img, contentWrapper);
-
-    return div;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'comment-item';
+    wrapper.innerHTML = `
+        <img src="${escapeHtml(avatar)}" alt="avatar" class="avatar">
+        <div class="comment-content">
+            <div class="comment-user-info"><strong>Tu</strong></div>
+            <div class="comment-text"><span class="comment-text-box">${escapeHtml(content)}</span></div>
+        </div>
+    `;
+    return wrapper;
 }
 
-function votePoll(postId, selected, radioElem) {
+function votePoll(postId, selected) {
     if (!selected) return;
     fetch(`/poll_vote/${postId}`, {
         method: 'POST',
-        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `option_index=${encodeURIComponent(selected)}`
-    }).then(async resp => {
-        if (resp.ok) {
-            reloadPoll(postId);
-        }
-    });
+    }).then(resp => { if (resp.ok) reloadPoll(postId); });
 }
 
 function reloadPoll(postId) {
     fetch(`/load_posts?last_id=${postId}&limit=1`)
-        .then(resp => resp.json())
+        .then(r => r.json())
         .then(data => {
             const p = data.posts?.[0];
-            if (!p || !p.poll) return;
+            if (!p?.poll) return;
 
             const pollDiv = document.querySelector(`#poll-block-${p.id}`);
             if (!pollDiv) return;
 
-            const pollHTML = `
+            const options = p.poll_data.results.map((opt, idx) => `
+                <label class="poll-option ${opt.voted ? 'selected' : ''}">
+                    <input type="radio" name="poll_${p.id}" value="${opt.index ?? idx}" disabled ${opt.voted ? 'checked' : ''}>
+                    <span>${escapeHtml(opt.text)}</span>
+                    <div class="poll-bar" style="--w:${opt.percentage ?? 0}%"></div>
+                    <span class="poll-percent">${opt.percentage ?? 0}%</span>
+                </label>
+            `).join('');
+
+            const hasVoters = p.poll_data.is_creator && p.poll_data.results.some(r => r.voters?.length);
+
+            pollDiv.innerHTML = `
                 <div class="poll"><br>
                     <strong>${escapeHtml(p.poll.question)}</strong><br>
-                    ${p.poll_data.results.map((opt, idx) => {
-                        const optionIndex = opt.index ?? idx;
-                        const percent = opt.percentage ?? 0;
-                        const barColor = '#4CAF50';
-                        return `
-                            <label class="poll-option ${opt.voted ? 'selected' : ''}">
-                                <input type="radio" name="poll_${p.id}" value="${optionIndex}" disabled ${opt.voted ? 'checked' : ''}>
-                                <span>${escapeHtml(opt.text)}</span>
-                                <div class="poll-bar" style="width:${percent}%;background:${barColor};"></div>
-                                <span class="poll-percent">${percent}%</span>
-                            </label>
-                        `;
-                    }).join('')}
+                    ${options}
                 </div>
-                ${p.poll_data.is_creator && p.poll_data.results.some(r => Array.isArray(r.voters) && r.voters.length)
-                    ? `<button class="show-more-comments-btn show-voters-btn" 
-                        data-post-id="${p.id}" 
-                        data-poll-voters="${encodeURIComponent(JSON.stringify(p.poll_data.results))}"
-                        style="margin:8px 0; background:#901010; color:#fff; border:none; border-radius:50px; padding:12px 32px; font-size:1em; cursor:pointer; width:90vw">
-                        Mostra votanti
-                    </button>`
-                    : ''
-                }
+                ${hasVoters ? `<button class="show-more-comments-btn voters-btn" data-post-id="${p.id}" data-poll-voters="${encodeURIComponent(JSON.stringify(p.poll_data.results))}">Mostra votanti</button>` : ''}
             `;
-
-            pollDiv.innerHTML = pollHTML;
         })
         .catch(err => console.error('Errore reloadPoll:', err));
 }
