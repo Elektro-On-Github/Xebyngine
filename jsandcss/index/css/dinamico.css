@@ -1,0 +1,460 @@
+/* comments.js */
+.comments-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--overlay-bg, rgba(255,255,255,0));
+    backdrop-filter: blur(var(--glass-blur, 8px));
+    -webkit-backdrop-filter: blur(var(--glass-blur, 8px));
+    z-index: 10998;
+    transition: opacity 0.35s cubic-bezier(.2,.8,.2,1);
+    opacity: 0;
+}
+
+.comments-overlay.active {
+    opacity: 1;
+}
+
+/* Modal Container */
+.comments-modal {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: -100%;
+    height: 75vh;
+    background: #fff;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.25);
+    z-index: 10999;
+    transition: bottom 0.35s cubic-bezier(.2,.8,.2,1);
+    display: flex;
+    flex-direction: column;
+    padding: 8px 2px 0 18px;
+}
+
+.comments-modal.open {
+    bottom: 0;
+}
+
+.comments-modal.expanded {
+    height: calc(100vh - 28px);
+}
+
+/* Handle */
+.comments-modal-handle-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.comments-modal-handle {
+    width: 48px;
+    height: 4px;
+    background: rgba(0,0,0,0.12);
+    border-radius: 4px;
+    margin: 8px 0;
+    cursor: pointer;
+}
+
+/* Comments List */
+.comments-modal-list {
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 140px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.comments-modal-list::-webkit-scrollbar {
+    display: none;
+}
+
+/* Comment Form */
+.comments-modal .comment-form {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0;
+    padding: 12px;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
+}
+
+.comments-modal .comment-form.floating {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%) translateY(24px);
+    z-index: 11001;
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(.2,.8,.2,1), 
+                opacity 0.35s cubic-bezier(.2,.8,.2,1);
+}
+
+.comments-modal .comment-form.floating.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.comments-modal .comment-form.floating.hiding {
+    opacity: 0;
+    transform: translateX(-50%) translateY(24px);
+}
+
+.comments-modal .comment-form.floating.expanded {
+    bottom: 28px;
+}
+
+.comments-modal .comment-input {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 24px;
+    border: 1px solid #e3e3e3;
+    box-shadow: none;
+}
+
+.comments-modal .comment-send-btn {
+    border: none;
+    padding: 12px 18px;
+    border-radius: 24px;
+}
+
+/* Comment Row */
+.comment-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+    position: relative;
+}
+
+.comment-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-content {
+    flex: 1;
+    padding-right: 60px;
+    min-width: 0;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comment-username {
+    color: inherit;
+    text-decoration: none;
+}
+
+.comment-text {
+    margin-top: 8px;
+}
+
+.like-comment-form {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: absolute;
+    right: 8px;
+    top: 10px;
+}
+
+.like-comment-btn {
+    all: unset;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e53935;
+    font-size: 1.3em;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.like-comment-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.1);
+}
+
+/* States */
+.comments-empty {
+    color: #888;
+    text-align: center;
+    margin-top: 24px;
+}
+
+.comments-load-more {
+    margin: 12px auto;
+    display: block;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+
+
+
+
+
+/* contacts.js */
+/* ===== CONTACTS MODAL ===== */
+#contacts-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99998;
+    transition: opacity 0.35s cubic-bezier(.2,.8,.2,1);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    background: rgba(255,255,255,0);
+    opacity: 0;
+}
+
+#contacts-overlay.visible {
+    opacity: 1;
+}
+
+#contacts-modal {
+    position: relative;
+    max-width: 680px;
+    width: min(680px, calc(100vw - 24px));
+    max-height: 84vh;
+    overflow: auto;
+    background: rgba(255,255,255,0.80);
+    border-radius: 14px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+    padding: 18px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+#contacts-list {
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 18px;
+}
+
+.contact-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+}
+
+.contact-row a {
+    font-size: 1.08em;
+    color: #222;
+    text-decoration: none;
+}
+
+.contact-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-icon i {
+    font-size: 1.1em;
+    color: #901010;
+}
+
+.contacts-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.contacts-header h3 {
+    margin: 0;
+    font-size: 1.05em;
+}
+
+.contacts-empty {
+    color: #888;
+    text-align: center;
+    margin-top: 24px;
+}
+
+
+
+/* init.js */
+/* ===== SHARE POST MODAL ===== */
+#share-post-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    z-index: 9999;
+    transition: background 0.4s cubic-bezier(0.1, 0.9, 0.2, 1),
+                backdrop-filter 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+#share-post-modal.visible {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+#share-modal-content {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    background: white;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+#share-post-modal.visible #share-modal-content {
+    transform: translateX(-50%) translateY(0);
+}
+
+.share-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.share-header h2 {
+    margin: 0;
+    font-size: 18px;
+    padding: 6px;
+}
+
+.share-search-wrap {
+    margin-bottom: 12px;
+}
+
+.share-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 50px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+#share-contacts-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.share-message-wrap {
+    margin-top: 16px;
+}
+
+.share-message-wrap label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.share-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.share-contact-item:hover {
+    background: #efefef;
+}
+
+.share-contact-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.share-contact-name {
+    flex: 1;
+    font-weight: 600;
+}
+
+/* ===== STATUS MESSAGES ===== */
+.status-msg {
+    text-align: center;
+    color: #999;
+}
+
+.status-msg.error {
+    color: #e53935;
+}
+
+/* ===== POLL INPUT ===== */
+.poll-input {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* ===== POST HIGHLIGHT ===== */
+.post-highlight {
+    box-shadow: 0 0 0 3px var(--primary), 0 4px 12px rgba(144,16,16,.3);
+    transition: box-shadow 0.3s ease;
+}
+
+
+
+
+
+/* ink splash */
+/* ===== INK SPLASH EFFECT ===== */
+.ink-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    mix-blend-mode: normal;
+    transition: opacity 220ms ease;
+    opacity: 1;
+}
+
+.ink-canvas.fade-out {
+    opacity: 0;
+}
+
+.ink-container {
+    position: relative;
+}
