@@ -59,8 +59,7 @@ def create_post():
 
     for idx, photo in enumerate(photos[:5]):
         if photo and validate_image_file(photo):
-            ext = photo.filename.rsplit('.', 1)[1].lower()
-            new_filename = generate_filename(user_id, ext)
+            new_filename = generate_filename(user_id, "avif")
             os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
             file_path = os.path.join(config.UPLOAD_FOLDER, new_filename)
             photo.save(file_path)

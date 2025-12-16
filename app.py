@@ -65,9 +65,8 @@ def uploaded_avatar(filename):
     resp.headers['Cache-Control'] = 'public, max-age=86400'
     return resp
 
-@app.route('/uploads/<path:filename>')
+@app.route('/uploads/avif/<path:filename>')
 def uploaded_file(filename):
-    """Serve file uploadati - GLOBALE."""
     safe_name = os.path.basename(filename)
     return send_from_directory(config.UPLOAD_FOLDER, safe_name)
 
@@ -77,7 +76,6 @@ def uploaded_file(filename):
 
 @app.before_request
 def refresh_session_timeout():
-    """Rinnova timeout sessione e genera CSRF token."""
     if "user_id" in session:
         session.permanent = True
         session.modified = True
@@ -89,7 +87,6 @@ def refresh_session_timeout():
 
 @app.context_processor
 def inject_csrf_token():
-    """Inietta CSRF token in tutti i template."""
     try:
         return { 'csrf_token': session.get('csrf_token') }
     except Exception:
@@ -97,7 +94,6 @@ def inject_csrf_token():
 
 @app.after_request
 def add_security_headers(response):
-    """Aggiungi security headers a tutte le risposte."""
     for header, value in config.SECURITY_HEADERS.items():
         response.headers[header] = value
     
@@ -143,7 +139,7 @@ scheduler = BackgroundScheduler()
 scheduler.add_job(
     func=auto_cleanup_expired_posts,
     trigger='interval',
-    minutes=1  # minuti
+    minutes=1
 )
 scheduler.start()
 # ============================================================================
