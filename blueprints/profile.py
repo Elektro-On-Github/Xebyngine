@@ -44,7 +44,7 @@ def profile():
         if avatar_file and validate_image_file(avatar_file):
             ext = avatar_file.filename.rsplit('.', 1)[1].lower()
             filename = generate_filename(session["user_id"], ext)
-            avatars_folder = os.path.join(config.UPLOAD_FOLDER, 'avatars')
+            avatars_folder = os.path.join(config.AVATARS_FOLDER)
             os.makedirs(avatars_folder, exist_ok=True)
             save_path = os.path.join(avatars_folder, filename)
 

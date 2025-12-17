@@ -56,7 +56,7 @@ ensure_dirty_table()
 def uploaded_avatar(filename):
     """Serve avatar - GLOBALE."""
     safe_name = os.path.basename(filename)
-    directory = os.path.join(config.UPLOAD_FOLDER, 'avatars')
+    directory = os.path.join(config.AVATARS_FOLDER)
     file_path = os.path.join(directory, safe_name)
     if not os.path.isfile(file_path):
         safe_name = 'default.png'

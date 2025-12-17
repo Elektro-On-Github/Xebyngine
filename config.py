@@ -32,7 +32,7 @@ DB_POOL_MAX = 1024
 # ============================================================================
 
 UPLOAD_FOLDER = "uploads/avif"
-AVATARS_FOLDER = os.path.join(UPLOAD_FOLDER, 'avatars')
+AVATARS_FOLDER = "uploads/avatars"
 MAX_FILE_SIZE = 16 * 1024 * 1024  # 16 MB
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
