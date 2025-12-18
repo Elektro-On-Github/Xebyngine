@@ -133,6 +133,11 @@ def public_stuff_ico2():
     return send_from_directory(os.getcwd(), 'public_stuff/icon-512.png')
 
 
+# runna avif
+from utils.avif import process_one
+process_one()  # esegui una volta all'avvio
+
+
 # clean expired posts periodically
 from utils.db import auto_cleanup_expired_posts
 scheduler = BackgroundScheduler()
