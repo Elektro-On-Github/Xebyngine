@@ -78,9 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===== SHARE MODAL =====
 function openShareModal(postId) {
     let modal = document.getElementById('share-post-modal');
-    if (!modal) {
-        modal = createShareModal();
-    }
+    if (!modal) modal = createShareModal();
     modal.dataset.postId = postId;
     modal.style.display = 'block';
     requestAnimationFrame(() => modal.classList.add('visible'));
@@ -101,6 +99,7 @@ function createShareModal() {
                 <label>Messaggio:</label>
                 <input type="text" id="share-message-input" class="share-input" placeholder="Invia un messaggio..." maxlength="100">
             </div>
+            <button id="share-send-btn" class="share-send-btn" disabled>Invia</button>
         </div>
     `;
     document.body.appendChild(modal);
@@ -114,12 +113,43 @@ function createShareModal() {
         });
     });
 
-    return modal;
+    document.getElementById('share-send-btn').addEventListener('click', async () => {
+    const selected = document.querySelectorAll('.share-contact-item.selected');
+    if (!selected.length) return;
+    
+    const modal = document.getElementById('share-post-modal');
+    const postId = modal.dataset.postId;
+    const message = document.getElementById('share-message-input').value.trim() || 'Ti ho condiviso un post';
+    
+    // Crea tutte le richieste in parallelo
+    const requests = Array.from(selected).map(item => {
+        const formData = new FormData();
+        formData.append('post_id', postId);
+        formData.append('receiver_id', item.dataset.userId);
+        formData.append('message_text', message);
+        return fetch('/share_post', { method: 'POST', body: formData });
+    });
+    
+    try {
+        await Promise.all(requests);
+        closeShareModal();
+        alert(`Post condiviso con ${selected.length} contatt${selected.length > 1 ? 'i' : 'o'}!`);
+    } catch {
+        alert('Errore nella condivisione. Riprova.');
+    }
+});
+return modal;
 }
 
 function closeShareModal() {
     const modal = document.getElementById('share-post-modal');
     modal.classList.remove('visible');
+    document.querySelectorAll('.share-contact-item.selected').forEach(el => el.classList.remove('selected'));
+    const btn = document.getElementById('share-send-btn');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Invia';
+    }
     setTimeout(() => modal.style.display = 'none', 400);
 }
 
@@ -143,7 +173,11 @@ function loadShareContacts() {
             `).join('');
 
             list.querySelectorAll('.share-contact-item').forEach(item => {
-                item.addEventListener('click', () => sharePostToUser(item.dataset.userId, item.dataset.username));
+                item.addEventListener('click', () => {
+                    item.classList.toggle('selected');
+                    const hasSelection = document.querySelector('.share-contact-item.selected');
+                    document.getElementById('share-send-btn').disabled = !hasSelection;
+                });
             });
         })
         .catch(() => {
@@ -165,6 +199,33 @@ function sharePostToUser(userId, username) {
             alert(`Post condiviso con ${username}!`);
         })
         .catch(() => alert('Errore nella condivisione. Riprova.'));
+}
+
+function sendSelectedShare() {
+    const selected = document.querySelector('.share-contact-item.selected');
+    if (!selected) return;
+    
+    const modal = document.getElementById('share-post-modal');
+    const btn = document.getElementById('share-send-btn');
+    btn.disabled = true;
+    btn.textContent = 'Invio...';
+    
+    const formData = new FormData();
+    formData.append('post_id', modal.dataset.postId);
+    formData.append('receiver_id', selected.dataset.userId);
+    formData.append('message_text', document.getElementById('share-message-input').value.trim() || 'Ti ho condiviso un post');
+
+    fetch('/share_post', { method: 'POST', body: formData })
+        .then(r => {
+            if (!r.ok) throw new Error();
+            closeShareModal();
+            alert(`Post condiviso con ${selected.dataset.username}!`);
+        })
+        .catch(() => {
+            alert('Errore nella condivisione. Riprova.');
+            btn.disabled = false;
+            btn.textContent = 'Invia';
+        });
 }
 
 // ===== SCROLL TO POST =====
