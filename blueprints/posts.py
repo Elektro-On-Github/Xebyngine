@@ -4,7 +4,7 @@ import json
 import time
 import os
 import config
-from utils.security import sanitize_input, validate_image_file, rate_limit, require_csrf
+from utils.security import sanitize_input, validate_image_file, validate_video_file, rate_limit, require_csrf
 from utils.helpers import generate_filename, remove_files_for_image_path, ensure_viewer_token
 from utils.db import (get_conn, release_conn, get_comments, get_post_like_count, 
                       get_post_view_count, get_poll_results, cleanup_expired_posts)
@@ -50,21 +50,25 @@ def create_post():
     now_secs = int(time.time())
     expires_at = now_secs + duration
 
-    image_paths = []
-    photos = request.files.getlist('photos') or []
-    if not photos:
-        single = request.files.get('photo')
-        if single:
-            photos = [single]
-
-    for idx, photo in enumerate(photos[:5]):
+    media = []
+    # Carica foto
+    for idx, photo in enumerate((request.files.getlist('photos') or [])[:5]):
         if photo and validate_image_file(photo):
-            new_filename = generate_filename(user_id, "avif")
+            new_filename = generate_filename(session["user_id"], "avif")
             os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
-            file_path = os.path.join(config.UPLOAD_FOLDER, new_filename)
-            photo.save(file_path)
-            image_paths.append(new_filename)
-    image_path = json.dumps(image_paths) if image_paths else None
+            photo.save(os.path.join(config.UPLOAD_FOLDER, new_filename))
+            media.append({'path': new_filename, 'type': 'photo'})
+    
+    # Carica video
+    for idx, video in enumerate((request.files.getlist('videos') or [])[:5 - len(media)]):
+        if video and validate_video_file(video):
+            ext = video.filename.rsplit('.', 1)[1].lower()
+            new_filename = generate_filename(session["user_id"], ext)
+            os.makedirs(config.VIDEO_FOLDER, exist_ok=True)
+            video.save(os.path.join(config.VIDEO_FOLDER, new_filename))
+            media.append({'path': new_filename, 'type': 'video'})
+    
+    image_path = json.dumps(media) if media else None
 
     poll_question = sanitize_input(request.form.get("poll_question", ""), config.MAX_POLL_QUESTION_LENGTH)
     poll_options = []
@@ -75,13 +79,13 @@ def create_post():
     if len(poll_options) < 2:
         poll_options = None
 
-    has_images = bool(image_paths)
+    has_images = bool(media)
     has_text = bool(content)
     has_poll = bool(poll_options)
     if not (has_text or has_images or has_poll):
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
             return jsonify({'status': 'error', 'error': 'Empty post not allowed'}), 400
-        flash('Il post non può essere vuoto. Aggiungi testo o immagini.', 'error')
+        flash('Il post non può essere vuoto. Aggiungi testo, foto o video.', 'error')
         return redirect(request.referrer or url_for('misc_bp.index'))
 
     conn = get_conn()
@@ -447,18 +451,28 @@ def load_posts():
         avatar_url = url_for('uploaded_avatar', filename=avatar_filename)
 
         image_urls = []
+        media = []
         image_paths_list = []
         if image_path:
             try:
-                image_paths_list = json.loads(image_path)
+                parsed = json.loads(image_path)
+                if parsed and isinstance(parsed[0], dict):
+                    media = parsed
+                    image_paths_list = [m['path'] for m in parsed]
+                    for m in parsed:
+                        if m.get('type') == 'video':
+                            image_urls.append(url_for('uploaded_video', filename=os.path.basename(m['path'])))
+                        else:
+                            image_urls.append(url_for('uploaded_file', filename=os.path.basename(m['path'])))
+                else:
+                    image_paths_list = parsed
+                    for img in parsed:
+                        image_urls.append(url_for('uploaded_file', filename=os.path.basename(img)))
+                        media.append({'path': img, 'type': 'photo'})
             except Exception:
                 image_paths_list = [image_path]
-            for img in image_paths_list:
-                try:
-                    # FIX: Blueprint endpoint
-                    image_urls.append(url_for('uploaded_file', filename=os.path.basename(img)))
-                except Exception:
-                    pass
+                image_urls.append(url_for('uploaded_file', filename=os.path.basename(image_path)))
+                media.append({'path': image_path, 'type': 'photo'})
 
         remaining_seconds = max(0, expires_at - now_secs)
 
@@ -485,6 +499,7 @@ def load_posts():
             "image_path": image_path,
             "image_paths": image_paths_list,
             "image_urls": image_urls,
+            "media": media,
             "avatar": avatar_filename,
             "avatar_url": avatar_url,
             "like_count": like_count,

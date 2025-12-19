@@ -29,6 +29,7 @@ app.config.update(
 
 # Upload configuration
 os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(config.VIDEO_FOLDER, exist_ok=True)
 os.makedirs(config.AVATARS_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = config.UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = config.MAX_FILE_SIZE
@@ -69,6 +70,13 @@ def uploaded_avatar(filename):
 def uploaded_file(filename):
     safe_name = os.path.basename(filename)
     return send_from_directory(config.UPLOAD_FOLDER, safe_name)
+
+@app.route('/uploads/videos/<path:filename>')
+def uploaded_video(filename):
+    safe_name = os.path.basename(filename)
+    resp = send_from_directory(config.VIDEO_FOLDER, safe_name)
+    resp.headers['Accept-Ranges'] = 'bytes'
+    return resp
 
 # ============================================================================
 # SECURITY MIDDLEWARE

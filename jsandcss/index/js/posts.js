@@ -149,7 +149,12 @@ const renderPostMenu = (p) => `
 
 const renderImages = (p) => {
     if (Array.isArray(p.image_urls) && p.image_urls.length) {
-        return `<div class="post-images-scroller" style="display:flex;gap:8px;overflow-x:auto;padding:6px 0;">${p.image_urls.map(u => `<img src="${u}" alt="post image" style="height:240px;border-radius:12px;object-fit:cover;">`).join('')}</div>`;
+        return `<div class="post-images-scroller" style="display:flex;gap:8px;overflow-x:auto;padding:6px 0;">${p.image_urls.map((u, i) => {
+            const media = p.media?.[i];
+            return media?.type === 'video' 
+                ? `<video src="${u}" style="height:240px;border-radius:12px;object-fit:cover;background:#000;" controls muted></video>`
+                : `<img src="${u}" alt="post image" style="height:240px;border-radius:12px;object-fit:cover;">`;
+        }).join('')}</div>`;
     }
     return p.image_url ? `<img src="${p.image_url}" alt="post image">` : '';
 };

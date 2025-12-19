@@ -8,6 +8,17 @@ self.addEventListener("install", e => {
 
 // Fetch
 self.addEventListener("fetch", e => {
+  const url = new URL(e.request.url);
+  
+  // Escludi video, audio e file grandi dal cache
+  if (url.pathname.includes('/uploads/videos/') || 
+      url.pathname.includes('/uploads/photos/') ||
+      e.request.method !== 'GET') {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+  
+  // Per gli altri file, usa la strategia cache-first
   e.respondWith(
     caches.match(e.request).then(res => res || fetch(e.request))
   );

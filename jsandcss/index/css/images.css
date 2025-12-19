@@ -53,7 +53,9 @@
 }
 
 .post-images-scroller img,
-.post .post-images-scroller img {
+.post-images-scroller video,
+.post .post-images-scroller img,
+.post .post-images-scroller video {
     flex: 0 0 auto;
     width: auto;
     height: auto;

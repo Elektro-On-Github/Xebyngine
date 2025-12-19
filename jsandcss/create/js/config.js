@@ -8,6 +8,8 @@ const CreateConfig = {
         form: null,
         photosInput: null,
         photosBrowse: null,
+        videosInput: null,
+        videosBrowse: null,
         photosPreview: null,
         pollOverlay: null,
         pollQuestion: null,
@@ -40,6 +42,8 @@ const CreateConfig = {
         el.form = document.querySelector('form[enctype="multipart/form-data"]');
         el.photosInput = $('photos-input');
         el.photosBrowse = $('photos-browse');
+        el.videosInput = $('videos-input');
+        el.videosBrowse = $('videos-browse');
         el.photosPreview = $('photos-preview');
         el.pollOverlay = $('poll-overlay');
         el.pollQuestion = $('modal-poll-question');

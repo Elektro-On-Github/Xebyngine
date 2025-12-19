@@ -71,6 +71,18 @@ def validate_image_file(file_storage):
     image_type = imghdr.what(None, header)
     return image_type in ['png', 'jpeg', 'jpg']
 
+def validate_video_file(file_storage):
+    """Valida video."""
+    if not file_storage or not file_storage.filename:
+        return False
+    ext = file_storage.filename.rsplit('.', 1)[1].lower() if '.' in file_storage.filename else ''
+    if ext not in config.ALLOWED_VIDEO_EXT:
+        return False
+    file_storage.seek(0, 2)
+    size = file_storage.tell()
+    file_storage.seek(0)
+    return size <= config.MAX_VIDEO_SIZE
+
 # ============================================================================
 # RATE LIMITING
 # ============================================================================
