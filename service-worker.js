@@ -14,7 +14,12 @@ self.addEventListener("fetch", e => {
   if (url.pathname.includes('/uploads/videos/') || 
       url.pathname.includes('/uploads/photos/') ||
       e.request.method !== 'GET') {
-    e.respondWith(fetch(e.request));
+    e.respondWith(
+      fetch(e.request).catch(err => {
+        console.error('SW fetch error:', err);
+        return new Response('Network error', { status: 503, statusText: 'Service Unavailable' });
+      })
+    );
     return;
   }
   

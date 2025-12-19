@@ -261,17 +261,17 @@ const initializePostComponents = (div, p) => {
 const setupScrollerDots = (div) => {
     const scroller = div.querySelector('.post-images-scroller');
     if (!scroller) return;
-    const imgs = Array.from(scroller.querySelectorAll('img'));
-    if (imgs.length < 2) return;
+    const media = Array.from(scroller.querySelectorAll('img, video'));
+    if (media.length < 2) return;
 
     const dots = document.createElement('div');
     dots.className = 'post-scroller-dots';
-    imgs.forEach((_, idx) => {
+    media.forEach((_, idx) => {
         const btn = document.createElement('button');
         btn.className = 'scroller-dot';
         btn.dataset.index = idx;
         btn.addEventListener('click', () => {
-            scroller.scrollTo({ left: imgs[idx].offsetLeft, behavior: 'smooth' });
+            scroller.scrollTo({ left: media[idx].offsetLeft, behavior: 'smooth' });
             updateDots();
         });
         dots.appendChild(btn);
@@ -281,7 +281,7 @@ const setupScrollerDots = (div) => {
 
     const updateDots = () => {
         const idx = Math.round((scroller.scrollLeft || 0) / (scroller.clientWidth || 1));
-        const active = Math.max(0, Math.min(imgs.length - 1, idx));
+        const active = Math.max(0, Math.min(media.length - 1, idx));
         dots.querySelectorAll('.scroller-dot').forEach((b, i) => b.classList.toggle('active', i === active));
     };
 
