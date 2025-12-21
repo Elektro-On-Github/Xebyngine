@@ -56,11 +56,13 @@ def validate_password(password):
     return has_letter and has_number
 
 def validate_image_file(file_storage):
-    """Valida immagine usando magic bytes."""
+    """Valida immagine usando magic bytes e aspect ratio ragionevole."""
     if not file_storage:
         return False
     
     from .helpers import allowed_file
+    from PIL import Image
+    import io
     
     if not allowed_file(file_storage.filename):
         return False
@@ -69,7 +71,27 @@ def validate_image_file(file_storage):
     file_storage.seek(0)
     
     image_type = imghdr.what(None, header)
-    return image_type in ['png', 'jpeg', 'jpg']
+    if image_type not in ['png', 'jpeg', 'jpg']:
+        return False
+    
+    # Valida aspect ratio (almeno 0.1:1 e massimo 10:1)
+    try:
+        file_storage.seek(0)
+        img = Image.open(file_storage)
+        width, height = img.size
+        
+        if width <= 0 or height <= 0:
+            return False
+        
+        aspect_ratio = width / height
+        # Valida che l'aspect ratio sia ragionevole (non permettere 1920x10 o simili)
+        if aspect_ratio < 0.1 or aspect_ratio > 10:
+            return False
+        
+        file_storage.seek(0)
+        return True
+    except Exception:
+        return False
 
 def validate_video_file(file_storage):
     """Valida video."""

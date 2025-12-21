@@ -1,0 +1,145 @@
+.video-viewer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 220ms ease;
+    animation: fadeInVideo 220ms cubic-bezier(.2,.9,.2,1);
+}
+
+@keyframes fadeInVideo {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.video-viewer-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.video-viewer-video {
+    max-width: 95vw;
+    max-height: 95vh;
+    width: auto;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+    animation: scaleInVideo 300ms cubic-bezier(.2,.9,.2,1);
+}
+
+@keyframes scaleInVideo {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.video-viewer-controls {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    box-shadow: 10 20px 40px rgba(0,0,0,0.4);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 12px 12px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideUpVideo 300ms cubic-bezier(.2,.9,.2,1);
+}
+
+@keyframes slideUpVideo {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.video-viewer-progress {
+    flex: 1;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+}
+
+.video-viewer-progress-bar {
+    height: 100%;
+    background: #901010;
+    border-radius: 2px;
+    width: 0%;
+    transition: width 100ms linear;
+}
+
+.video-viewer-btn {
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 20px;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 200ms ease;
+    padding: 0;
+}
+
+.video-viewer-btn:hover {
+    background: rgba(255,255,255,0.15);
+    transform: scale(1.1);
+}
+
+.video-viewer-btn:active {
+    background: rgba(255,255,255,0.25);
+    transform: scale(0.95);
+}
+
+.video-viewer-time {
+    color: #000;
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 50px;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.video-viewer-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255,255,255,0.6);
+    border: none;
+    color: #000;
+    font-size: 28px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 200ms ease;
+    padding: 0;
+    z-index: 10;
+    animation: scaleInVideo 300ms cubic-bezier(.2,.9,.2,1);
+}
+
+.video-viewer-close:hover {
+    background: rgba(0,0,0,0.8);
+    transform: scale(1.1);
+}
+
+.video-viewer-close:active {
+    transform: scale(0.95);
+}

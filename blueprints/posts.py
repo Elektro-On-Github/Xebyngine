@@ -455,6 +455,7 @@ def load_posts():
         image_paths_list = []
         if image_path:
             try:
+                from PIL import Image
                 parsed = json.loads(image_path)
                 if parsed and isinstance(parsed[0], dict):
                     media = parsed
@@ -464,15 +465,44 @@ def load_posts():
                             image_urls.append(url_for('uploaded_video', filename=os.path.basename(m['path'])))
                         else:
                             image_urls.append(url_for('uploaded_file', filename=os.path.basename(m['path'])))
+                            # Aggiungi dimensioni all'immagine
+                            try:
+                                img_path = os.path.join(config.UPLOAD_FOLDER, os.path.basename(m['path']))
+                                if os.path.exists(img_path):
+                                    img = Image.open(img_path)
+                                    m['width'] = img.width
+                                    m['height'] = img.height
+                            except Exception:
+                                pass
                 else:
                     image_paths_list = parsed
                     for img in parsed:
                         image_urls.append(url_for('uploaded_file', filename=os.path.basename(img)))
-                        media.append({'path': img, 'type': 'photo'})
+                        media_item = {'path': img, 'type': 'photo'}
+                        # Aggiungi dimensioni
+                        try:
+                            img_path = os.path.join(config.UPLOAD_FOLDER, os.path.basename(img))
+                            if os.path.exists(img_path):
+                                pil_img = Image.open(img_path)
+                                media_item['width'] = pil_img.width
+                                media_item['height'] = pil_img.height
+                        except Exception:
+                            pass
+                        media.append(media_item)
             except Exception:
                 image_paths_list = [image_path]
                 image_urls.append(url_for('uploaded_file', filename=os.path.basename(image_path)))
-                media.append({'path': image_path, 'type': 'photo'})
+                media_item = {'path': image_path, 'type': 'photo'}
+                # Aggiungi dimensioni
+                try:
+                    img_path = os.path.join(config.UPLOAD_FOLDER, os.path.basename(image_path))
+                    if os.path.exists(img_path):
+                        pil_img = Image.open(img_path)
+                        media_item['width'] = pil_img.width
+                        media_item['height'] = pil_img.height
+                except Exception:
+                    pass
+                media.append(media_item)
 
         remaining_seconds = max(0, expires_at - now_secs)
 

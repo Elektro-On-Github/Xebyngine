@@ -52,7 +52,8 @@
         .post-share-card,
         .fa-share,
         .share-post-modal,
-        .scroller-dot.active
+        .scroller-dot.active,
+        .video-viewer-progress-bar
 
         
         { 

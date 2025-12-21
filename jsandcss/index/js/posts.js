@@ -151,9 +151,12 @@ const renderImages = (p) => {
     if (Array.isArray(p.image_urls) && p.image_urls.length) {
         return `<div class="post-images-scroller" style="display:flex;gap:8px;overflow-x:auto;padding:6px 0;">${p.image_urls.map((u, i) => {
             const media = p.media?.[i];
+            const dataAttrs = media?.width && media?.height 
+                ? ` data-width="${media.width}" data-height="${media.height}"` 
+                : '';
             return media?.type === 'video' 
-                ? `<video src="${u}" style="height:240px;border-radius:12px;object-fit:cover;background:#000;" controls muted></video>`
-                : `<img src="${u}" alt="post image" style="height:240px;border-radius:12px;object-fit:cover;">`;
+                ? `<video src="${u}" class="post-media" style="height:240px;border-radius:12px;object-fit:cover;background:#000;" muted></video>`
+                : `<img src="${u}" alt="post image" class="post-media"${dataAttrs} style="height:240px;border-radius:12px;object-fit:cover;">`;
         }).join('')}</div>`;
     }
     return p.image_url ? `<img src="${p.image_url}" alt="post image">` : '';
