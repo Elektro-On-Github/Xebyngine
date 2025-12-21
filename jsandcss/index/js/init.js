@@ -144,13 +144,17 @@ return modal;
 function closeShareModal() {
     const modal = document.getElementById('share-post-modal');
     modal.classList.remove('visible');
+    modal.classList.add('closing');
     document.querySelectorAll('.share-contact-item.selected').forEach(el => el.classList.remove('selected'));
     const btn = document.getElementById('share-send-btn');
     if (btn) {
         btn.disabled = true;
         btn.textContent = 'Invia';
     }
-    setTimeout(() => modal.style.display = 'none', 400);
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('closing');
+    }, 300);
 }
 
 function loadShareContacts() {

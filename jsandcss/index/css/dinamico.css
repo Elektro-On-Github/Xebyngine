@@ -312,14 +312,33 @@
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
     z-index: 9999;
-    transition: background 0.4s cubic-bezier(0.1, 0.9, 0.2, 1),
-                backdrop-filter 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+    transition: background 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                backdrop-filter 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: shareOverlayOpen 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes shareOverlayOpen {
+    from { background: rgba(255,255,255,0); backdrop-filter: blur(0px); }
+    to { background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); }
 }
 
 #share-post-modal.visible {
     background: rgba(255,255,255,0.1);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+}
+
+#share-post-modal.closing {
+    animation: shareOverlayClose 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes shareOverlayClose {
+    from { background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); }
+    to { background: rgba(255,255,255,0); backdrop-filter: blur(0px); }
+}
+
+#share-post-modal.closing #share-modal-content {
+    animation: shareContentSlideDown 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 #share-modal-content {
@@ -335,11 +354,23 @@
     max-height: 80vh;
     overflow-y: auto;
     box-sizing: border-box;
-    transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+    transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.1);
 }
 
 #share-post-modal.visible #share-modal-content {
     transform: translateX(-50%) translateY(0);
+    animation: shareContentSlideUp 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes shareContentSlideUp {
+    from { transform: translateX(-50%) translateY(100%); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+@keyframes shareContentSlideDown {
+    from { transform: translateX(-50%) translateY(0); opacity: 1; }
+    to { transform: translateX(-50%) translateY(100%); opacity: 0; }
 }
 
 .share-header {

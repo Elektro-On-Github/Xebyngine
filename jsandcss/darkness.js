@@ -54,7 +54,8 @@
         .share-post-modal,
         .scroller-dot.active,
         .video-viewer-progress-bar,
-        .post-media-play
+        .post-media-play,
+        #share-send-btn
 
         
         { 
