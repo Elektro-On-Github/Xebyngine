@@ -69,17 +69,9 @@ function openVideoViewer(videoSrc) {
         textContent: '0:00'
     });
 
-    const fullscreenBtn = Object.assign(document.createElement('button'), {
-        className: 'video-viewer-btn',
-        innerHTML: '<i class="fa-solid fa-expand"></i>',
-        type: 'button',
-        title: 'Schermo intero'
-    });
-
     controlsDiv.appendChild(playBtn);
     controlsDiv.appendChild(progressDiv);
     controlsDiv.appendChild(timeDiv);
-    controlsDiv.appendChild(fullscreenBtn);
 
     inner.appendChild(video);
     inner.appendChild(closeBtn);
@@ -116,7 +108,6 @@ function openVideoViewer(videoSrc) {
             e.preventDefault();
             video.paused ? video.play() : video.pause();
         }
-        if (e.key === 'f') video.requestFullscreen?.();
         if (e.key === 'ArrowLeft') video.currentTime = Math.max(0, video.currentTime - 5);
         if (e.key === 'ArrowRight') video.currentTime = Math.min(video.duration, video.currentTime + 5);
     }
@@ -159,14 +150,6 @@ function openVideoViewer(videoSrc) {
         const percent = (e.clientX - rect.left) / rect.width;
         video.currentTime = percent * video.duration;
         showControls();
-    });
-
-    fullscreenBtn.addEventListener('click', () => {
-        video.requestFullscreen?.().catch(() => {
-            if (video.webkitRequestFullscreen) {
-                video.webkitRequestFullscreen();
-            }
-        });
     });
 
     closeBtn.addEventListener('click', closeViewer);
