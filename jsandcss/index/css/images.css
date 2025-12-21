@@ -47,6 +47,30 @@
     display: none;
 }
 
+/* Video wrapper with play button */
+.post-media-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.post-media-play {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(144, 16, 16, 0.85);
+    border: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 5;
+    font-size: 24px;
+    color: #fff;
+}
+
 .post .post-images-scroller {
     scroll-snap-type: x proximity;
     align-items: center;

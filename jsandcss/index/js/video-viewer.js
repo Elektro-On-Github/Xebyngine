@@ -35,6 +35,7 @@ function openVideoViewer(videoSrc) {
         className: 'video-viewer-video',
         src: videoSrc,
         controls: false,
+        autoplay: true,
         preload: 'metadata'
     });
 
@@ -133,6 +134,7 @@ function openVideoViewer(videoSrc) {
     });
 
     video.addEventListener('loadedmetadata', () => {
+        video.play().catch(() => {}); // gestisce errori se l'autoplay si dovesse scassare
         timeDiv.textContent = formatTime(video.duration || 0);
     });
 

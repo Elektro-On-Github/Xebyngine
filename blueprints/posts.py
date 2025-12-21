@@ -51,21 +51,23 @@ def create_post():
     expires_at = now_secs + duration
 
     media = []
-    # Carica foto
-    for idx, photo in enumerate((request.files.getlist('photos') or [])[:5]):
-        if photo and validate_image_file(photo):
+    # Carica foto e video dallo stesso input
+    for idx, file in enumerate((request.files.getlist('photos') or [])[:5]):
+        if not file:
+            continue
+        
+        # Prova a caricare come immagine
+        if validate_image_file(file):
             new_filename = generate_filename(session["user_id"], "avif")
             os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
-            photo.save(os.path.join(config.UPLOAD_FOLDER, new_filename))
+            file.save(os.path.join(config.UPLOAD_FOLDER, new_filename))
             media.append({'path': new_filename, 'type': 'photo'})
-    
-    # Carica video
-    for idx, video in enumerate((request.files.getlist('videos') or [])[:5 - len(media)]):
-        if video and validate_video_file(video):
-            ext = video.filename.rsplit('.', 1)[1].lower()
+        # Altrimenti prova come video
+        elif validate_video_file(file):
+            ext = file.filename.rsplit('.', 1)[1].lower()
             new_filename = generate_filename(session["user_id"], ext)
             os.makedirs(config.VIDEO_FOLDER, exist_ok=True)
-            video.save(os.path.join(config.VIDEO_FOLDER, new_filename))
+            file.save(os.path.join(config.VIDEO_FOLDER, new_filename))
             media.append({'path': new_filename, 'type': 'video'})
     
     image_path = json.dumps(media) if media else None

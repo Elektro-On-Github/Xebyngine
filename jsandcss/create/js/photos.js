@@ -1,31 +1,25 @@
 function initPhotosPreview() {
-    const { photosInput, photosBrowse: photosBtn, videosInput, videosBrowse: videosBtn, photosPreview: preview } = CreateConfig.elements;
+    const { mediaInput, mediaBrowse: mediaBtn, photosPreview: preview } = CreateConfig.elements;
 
-    if (!photosInput || !preview) return;
+    if (!mediaInput || !preview) return;
 
-    const handle = (input, btn) => {
-        if (btn) {
-            btn.addEventListener('click', () => input.click());
-            btn.addEventListener('keydown', e => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    input.click();
-                }
-            });
-        }
-        input.addEventListener('change', updatePreview);
-    };
+    if (mediaBtn) {
+        mediaBtn.addEventListener('click', () => mediaInput.click());
+        mediaBtn.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                mediaInput.click();
+            }
+        });
+    }
 
-    handle(photosInput, photosBtn);
-    if (videosInput) handle(videosInput, videosBtn);
+    mediaInput.addEventListener('change', updatePreview);
 
     function updatePreview() {
         preview.innerHTML = '';
-        const files = [];
-        if (photosInput.files) files.push(...Array.from(photosInput.files));
-        if (videosInput?.files) files.push(...Array.from(videosInput.files));
+        const files = Array.from(mediaInput.files || []).slice(0, 5);
         
-        files.slice(0, 5).forEach(f => {
+        files.forEach(f => {
             if (f.type.startsWith('image/')) {
                 const img = document.createElement('img');
                 img.src = URL.createObjectURL(f);

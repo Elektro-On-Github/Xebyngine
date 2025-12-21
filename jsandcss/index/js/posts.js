@@ -155,7 +155,7 @@ const renderImages = (p) => {
                 ? ` data-width="${media.width}" data-height="${media.height}"` 
                 : '';
             return media?.type === 'video' 
-                ? `<video src="${u}" class="post-media" style="height:240px;border-radius:12px;object-fit:cover;background:#000;" muted></video>`
+                ? `<div class="post-media-wrapper" style="height:240px;border-radius:12px;overflow:hidden;"><video src="${u}" class="post-media" style="height:240px;border-radius:12px;object-fit:cover;background:#000;" muted></video><div class="post-media-play"><i class="fa-solid fa-play"></i></div></div>`
                 : `<img src="${u}" alt="post image" class="post-media"${dataAttrs} style="height:240px;border-radius:12px;object-fit:cover;">`;
         }).join('')}</div>`;
     }
