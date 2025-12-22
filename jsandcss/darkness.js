@@ -57,7 +57,8 @@
         .post-media-play,
         #share-send-btn,
         #call-overlay,
-        #video-container
+        #video-container,
+        .post-delete-btn
         
         { 
         filter: invert(1) hue-rotate(180deg) !important; 
