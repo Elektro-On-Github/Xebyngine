@@ -55,7 +55,7 @@ function appendMessage(sender, text, avatar = null) {
     if (!isMine) {
         const img = document.createElement('img');
         img.className = 'message-avatar';
-        img.src = avatar || '/static/default.png';
+        img.src = avatar || '/uploads/avatars/default.png';
         msg.appendChild(img);
     }
 
@@ -78,7 +78,7 @@ function appendPostShareMessage(sender, jsonContent, avatar = null) {
     if (!isMine) {
         const img = document.createElement('img');
         img.className = 'message-avatar';
-        img.src = avatar || '/static/default.png';
+        img.src = avatar || '/uploads/avatars/default.png';
         msg.appendChild(img);
     }
 

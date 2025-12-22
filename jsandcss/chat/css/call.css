@@ -147,7 +147,7 @@
     top: 72px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(10px);
     padding: 16px 24px;
     border-radius: 12px;
@@ -156,7 +156,7 @@
     display: none;
     align-items: center;
     gap: 12px;
-    min-width: 280px;
+    min-width: 380px;
     animation: slideDown 0.3s ease;
 }
 
@@ -278,6 +278,8 @@
     align-items: center;
     justify-content: center;
     animation: pulse 1.5s infinite;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .audio-indicator i {
@@ -285,16 +287,20 @@
     font-size: 20px;
 }
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.1); opacity: 0.7; }
+.audio-indicator.muted {
+    background: rgba(244, 67, 54, 0.2);
+    animation: none;
+}
+
+.audio-indicator.muted i {
+    color: #f44336;
 }
 
 #call-overlay.audio-only .audio-indicator {
     position: static;
-    width: 80px;
-    height: 80px;
-    margin-top: 24px;
+    width: 56px;
+    height: 56px;
+    margin-top: 0px;
 }
 
 #call-overlay.audio-only .audio-indicator i {

@@ -10,7 +10,7 @@ function appendMessage(sender, text, avatar = null) {
     if (sender !== ChatConfig.myId) {
         const img = document.createElement('img');
         img.className = 'message-avatar';
-        img.src = avatar || '/static/default.png';
+        img.src = avatar || '/uploads/avatars/default.png';
         img.alt = 'avatar';
         div.appendChild(img);
     }

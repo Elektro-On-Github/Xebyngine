@@ -7,6 +7,7 @@ const CallManager = {
     isVideoCall: false,
     isMuted: false,
     isVideoOff: false,
+    isAudioMuted: false,
     callType: null, // 'voice' or 'video'
     remoteUserId: null,
     
@@ -70,6 +71,7 @@ const CallManager = {
         this.elements.videoToggleBtn?.addEventListener('click', () => this.toggleVideo());
         this.elements.acceptBtn?.addEventListener('click', () => this.acceptCall());
         this.elements.rejectBtn?.addEventListener('click', () => this.rejectCall());
+        document.getElementById('audio-indicator')?.addEventListener('click', () => this.toggleAudio());
 
         console.log('CallManager initialized');
     },
@@ -220,7 +222,7 @@ const CallManager = {
         this.isCallActive = true;
         
         // Set user info
-        this.elements.callAvatar.src = ChatConfig.activeChatAvatar || '/static/default.png';
+        this.elements.callAvatar.src = ChatConfig.activeChatAvatar || '/uploads/avatars/default.png';
         this.elements.callUsername.textContent = ChatConfig.activeChatUsername || 'Unknown';
         
         if (mode === 'outgoing') {
@@ -253,7 +255,7 @@ const CallManager = {
         // Get caller info
         const caller = ChatConfig.pinnedUsers.find(u => String(u.id) === String(data.from));
         
-        this.elements.incomingAvatar.src = caller?.avatar_url || '/static/default.png';
+        this.elements.incomingAvatar.src = caller?.avatar_url || '/uploads/avatars/default.png';
         this.elements.incomingUsername.textContent = caller?.username || 'Unknown';
         this.elements.incomingType.textContent = this.isVideoCall ? 'Videochiamata in arrivo...' : 'Chiamata vocale in arrivo...';
 
@@ -368,8 +370,14 @@ const CallManager = {
         this.isCallActive = false;
         this.isMuted = false;
         this.isVideoOff = false;
+        this.isAudioMuted = false;
         this.elements.muteBtn.classList.remove('active');
         this.elements.videoToggleBtn.classList.remove('off');
+        const audioIndicator = document.getElementById('audio-indicator');
+        if (audioIndicator) {
+            audioIndicator.classList.remove('muted');
+            audioIndicator.querySelector('i').className = 'fas fa-volume-up';
+        }
 
         // Send hangup signal
         if (this.remoteUserId) {
@@ -383,7 +391,7 @@ const CallManager = {
         this.stopRingtone();
     },
 
-    // Toggle mute
+    // Toggle mute (microphone)
     toggleMute() {
         if (!this.localStream) return;
 
@@ -394,6 +402,24 @@ const CallManager = {
             this.elements.muteBtn.classList.toggle('active', this.isMuted);
             this.elements.muteBtn.querySelector('i').className = 
                 this.isMuted ? 'fas fa-microphone-slash' : 'fas fa-microphone';
+        }
+    },
+
+    // Toggle audio (mute received audio)
+    toggleAudio() {
+        if (!this.remoteStream) return;
+
+        const audioTracks = this.remoteStream.getAudioTracks();
+        audioTracks.forEach(track => {
+            track.enabled = !track.enabled;
+        });
+
+        this.isAudioMuted = !audioTracks[0]?.enabled || false;
+        const audioIndicator = document.getElementById('audio-indicator');
+        if (audioIndicator) {
+            audioIndicator.classList.toggle('muted', this.isAudioMuted);
+            audioIndicator.querySelector('i').className = 
+                this.isAudioMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
         }
     },
 

@@ -1,4 +1,4 @@
-const DEFAULT_AVATAR = '/static/default.png';
+const DEFAULT_AVATAR = '/uploads/avatars/default.png';
 
 function initializeSSE() {
     const evtSource = new EventSource(`/stream/messages?user_id=${ChatConfig.myId}`);

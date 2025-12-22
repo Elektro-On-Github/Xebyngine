@@ -24,11 +24,11 @@ function loadUserList() {
         item.classList.add('user-item');
         item.dataset.userid = user.id;
         item.dataset.username = user.username;
-        item.dataset.avatar = user.avatar_url || '/static/default.png';
+        item.dataset.avatar = user.avatar_url || '/uploads/avatars/default.png';
 
         const avatar = document.createElement('img');
         avatar.classList.add('user-avatar');
-        avatar.src = user.avatar_url || '/static/default.png';
+        avatar.src = user.avatar_url || '/uploads/avatars/default.png';
         avatar.alt = 'avatar';
 
         const meta = document.createElement('div');
