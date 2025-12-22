@@ -55,11 +55,12 @@
         .scroller-dot.active,
         .video-viewer-progress-bar,
         .post-media-play,
-        #share-send-btn
-
+        #share-send-btn,
+        #call-overlay,
+        #video-container
         
         { 
-        filter: invert(1) hue-rotate(180deg); 
+        filter: invert(1) hue-rotate(180deg) !important; 
         }
     </style>
     `;
