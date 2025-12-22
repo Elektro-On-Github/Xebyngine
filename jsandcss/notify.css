@@ -1,0 +1,87 @@
+.notify-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: notifyFadeIn 0.2s ease;
+}
+
+.notify-modal {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 320px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    animation: notifySlideUp 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+.notify-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 12px;
+}
+
+.notify-message {
+    font-size: 14px;
+    color: #646464;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.notify-button {
+    background: #901010;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.notify-button:hover {
+    background: #6d0c0c;
+}
+
+.notify-fadeout {
+    animation: notifyFadeOut 0.2s ease forwards;
+}
+
+@keyframes notifyFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes notifyFadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes notifySlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

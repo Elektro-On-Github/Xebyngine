@@ -25,7 +25,7 @@ function appendMessage(sender, text, avatar = null) {
 
 function sendMessage() {
     if (!ChatConfig.activeChatId) {
-        alert('Seleziona un contatto prima di inviare un messaggio');
+        showCustomNotification('Seleziona un contatto prima di inviare un messaggio', 'info');
         return;
     }
     
@@ -48,6 +48,6 @@ function sendMessage() {
         ChatConfig.elements.input.focus();
     }).catch(err => {
         console.error('Errore invio messaggio:', err);
-        alert('Errore nell\'invio del messaggio');
+        showCustomNotification('Errore nell\'invio del messaggio', 'error');
     });
 }

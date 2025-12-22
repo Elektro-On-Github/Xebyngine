@@ -218,9 +218,10 @@ function reloadPoll(postId) {
             const options = p.poll_data.results.map((opt, idx) => `
                 <label class="poll-option ${opt.voted ? 'selected' : ''}">
                     <input type="radio" name="poll_${p.id}" value="${opt.index ?? idx}" disabled ${opt.voted ? 'checked' : ''}>
-                    <span>${escapeHtml(opt.text)}</span>
-                    <div class="poll-bar" style="--w:${opt.percentage ?? 0}%"></div>
-                    <span class="poll-percent">${opt.percentage ?? 0}%</span>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="--w:${opt.percentage ?? 0}%;" data-votes="${opt.votes ?? 0}" data-orig-perc="${opt.percentage ?? 0}"></div>
+                        <span class="bar-label">${escapeHtml(opt.text)} — ${opt.votes ?? 0} ${(opt.votes ?? 0) !== 1 ? 'voti' : 'voto'} (${opt.percentage ?? 0}%)</span>
+                    </div>
                 </label>
             `).join('');
 

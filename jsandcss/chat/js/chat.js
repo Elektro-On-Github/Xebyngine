@@ -138,7 +138,7 @@ function appendPostShareMessage(sender, jsonContent, avatar = null) {
 }
 
 function sendMessage() {
-    if (!ChatConfig.activeChatId) return alert('Seleziona un contatto');
+    if (!ChatConfig.activeChatId) return showCustomNotification('Seleziona un contatto', 'info');
     
     const content = ChatConfig.elements.input.value.trim();
     if (!content) return;
@@ -156,7 +156,7 @@ function sendMessage() {
         ChatConfig.elements.input.value = '';
         ChatConfig.elements.input.focus();
         sendTypingStatus(false); // Stop typing
-    }).catch(() => alert('Errore invio messaggio'));
+    }).catch(() => showCustomNotification('Errore invio messaggio', 'error'));
 }
 
 // User list

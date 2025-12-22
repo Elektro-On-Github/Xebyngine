@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (inputs.length && !inputs[inputs.length - 1].value.trim()) {
             return inputs[inputs.length - 1].focus();
         }
-        if (inputs.length >= 6) return alert("Massimo 6 opzioni!");
+        if (inputs.length >= 6) return showCustomNotification("Massimo 6 opzioni!", 'info');
         
         const newOption = Object.assign(document.createElement('input'), {
             type: 'text',
@@ -133,9 +133,9 @@ function createShareModal() {
     try {
         await Promise.all(requests);
         closeShareModal();
-        alert(`Post condiviso con ${selected.length} contatt${selected.length > 1 ? 'i' : 'o'}!`);
+        showCustomNotification(`Post condiviso con ${selected.length} contatt${selected.length > 1 ? 'i' : 'o'}!`, 'success');
     } catch {
-        alert('Errore nella condivisione. Riprova.');
+        showCustomNotification('Errore nella condivisione. Riprova.', 'error');
     }
 });
 return modal;
@@ -200,9 +200,9 @@ function sharePostToUser(userId, username) {
         .then(r => {
             if (!r.ok) throw new Error();
             closeShareModal();
-            alert(`Post condiviso con ${username}!`);
+            showCustomNotification(`Post condiviso con ${username}!`, 'success');
         })
-        .catch(() => alert('Errore nella condivisione. Riprova.'));
+        .catch(() => showCustomNotification('Errore nella condivisione. Riprova.', 'error'));
 }
 
 function sendSelectedShare() {
@@ -223,10 +223,10 @@ function sendSelectedShare() {
         .then(r => {
             if (!r.ok) throw new Error();
             closeShareModal();
-            alert(`Post condiviso con ${selected.dataset.username}!`);
+            showCustomNotification(`Post condiviso con ${selected.dataset.username}!`, 'success');
         })
         .catch(() => {
-            alert('Errore nella condivisione. Riprova.');
+            showCustomNotification('Errore nella condivisione. Riprova.', 'error');
             btn.disabled = false;
             btn.textContent = 'Invia';
         });

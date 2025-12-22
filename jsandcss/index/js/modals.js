@@ -273,8 +273,8 @@ document.addEventListener('click', e => {
                 setTimeout(() => el.remove(), 320);
             }
         } else {
-            alert('Errore: ' + (j?.error || 'nella cancellazione'));
+            showCustomNotification('Errore: ' + (j?.error || 'nella cancellazione'), 'error');
         }
     })
-    .catch(() => alert('Errore nella richiesta'));
+    .catch(() => showCustomNotification('Errore nella richiesta', 'error'));
 });

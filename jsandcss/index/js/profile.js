@@ -85,10 +85,10 @@
                 if (data?.status === 'ok') {
                     data.pinned ? animatePin(el) : restorePin(el);
                 } else {
-                    alert('Errore nel mettere in lista');
+                    showCustomNotification('Errore nel mettere in lista', 'error');
                 }
             } catch {
-                alert('Errore di rete');
+                showCustomNotification('Errore di rete', 'error');
             } finally {
                 el._pending = false;
                 el.disabled = false;
@@ -156,10 +156,10 @@
                 openModal(URL.createObjectURL(blob), false);
             } else {
                 const data = await resp.json();
-                data?.url ? openModal(data.url, true) : alert('Impossibile ottenere il QR');
+                data?.url ? openModal(data.url, true) : showCustomNotification('Impossibile ottenere il QR', 'error');
             }
         } catch {
-            alert('Errore nella generazione del QR');
+            showCustomNotification('Errore nella generazione del QR', 'error');
         } finally {
             btn.disabled = false;
             btn.innerHTML = origText;
@@ -247,7 +247,7 @@
             btn.textContent = 'Copiato!';
             setTimeout(() => (btn.textContent = 'Copia'), 1300);
         } catch {
-            alert('Copia fallita');
+            showCustomNotification('Copia fallita', 'error');
         }
     }
 })();

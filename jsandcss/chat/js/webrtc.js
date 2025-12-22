@@ -79,7 +79,7 @@ const CallManager = {
     // Start outgoing call
     async startCall(type) {
         if (!ChatConfig.activeChatId) {
-            alert('Seleziona un contatto prima di chiamare');
+            showCustomNotification('Seleziona un contatto prima di chiamare', 'info');
             return;
         }
 
@@ -116,7 +116,7 @@ const CallManager = {
 
         } catch (error) {
             console.error('Error starting call:', error);
-            alert('Impossibile avviare la chiamata: ' + error.message);
+            showCustomNotification('Impossibile avviare la chiamata: ' + error.message, 'error');
             this.endCall();
         }
     },
@@ -305,7 +305,7 @@ const CallManager = {
 
         } catch (error) {
             console.error('Error accepting call:', error);
-            alert('Errore nell\'accettare la chiamata');
+            showCustomNotification('Errore nell\'accettare la chiamata', 'error');
             this.rejectCall();
         }
     },

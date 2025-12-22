@@ -205,7 +205,7 @@ const renderPoll = (p) => {
                 <input type="radio" name="poll_${p.id}" value="${optionIndex}" id="poll${p.id}_${optionIndex}" data-option-index="${optionIndex}" ${disabled}
                     onchange="document.querySelectorAll('[name=\\'poll_${p.id}\\']').forEach(r => { if(!r.checked) r.disabled = true; });">
                 <div class="bar-container">
-                    <div class="bar-fill" style="width:${perc}%;" data-votes="${votes}" data-orig-perc="${perc}"></div>
+                    <div class="bar-fill" style="--w:${perc}%;" data-votes="${votes}" data-orig-perc="${perc}"></div>
                     <span class="bar-label">${escapeHtml(optText)} — ${votes} ${votes !== 1 ? 'voti' : 'voto'} (${perc}%)</span>
                 </div>
             </label>
