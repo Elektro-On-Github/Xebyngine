@@ -115,8 +115,6 @@ def profile():
                 image_paths_list = json.loads(image_path)
             except Exception:
                 image_paths_list = [image_path]
-            for img in image_paths_list:
-                image_urls.append(url_for('uploaded_file', filename=os.path.basename(img)))
         posts.append({
             "id": p[0],
             "content": p[1],

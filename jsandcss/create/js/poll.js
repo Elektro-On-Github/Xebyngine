@@ -72,7 +72,7 @@ function initPollModal() {
     }
 
     if (modalSave) {
-        modalSave.onclick = () => {
+        modalSave.onclick = async () => {
             const q = modalQuestion.value || '';
             const formQ = document.querySelector('input[name="poll_question"]');
             if (formQ) formQ.value = q;
@@ -95,7 +95,7 @@ function initPollModal() {
             });
 
             if (idx <= 2) {
-                alert('Inserisci almeno 2 opzioni per il sondaggio');
+                await showCustomNotification('Inserisci almeno 2 opzioni per il sondaggio', 'error');
                 return;
             }
 

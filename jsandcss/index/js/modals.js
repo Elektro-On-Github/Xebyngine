@@ -253,12 +253,13 @@ document.addEventListener('click', e => {
 });
 
 // === DELETE POST ===
-document.addEventListener('click', e => {
+document.addEventListener('click', async e => {
     const btn = e.target.closest?.('.post-delete-btn');
     if (!btn?.dataset.postId) return;
 
     const id = btn.dataset.postId;
-    if (!confirm('Sei sicuro di voler eliminare questo post?')) return;
+    const confirmed = await showConfirmDialog('Sei sicuro di voler eliminare questo post?', 'Elimina post');
+    if (!confirmed) return;
 
     fetch(`/delete_post/${id}`, {
         method: 'POST',

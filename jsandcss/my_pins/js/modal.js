@@ -43,11 +43,11 @@ function initModal() {
                 }
                 hideModal();
             } else {
-                alert(data.error || 'Errore durante la rimozione');
+                await showCustomNotification(data.error || 'Errore durante la rimozione', 'error');
             }
         } catch (err) {
             console.error(err);
-            alert('Errore di rete');
+            await showCustomNotification('Errore di rete', 'error');
         } finally {
             btnOk.disabled = false;
             btnOk.textContent = 'Rimuovi';
