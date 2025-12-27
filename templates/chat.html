@@ -13,7 +13,6 @@
 <link rel="stylesheet" href="/jsandcss/chat/css/users-menu.css">
 <link rel="stylesheet" href="/jsandcss/chat/css/components.css">
 <link rel="stylesheet" href="/jsandcss/chat/css/responsive.css">
-<link rel="stylesheet" href="/jsandcss/chat/css/call.css">
 <link rel="stylesheet" href="/jsandcss/notify.css">
 </head>
 <body>
@@ -58,66 +57,6 @@
             <img class="chat-user-avatar" src="/uploads/avatars/default.png" alt="avatar">
             <span class="chat-user-name"></span>
         </div>
-    </div>
-    <!-- NUOVI BOTTONI CHIAMATA -->
-    <div class="header-call-btns" id="call-buttons" style="display: none;">
-        <button class="header-call-btn" id="voice-call-btn" title="Chiamata vocale" disabled>
-            <i class="fas fa-phone"></i>
-        </button>
-        <button class="header-call-btn" id="video-call-btn" title="Videochiamata" disabled>
-            <i class="fas fa-video"></i>
-        </button>
-    </div>
-</div>
-
-<!-- CALL OVERLAY-->
-<div id="call-overlay">
-    <div class="call-content">
-        <!-- Video containers -->
-        <div class="video-container">
-            <video id="remote-video" autoplay playsinline></video>
-            <video id="local-video" autoplay playsinline muted></video>
-        </div>
-        
-        <!-- Call info (mostrato durante squillo) -->
-        <div class="call-info" id="call-info">
-            <img class="call-avatar" id="call-avatar" src="/uploads/avatars/default.png" alt="avatar">
-            <h2 class="call-username" id="call-username"></h2>
-            <p class="call-status" id="call-status">Chiamata in corso...</p>
-        </div>
-        
-        <!-- Call controls -->
-        <div class="call-controls">
-            <button class="call-btn mute" id="mute-btn" title="Muto">
-                <i class="fas fa-microphone"></i>
-            </button>
-            <button class="call-btn hangup" id="hangup-btn" title="Riaggancia">
-                <i class="fas fa-phone-slash"></i>
-            </button>
-            <button class="call-btn video-toggle" id="video-toggle-btn" title="Video on/off">
-                <i class="fas fa-video"></i>
-            </button>
-            <div class="audio-indicator" id="audio-indicator" style="display: none;">
-                <i class="fas fa-volume-up"></i>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- CALL IN ARRIVO -->
- <div class="incoming-call" id="incoming-call">
-    <img class="incoming-call-avatar" id="incoming-avatar" src="/uploads/avatars/default.png" alt="avatar">
-    <div class="incoming-call-info">
-        <strong id="incoming-username">Username</strong>
-        <span id="incoming-type">Chiamata vocale...</span>
-    </div>
-    <div class="incoming-call-actions">
-        <button class="incoming-call-btn accept" id="accept-call-btn">
-            <i class="fas fa-phone"></i>
-        </button>
-        <button class="incoming-call-btn reject" id="reject-call-btn">
-            <i class="fas fa-phone-slash"></i>
-        </button>
     </div>
 </div>
 
@@ -167,7 +106,6 @@
 <script src="/jsandcss/chat/js/sse.js"></script>
 <script src="/jsandcss/darkness.js"></script>
 <script src="/service-worker.js"></script>
-<script src="/jsandcss/chat/js/webrtc.js"></script>
 <script src="/jsandcss/chat/js/init.js"></script>
 
 </body>

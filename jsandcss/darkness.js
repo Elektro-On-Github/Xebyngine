@@ -43,9 +43,6 @@
         .header-back-btn,
         .back-btn-search,
         .ready,
-        .audio-only,
-        .call-info,
-        .call-username,
         .qr-modal-link,
         .section-title,
         #likers-back-btn,
@@ -56,8 +53,6 @@
         .video-viewer-progress-bar,
         .post-media-play,
         #share-send-btn,
-        #call-overlay,
-        #video-container,
         .post-delete-btn,
         .notify-button
         

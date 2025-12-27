@@ -79,15 +79,6 @@ function setupSSEEventListeners(evtSource) {
         }
     });
 
-    evtSource.addEventListener('call-signal', e => {
-        try {
-            handleCallSignal(JSON.parse(e.data));
-            reconnectAttempts = 0;
-        } catch (error) {
-            console.error('Errore parsing call-signal:', error);
-        }
-    });
-
     evtSource.onerror = () => {
         handleSSEError(evtSource);
     };
@@ -113,21 +104,3 @@ function handleSSEError(evtSource) {
     }, delay);
 }
 
-const CALL_HANDLERS = {
-    offer:          data => CallManager.handleIncomingCall(data),
-    answer:         data => CallManager.handleAnswer(data),
-    'ice-candidate': data => CallManager.handleIceCandidate(data),
-    hangup:         () => CallManager.endCall(),
-    reject:         () => { CallManager.endCall(); showCustomNotification('Chiamata rifiutata', 'info'); }
-};
-
-function handleCallSignal({ type, data }) {
-    const handler = CALL_HANDLERS[type];
-    if (handler) {
-        try {
-            handler(data);
-        } catch (error) {
-            console.error(`Errore in handleCallSignal (${type}):`, error);
-        }
-    }
-}

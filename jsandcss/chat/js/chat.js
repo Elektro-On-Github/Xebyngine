@@ -211,7 +211,6 @@ function switchChat(userId, username, avatar) {
     ChatConfig.activeChatAvatar = avatar || '/uploads/avatars/default.png';
 
     updateChatHeader();
-    enableCallButtons();
     
     document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
     const active = document.querySelector(`[data-userid="${userId}"]`);

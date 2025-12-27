@@ -10,7 +10,7 @@ from utils.db import get_conn, release_conn, save_message, get_pinned_users, get
 
 chat_bp = Blueprint('chat_bp', __name__)
 
-# === SSE CLIENTS (unificato: messaggi + typing) ===
+# === SSE CLIENTS ===
 clients = {}
 clients_lock = Lock()
 
@@ -421,33 +421,7 @@ def stream_messages():
         headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'}
     )
 
-# === WEBRTC SIGNALING ===
-call_signals = {}  # {user_id: [signals]}
-call_signals_lock = Lock()
 
-@chat_bp.route('/call/signal', methods=['POST'])
-@require_csrf
-def call_signal():
-    if "user_id" not in session:
-        return "Unauthorized", 401
-    
-    data = request.get_json()
-    signal_type = data.get('type')
-    signal_data = data.get('data')
-    
-    if not signal_type or not signal_data:
-        return "Missing data", 400
-    
-    recipient_id = str(signal_data.get('to'))
-    sender_id = str(session['user_id'])
-    
-    # Send signal to recipient via SSE
-    send_to_user(recipient_id, 'call-signal', {
-        'type': signal_type,
-        'data': signal_data
-    })
-    
-    return '', 204
 
 
 # === GET CHAT USERS (JSON) ===
