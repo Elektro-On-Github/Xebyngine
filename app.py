@@ -6,7 +6,7 @@ import os
 import config
 from apscheduler.schedulers.background import BackgroundScheduler
 # Import utils per inizializzazione
-from utils.db import ensure_crono_table, ensure_post_views_table
+from utils.db import ensure_crono_table, ensure_post_views_table, ensure_report_table
 from utils.dirty_manager import ensure_dirty_table
 
 # Import blueprints
@@ -47,6 +47,7 @@ socketio = SocketIO(app, cors_allowed_origins=config.SOCKETIO_CORS_ORIGINS)
 ensure_crono_table()
 ensure_post_views_table()
 ensure_dirty_table()
+ensure_report_table()
 
 
 # ============================================================================

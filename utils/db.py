@@ -79,6 +79,36 @@ def ensure_post_views_table():
         if conn:
             release_conn(conn)
 
+def ensure_report_table():
+    """Crea tabella report se non esiste."""
+    conn = None
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS report (
+                id BIGSERIAL PRIMARY KEY,
+                reporter_id VARCHAR(32) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                reporter_username VARCHAR(32) NOT NULL,
+                recipient_id VARCHAR(32) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                recipient_username VARCHAR(32) NOT NULL,
+                message_id INT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+                message_content VARCHAR(65536),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS report_reporter_idx ON report (reporter_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS report_recipient_idx ON report (recipient_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS report_created_idx ON report (created_at DESC)")
+        conn.commit()
+        cur.close()
+    except Exception:
+        import sys
+        print("Warning: could not ensure report table exists", file=sys.stderr)
+    finally:
+        if conn:
+            release_conn(conn)
+
 # ============================================================================
 # POST QUERIES
 # ============================================================================
@@ -520,3 +550,26 @@ def auto_cleanup_expired_posts():
         cur.close()
         release_conn(conn)
         return 0
+
+# ============================================================================
+# MESSAGE REPORTING
+# ============================================================================
+
+def report_message(reporter_id, reporter_username, recipient_id, recipient_username, message_id, message_content):
+    """Salva una segnalazione di messaggio nel database."""
+    conn = get_conn()
+    try:
+        with conn.cursor() as c:
+            c.execute("""
+                INSERT INTO report 
+                (reporter_id, reporter_username, recipient_id, recipient_username, message_id, message_content, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+            """, (reporter_id, reporter_username, recipient_id, recipient_username, message_id, message_content))
+            conn.commit()
+            return True
+    except Exception as e:
+        print(f"Error reporting message: {e}")
+        conn.rollback()
+        return False
+    finally:
+        release_conn(conn)

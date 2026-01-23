@@ -37,20 +37,77 @@ function loadHistory() {
         .then(html => {
             ChatConfig.elements.chatContainer.innerHTML = html;
             ChatConfig.elements.chatContainer.scrollTop = ChatConfig.elements.chatContainer.scrollHeight;
+            
+            // Aggiungi event listener ai messaggi caricati
+            attachMessageListeners();
         })
         .catch(() => {
             ChatConfig.elements.chatContainer.innerHTML = '<div class="empty-chat"><i class="fas fa-exclamation-triangle"></i><p>Errore nel caricamento</p></div>';
         });
 }
 
+// Funzione per aggiungere event listeners ai messaggi caricati dal server
+function attachMessageListeners() {
+    const messages = ChatConfig.elements.chatContainer.querySelectorAll('.message');
+    messages.forEach(msgEl => {
+        const messageId = msgEl.getAttribute('data-message-id');
+        const senderId = msgEl.getAttribute('data-sender-id');
+        const recipientId = msgEl.getAttribute('data-recipient-id');
+        
+        if (messageId && senderId && recipientId) {
+            const messageText = msgEl.querySelector('span')?.textContent || '';
+            
+            // Touch long press
+            let longPressTimer = null;
+            let isLongPress = false;
+            
+            msgEl.addEventListener('touchstart', (e) => {
+                longPressTimer = setTimeout(() => {
+                    isLongPress = true;
+                    handleMessageLongPress(msgEl, messageText, senderId, messageId, recipientId);
+                }, 500);
+            }, {passive: true});
+
+            msgEl.addEventListener('touchend', () => {
+                clearTimeout(longPressTimer);
+                isLongPress = false;
+            }, {passive: true});
+
+            msgEl.addEventListener('mouseleave', () => {
+                clearTimeout(longPressTimer);
+            });
+
+            // Mouse long press
+            msgEl.addEventListener('mousedown', (e) => {
+                longPressTimer = setTimeout(() => {
+                    isLongPress = true;
+                    handleMessageLongPress(msgEl, messageText, senderId, messageId, recipientId);
+                }, 500);
+            });
+
+            msgEl.addEventListener('mouseup', () => {
+                clearTimeout(longPressTimer);
+                isLongPress = false;
+            });
+        }
+    });
+}
+
 // Message handling
-function appendMessage(sender, text, avatar = null) {
+function appendMessage(sender, text, avatar = null, messageId = null, recipientId = null) {
     const empty = ChatConfig.elements.chatContainer.querySelector('.empty-chat');
     if (empty) empty.remove();
 
     const isMine = sender === ChatConfig.myId;
     const msg = document.createElement('div');
     msg.className = `message ${isMine ? 'me' : 'other'}`;
+
+    // Aggiungi attributi data per il long press
+    if (messageId && recipientId) {
+        msg.setAttribute('data-message-id', messageId);
+        msg.setAttribute('data-sender-id', sender);
+        msg.setAttribute('data-recipient-id', recipientId);
+    }
 
     if (!isMine) {
         const img = document.createElement('img');
@@ -62,6 +119,40 @@ function appendMessage(sender, text, avatar = null) {
     const span = document.createElement('span');
     span.textContent = text;
     msg.appendChild(span);
+
+    // Aggiungi event listener per long press solo se abbiamo messageId
+    if (messageId && recipientId) {
+        let longPressTimer = null;
+        let isLongPress = false;
+
+        msg.addEventListener('touchstart', (e) => {
+            longPressTimer = setTimeout(() => {
+                isLongPress = true;
+                handleMessageLongPress(msg, text, sender, messageId, recipientId);
+            }, 500);
+        }, {passive: true});
+
+        msg.addEventListener('touchend', () => {
+            clearTimeout(longPressTimer);
+            isLongPress = false;
+        }, {passive: true});
+
+        msg.addEventListener('mouseleave', () => {
+            clearTimeout(longPressTimer);
+        });
+
+        msg.addEventListener('mousedown', (e) => {
+            longPressTimer = setTimeout(() => {
+                isLongPress = true;
+                handleMessageLongPress(msg, text, sender, messageId, recipientId);
+            }, 500);
+        });
+
+        msg.addEventListener('mouseup', () => {
+            clearTimeout(longPressTimer);
+            isLongPress = false;
+        });
+    }
 
     ChatConfig.elements.chatContainer.appendChild(msg);
     ChatConfig.elements.chatContainer.scrollTop = ChatConfig.elements.chatContainer.scrollHeight;

@@ -233,6 +233,20 @@ CREATE TABLE IF NOT EXISTS dirty (
     last_activity TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- =====================================================
+-- SEGNALAZIONI MESSAGGI
+-- =====================================================
+CREATE TABLE IF NOT EXISTS report (
+    id BIGSERIAL PRIMARY KEY,
+    reporter_id VARCHAR(32) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reporter_username VARCHAR(32) NOT NULL,
+    recipient_id VARCHAR(32) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    recipient_username VARCHAR(32) NOT NULL,
+    message_id INT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+    message_content VARCHAR(65536),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 ----------------------------------------------------------
 ----------------------------------------------------------
 ----------------------------------------------------------

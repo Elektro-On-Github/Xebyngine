@@ -6,7 +6,7 @@ import json
 import os
 import config
 from utils.security import sanitize_input, rate_limit, require_csrf
-from utils.db import get_conn, release_conn, save_message, get_pinned_users, get_chat_users
+from utils.db import get_conn, release_conn, save_message, get_pinned_users, get_chat_users, report_message
 
 chat_bp = Blueprint('chat_bp', __name__)
 
@@ -144,13 +144,13 @@ def chat_history(other_user_id):
     try:
         with conn.cursor() as c:
             c.execute("""
-                SELECT sender_id, content, message_type FROM messages
+                SELECT id, sender_id, content, message_type FROM messages
                 WHERE (sender_id=%s AND receiver_id=%s) OR (sender_id=%s AND receiver_id=%s)
                 ORDER BY created_at ASC
             """, (my_id, other_user_id, other_user_id, my_id))
             rows = c.fetchall()
 
-            user_ids = list({r[0] for r in rows} | {my_id, other_user_id})
+            user_ids = list({r[1] for r in rows} | {my_id, other_user_id})
             c.execute("SELECT user_id, avatar_path FROM profile WHERE user_id = ANY(%s)", (user_ids,))
             avatar_rows = {uid: get_avatar_url(path) for uid, path in c.fetchall()}
     finally:
@@ -160,7 +160,7 @@ def chat_history(other_user_id):
     avatar_rows.setdefault(other_user_id, default)
 
     html_parts = []
-    for sid, content, message_type in rows:
+    for msg_id, sid, content, message_type in rows:
         is_mine = sid == my_id
         avatar = avatar_rows.get(sid)
         
@@ -169,7 +169,7 @@ def chat_history(other_user_id):
             try:
                 payload = json.loads(content)
                 post_card_html = f'''
-                <div class="message {"me" if is_mine else "other"}">
+                <div class="message {"me" if is_mine else "other"}" data-message-id="{msg_id}" data-sender-id="{sid}" data-recipient-id="{other_user_id}">
                     {"" if is_mine else f'<img class="message-avatar" src="{avatar}" alt="">'}
                     <div class="post-share-card">
                         <div class="post-share-header"><strong>Post di {escape(payload.get('author', 'Sconosciuto'))}</strong></div>
@@ -186,14 +186,14 @@ def chat_history(other_user_id):
             except:
                 # Fallback se il JSON non è valido
                 html_parts.append(
-                    f'<div class="message {"me" if is_mine else "other"}">'
+                    f'<div class="message {"me" if is_mine else "other"}" data-message-id="{msg_id}" data-sender-id="{sid}" data-recipient-id="{other_user_id}">'
                     f'{"" if is_mine else f"<img class=\"message-avatar\" src=\"{avatar}\" alt=\"\">"}'
                     f'<span>Post condiviso</span></div>'
                 )
         else:
             # Messaggio di testo normale
             html_parts.append(
-                f'<div class="message {"me" if is_mine else "other"}">'
+                f'<div class="message {"me" if is_mine else "other"}" data-message-id="{msg_id}" data-sender-id="{sid}" data-recipient-id="{other_user_id}">'
                 f'{"" if is_mine else f"<img class=\"message-avatar\" src=\"{avatar}\" alt=\"\">"}'
                 f'<span>{escape(content or "")}</span></div>'
             )
@@ -471,3 +471,53 @@ def get_chat_users_json():
             return jsonify({'users': users})
     finally:
         release_conn(conn)
+
+
+# === REPORT MESSAGE ===
+@chat_bp.route('/report_message', methods=['POST'])
+@rate_limit(10, 60)
+def report_message_route():
+    """Segnala un messaggio come inappropriato."""
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    reporter_id = session["user_id"]
+    reporter_username = session.get("username", "Unknown")
+    message_id = request.form.get('message_id')
+    recipient_id = request.form.get('recipient_id')
+    message_content = request.form.get('message_content')
+    
+    # Debug: Log what we received
+    import sys
+    print(f"DEBUG report_message: message_id={message_id}, recipient_id={recipient_id}, message_content={message_content[:50] if message_content else None}", file=sys.stderr)
+    
+    if not all([message_id, recipient_id, message_content]):
+        print(f"DEBUG Missing: message_id={bool(message_id)}, recipient_id={bool(recipient_id)}, message_content={bool(message_content)}", file=sys.stderr)
+        return jsonify({"error": "Missing parameters"}), 400
+    
+    # Verifica che il messaggio esista e appartenga alla conversazione
+    conn = get_conn()
+    try:
+        with conn.cursor() as c:
+            c.execute("""
+                SELECT id FROM messages WHERE id = %s
+            """, (int(message_id),))
+            if not c.fetchone():
+                return jsonify({"error": "Message not found"}), 404
+            
+            # Recupera il nome utente del recipient
+            c.execute("""
+                SELECT username FROM users WHERE id = %s
+            """, (recipient_id,))
+            user_row = c.fetchone()
+            recipient_username = user_row[0] if user_row else "Unknown"
+        
+        # Salva la segnalazione
+        success = report_message(reporter_id, reporter_username, recipient_id, recipient_username, int(message_id), message_content)
+        if success:
+            return jsonify({"success": True, "message": "Segnalazione inviata"}), 200
+        else:
+            return jsonify({"error": "Failed to save report"}), 500
+    finally:
+        release_conn(conn)
+
