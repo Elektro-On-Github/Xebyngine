@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, session, url_fo
 from werkzeug.security import check_password_hash
 import secrets
 import config
-from utils.security import sanitize_input, validate_username, validate_email, validate_password, rate_limit
+from utils.security import sanitize_input, validate_username, validate_email, validate_password, rate_limit, require_csrf
 from utils.helpers import register_user_db
 from utils.db import get_conn, release_conn
 
@@ -13,6 +13,7 @@ auth_bp = Blueprint('auth_bp', __name__)
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 @rate_limit(*config.RATE_LIMIT_LOGIN)
+@require_csrf
 def login():
     """Pagina login."""
     if request.method == "POST":
@@ -41,6 +42,7 @@ def login():
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 @rate_limit(*config.RATE_LIMIT_REGISTER)
+@require_csrf
 def register():
     """Pagina registrazione."""
     if request.method == "POST":
