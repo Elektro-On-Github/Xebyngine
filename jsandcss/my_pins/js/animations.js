@@ -6,7 +6,7 @@ function initScrollAnimations() {
             if (entry.isIntersecting && !entry.target.classList.contains('animate-in')) {
                 setTimeout(() => {
                     entry.target.classList.add('animate-in');
-                }, animatedCount * 50);
+                }, animatedCount * 8);
 
                 animatedCount++;
                 observer.unobserve(entry.target);

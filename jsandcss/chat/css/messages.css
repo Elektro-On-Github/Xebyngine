@@ -163,13 +163,14 @@
 
 .message-context-menu {
     position: absolute;
-    background: white;
+    background: rgba(255,255,255,0.6);
     border-radius: 12px;
     padding: 8px 0;
     box-shadow: 0 4px 16px rgba(0,0,0,.15);
     z-index: 1000;
     animation: popIn .2s ease;
     border: 1px solid rgba(0,0,0,.08);
+    backdrop-filter: blur(8px);
 }
 
 .message-context-btn {
@@ -195,12 +196,6 @@
 .message-context-btn i {
     font-size: 1.1rem;
     color: var(--primary);
-}
-
-/* Message with long-press active state */
-.message.long-pressed {
-    background: rgba(144,16,16,.05);
-    border-radius: 8px;
 }
 
 /* Message selection indicator */

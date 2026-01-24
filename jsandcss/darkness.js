@@ -54,7 +54,9 @@
         .post-media-play,
         #share-send-btn,
         .post-delete-btn,
-        .notify-button
+        .notify-button,
+        .fa-flag,
+        .fa-times
         
         { 
         filter: invert(1) hue-rotate(180deg) !important; 
