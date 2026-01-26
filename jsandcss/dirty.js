@@ -57,12 +57,12 @@ class DirtyManager {
                 <div class="dirty-card">
                     <div class="dirty-icon"><i class="fa-solid fa-bath"></i></div>
                     <div>
-                        <h2 class="dirty-title">App sporca!</h2>
+                        <h2 class="dirty-message">App sporca!</h2>
                         <h1 class="dirty-message">Non hai effettuato l'accesso per più di 7 giorni.</h1>
                     </div>
                 </div>
                 <button id="clean-btn" class="clean-button">
-                    <i class="fa-solid fa-bath"></i> Pulisci
+                    Pulisci
                 </button>
             </div>
         `;
