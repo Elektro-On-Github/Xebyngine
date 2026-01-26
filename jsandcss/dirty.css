@@ -1,34 +1,66 @@
-/* Overlay giallo trasparente */
+/* Overlay giallo full screen */
 .dirty-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 230, 0, 0.35);
-    z-index: 99999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(2px);
-    transition: opacity 0.5s ease;
+    background-color: rgba(255, 230, 0, 0.3);
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
-/* Stato nascosto */
 .dirty-overlay.hidden {
     opacity: 0;
     pointer-events: none;
 }
 
-/* Card del messaggio */
+/* Notifica banner sopra navbar in basso */
+.dirty-banner {
+    position: fixed;
+    bottom: 64px;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(90deg, #ffd700, #ffed4e);
+    z-index: 101;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    border-top: 3px solid #ffc107;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+    animation: slideUp 400ms ease-out;
+    pointer-events: auto;
+}
+
+.dirty-banner.hidden {
+    display: none;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* Contenitore messaggio */
 .dirty-card {
-    background: linear-gradient(145deg, rgba(238, 238, 238, 0.7), rgba(184, 184, 184, 0.7));
-    padding: 40px 50px;
-    border-radius: 18px;
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    max-width: 450px;
-    animation: bounceIn 600ms cubic-bezier(0.1, 0.9, 0.2, 1) backwards;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    text-align: left;
+    box-shadow: none;
+    max-width: none;
+    animation: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
 }
 
 @keyframes bounceIn {
@@ -44,9 +76,10 @@
 
 /* Icona */
 .dirty-icon {
-    font-size: 64px;
-    margin-bottom: 15px;
-    animation: shake 0.5s ease-in-out infinite alternate;
+    font-size: 24px;
+    margin-bottom: 0;
+    animation: none;
+    flex-shrink: 0;
 }
 
 @keyframes shake {
@@ -56,18 +89,18 @@
 
 /* Titolo */
 .dirty-title {
-    font-size: 28px;
+    font-size: 13px;
     font-weight: bold;
     color: #333;
-    margin-bottom: 10px;
+    margin-bottom: 0;
 }
 
 /* Messaggio */
 .dirty-message {
-    font-size: 16px;
+    font-size: 12px;
     color: #000;
-    margin-bottom: 25px;
-    line-height: 1.5;
+    margin-bottom: 0;
+    line-height: 1.3;
 }
 
 
@@ -75,19 +108,22 @@
 .clean-button {
     background: linear-gradient(145deg, #4CAF50, #45a049);
     color: white;
-    padding: 15px 50px;
+    padding: 8px 16px;
     border: none;
-    border-radius: 50px;
-    font-size: 18px;
+    border-radius: 20px;
+    font-size: 12px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-right: 26px;
 }
 
 .clean-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.4);
 }
 
 .clean-button:active {
@@ -102,10 +138,6 @@
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-    .dirty-card {
-        background: linear-gradient(145deg, rgba(238, 238, 238, 0.7), rgba(184, 184, 184, 0.7));
-    }
-    
     .dirty-title {
         color: #000;
     }
@@ -121,18 +153,13 @@
 }
 
 /* Mobile responsive */
-@media (max-width: 500px) {
-    .dirty-card {
-        margin: 20px;
-        padding: 30px 25px;
-    }
-    
+@media (max-width: 500px) {    
     .dirty-icon {
-        font-size: 48px;
+        font-size: 24px;
     }
     
     .dirty-title {
-        font-size: 22px;
+        font-size: 16px;
     }
     
     .clean-button {

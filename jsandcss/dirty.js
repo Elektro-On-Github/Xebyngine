@@ -48,28 +48,32 @@ class DirtyManager {
     }
 
     createOverlay() {
-        // Crea l'HTML dell'overlay
-        const overlayHTML = `
-            <div id="dirty-overlay" class="dirty-overlay hidden">
+        // Overlay giallo full screen
+        const overlayHTML = `<div id="dirty-overlay" class="dirty-overlay hidden"></div>`;
+        
+        // Banner notifica sopra navbar
+        const bannerHTML = `
+            <div id="dirty-banner" class="dirty-banner hidden">
                 <div class="dirty-card">
                     <div class="dirty-icon"><i class="fa-solid fa-bath"></i></div>
-                    <h2 class="dirty-title">Account Sporco!</h2>
-                    <p class="dirty-message">
-                        Non hai effettuato l'accesso per più di 7 giorni.
-                        Devi togliere la polvere!
-                    </p>
-                    <button id="clean-btn" class="clean-button">
-                        <i class="fa-solid fa-bath"></i> Pulisci
-                    </button>
+                    <div>
+                        <h2 class="dirty-title">App sporca!</h2>
+                        <h1 class="dirty-message">Non hai effettuato l'accesso per più di 7 giorni.</h1>
+                    </div>
                 </div>
+                <button id="clean-btn" class="clean-button">
+                    <i class="fa-solid fa-bath"></i> Pulisci
+                </button>
             </div>
         `;
 
         // Inserisci nel body
         document.body.insertAdjacentHTML('beforeend', overlayHTML);
+        document.body.insertAdjacentHTML('afterbegin', bannerHTML);
 
         // Salva riferimenti
         this.overlay = document.getElementById('dirty-overlay');
+        this.banner = document.getElementById('dirty-banner');
         this.cleanBtn = document.getElementById('clean-btn');
 
         // Event listener per il bottone clean
@@ -163,12 +167,12 @@ class DirtyManager {
             this.daysSpan.textContent = days;
         }
         this.overlay.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Blocca scroll
+        this.banner.classList.remove('hidden');
     }
 
     hideOverlay() {
         this.overlay.classList.add('hidden');
-        document.body.style.overflow = ''; // Ripristina scroll
+        this.banner.classList.add('hidden');
     }
 
     resetButton() {
