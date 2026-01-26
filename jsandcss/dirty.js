@@ -22,62 +22,36 @@ class DirtyManager {
     }
 
     setup() {
-        // Ottieni CSRF token
-        this.csrfToken = this.getCSRFToken();
-        
-        // Crea l'overlay dinamicamente
         this.createOverlay();
-        
-        // Controlla lo stato dirty
         this.checkDirtyStatus();
     }
 
-    getCSRFToken() {
-        // Prova da meta tag
-        const meta = document.querySelector('meta[name="csrf-token"]');
-        if (meta) return meta.getAttribute('content');
-        
-        // Prova da input hidden
-        const input = document.querySelector('input[name="csrf_token"]');
-        if (input) return input.value;
-        
-        // Prova da variabile globale
-        if (typeof csrfToken !== 'undefined') return csrfToken;
-        
-        return null;
-    }
-
     createOverlay() {
-        // Overlay giallo full screen
+        // Overlay sempre visibile su tutte le pagine
         const overlayHTML = `<div id="dirty-overlay" class="dirty-overlay hidden"></div>`;
-        
-        // Banner notifica sopra navbar
-        const bannerHTML = `
-            <div id="dirty-banner" class="dirty-banner hidden">
-                <div class="dirty-card">
-                    <div class="dirty-icon"><i class="fa-solid fa-bath"></i></div>
-                    <div>
-                        <h2 class="dirty-message">App sporca!</h2>
-                        <h1 class="dirty-message">Non hai effettuato l'accesso per più di 7 giorni.</h1>
-                    </div>
-                </div>
-                <button id="clean-btn" class="clean-button">
-                    Pulisci
-                </button>
-            </div>
-        `;
-
-        // Inserisci nel body
         document.body.insertAdjacentHTML('beforeend', overlayHTML);
-        document.body.insertAdjacentHTML('afterbegin', bannerHTML);
-
-        // Salva riferimenti
         this.overlay = document.getElementById('dirty-overlay');
-        this.banner = document.getElementById('dirty-banner');
-        this.cleanBtn = document.getElementById('clean-btn');
 
-        // Event listener per il bottone clean
-        this.cleanBtn.addEventListener('click', () => this.cleanAccount());
+        // Banner solo su index.html o root
+        const isIndex = window.location.pathname.includes('index.html') || window.location.pathname === '/';
+        if (isIndex) {
+            const bannerHTML = `
+                <div id="dirty-banner" class="dirty-banner hidden">
+                    <div class="dirty-card">
+                        <div class="dirty-icon"><i class="fa-solid fa-bath"></i></div>
+                        <div>
+                            <h2 class="dirty-message">App sporca!</h2>
+                            <h1 class="dirty-message">Non hai effettuato l'accesso per più di 7 giorni.</h1>
+                        </div>
+                    </div>
+                    <button id="clean-btn" class="clean-button">Pulisci</button>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('afterbegin', bannerHTML);
+            this.banner = document.getElementById('dirty-banner');
+            this.cleanBtn = document.getElementById('clean-btn');
+            this.cleanBtn.addEventListener('click', () => this.cleanAccount());
+        }
     }
 
     async checkDirtyStatus() {
@@ -166,14 +140,26 @@ class DirtyManager {
         if (this.daysSpan) {
             this.daysSpan.textContent = days;
         }
-        this.overlay.classList.remove('hidden');
-        this.banner.classList.remove('hidden');
+
+        if (this.overlay) {
+            this.overlay.classList.remove('hidden');
+        }
+
+        if (this.banner) { // 👈 QUESTO
+            this.banner.classList.remove('hidden');
+        }
     }
 
     hideOverlay() {
-        this.overlay.classList.add('hidden');
-        this.banner.classList.add('hidden');
+        if (this.overlay) {
+            this.overlay.classList.add('hidden');
+        }
+
+        if (this.banner) { // 👈 QUESTO
+            this.banner.classList.add('hidden');
+        }
     }
+
 
     resetButton() {
         this.cleanBtn.classList.remove('loading');
