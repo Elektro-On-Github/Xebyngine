@@ -124,7 +124,14 @@ def update_last_activity(user_id):
         conn = get_conn()
         cur = conn.cursor()
         
-        # UPSERT: inserisce o aggiorna
+        # Valida che l'utente esista in users PRIMA dell'UPSERT
+        cur.execute('SELECT id FROM users WHERE id = %s', (user_id,))
+        if not cur.fetchone():
+            print(f"Utente non trovato: {user_id}")
+            cur.close()
+            return False
+        
+        # UPSERT: ora è sicuro inserire
         cur.execute('''
             INSERT INTO dirty (user_id, status, last_activity) 
             VALUES (%s, 'no', NOW())
@@ -134,7 +141,13 @@ def update_last_activity(user_id):
         
         conn.commit()
         cur.close()
-        print(f"✅ Attività aggiornata per user_id: {user_id}")
+        print(f"Attività aggiornata per user_id: {user_id}")
+        return True
+    
+    except Exception as e:
+        import sys
+        print(f"Errore: {e}", file=sys.stderr)
+        return False
     
     finally:
         if conn:
