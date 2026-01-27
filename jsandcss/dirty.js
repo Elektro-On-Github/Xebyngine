@@ -145,7 +145,7 @@ class DirtyManager {
             this.overlay.classList.remove('hidden');
         }
 
-        if (this.banner) { // 👈 QUESTO
+        if (this.banner) {
             this.banner.classList.remove('hidden');
         }
     }
@@ -155,7 +155,7 @@ class DirtyManager {
             this.overlay.classList.add('hidden');
         }
 
-        if (this.banner) { // 👈 QUESTO
+        if (this.banner) {
             this.banner.classList.add('hidden');
         }
     }
