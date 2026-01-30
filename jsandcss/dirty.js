@@ -50,7 +50,7 @@ class DirtyManager {
             document.body.insertAdjacentHTML('afterbegin', bannerHTML);
             this.banner = document.getElementById('dirty-banner');
             this.cleanBtn = document.getElementById('clean-btn');
-            this.cleanBtn.addEventListener('click', () => this.cleanAccount());
+            this.cleanBtn.addEventListener('click', () => this.showLoadingOverlay());
         }
     }
 
@@ -85,11 +85,7 @@ class DirtyManager {
         }
     }
 
-    async cleanAccount() {
-        // Stato loading
-        this.cleanBtn.classList.add('loading');
-        this.cleanBtn.textContent = 'Pulizia in corso...';
-
+    cleanAccount() {
         try {
             const headers = {
                 'Content-Type': 'application/json',
@@ -101,7 +97,7 @@ class DirtyManager {
                 headers['X-CSRFToken'] = this.csrfToken;
             }
 
-            const response = await fetch('/api/dirty/clean', {
+            const response = fetch('/api/dirty/clean', {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: headers,
@@ -110,30 +106,67 @@ class DirtyManager {
                 })
             });
 
-            const data = await response.json();
+            const data = response.json();
 
             if (data.success) {
-                // Animazione di successo
-                this.cleanBtn.textContent = 'Pulito!';
-                this.cleanBtn.style.background = 'linear-gradient(145deg, #28a745, #218838)';
-                
-                // Nascondi overlay dopo un breve delay
-                setTimeout(() => {
-                    this.hideOverlay();
-                    this.resetButton();
-                }, 1000);
-
+                console.log('Account pulito con successo');
             } else {
                 throw new Error(data.error || 'Errore durante la pulizia');
             }
 
         } catch (error) {
             console.error('Errore pulizia account:', error);
-            this.cleanBtn.textContent = 'Errore - Riprova';
-            this.cleanBtn.style.background = 'linear-gradient(145deg, #dc3545, #c82333)';
-            
-            setTimeout(() => this.resetButton(), 2000);
         }
+    }
+
+    showLoadingOverlay() {
+        // Crea l'overlay di pulizia con progress bar
+        const loadingOverlayHTML = `
+            <div id="cleaning-overlay" class="cleaning-overlay">
+                <div class="cleaning-container">
+                    <div class="cleaning-content">
+                        <p>L'app sarà pulita tra poco</p>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar"></div>
+                        </div>
+                        <p class="progress-text">30 secondi rimanenti</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', loadingOverlayHTML);
+        const cleaningOverlay = document.getElementById('cleaning-overlay');
+        const progressBar = cleaningOverlay.querySelector('.progress-bar');
+        const progressText = cleaningOverlay.querySelector('.progress-text');
+
+        // Durata totale: 30 secondi
+        const duration = 30000; // 60 secondi in millisecondi
+        const startTime = Date.now();
+
+        // Anima la progress bar
+        const updateProgress = () => {
+            const elapsed = Date.now() - startTime;
+            const percentage = Math.min((elapsed / duration) * 100, 100);
+            progressBar.style.width = percentage + '%';
+
+            const remainingSeconds = Math.max(Math.ceil((duration - elapsed) / 1000), 0);
+            progressText.textContent = remainingSeconds + ' secondo' + (remainingSeconds !== 1 ? 'i' : '') + ' rimanenti';
+
+            if (percentage < 100) {
+                requestAnimationFrame(updateProgress);
+            } else {
+                // Quando la progress bar arriva al 100%, esegui cleanAccount
+                this.cleanAccount();
+                
+                // Refresh della pagina dopo 1 secondo
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }
+        };
+
+        updateProgress();
     }
 
     showOverlay(days) {
