@@ -21,10 +21,14 @@ class DirtyManager {
         }
     }
 
-    setup() {
-        this.createOverlay();
-        this.checkDirtyStatus();
+    async setup() {
+        const isDirty = await this.checkDirtyStatus();
+        if (isDirty) {
+            this.createOverlay();
+            this.showOverlay();
+        }
     }
+
 
     createOverlay() {
         // Overlay sempre visibile su tutte le pagine
@@ -63,31 +67,20 @@ class DirtyManager {
             const response = await fetch('/api/dirty/status', {
                 method: 'GET',
                 credentials: 'same-origin',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
 
-            if (!response.ok) {
-                if (response.status === 401) {
-                    console.log('Utente non autenticato - dirty check skipped');
-                    return;
-                }
-                throw new Error('Errore nel controllo stato');
-            }
+            if (!response.ok) return false;
 
             const data = await response.json();
+            return data.is_dirty;
 
-            if (data.is_dirty) {
-                this.showOverlay(data.days_inactive);
-            } else {
-                this.hideOverlay();
-            }
-
-        } catch (error) {
-            console.error('Errore controllo dirty status:', error);
+        } catch (e) {
+            console.error(e);
+            return false;
         }
     }
+
 
     cleanAccount() {
         try {
