@@ -40,17 +40,21 @@ class DirtyManager {
                     <div class="dirty-card">
                         <div class="dirty-icon"><i class="fa-solid fa-bath"></i></div>
                         <div>
-                            <h2 class="dirty-message">App sporca!</h2>
-                            <h1 class="dirty-message">Non hai effettuato l'accesso per più di 7 giorni.</h1>
+                            <h2 class="dirty-message"></h2>
+                            <h1 class="dirty-message">App sporca! <br> Non hai effettuato l'accesso per più di 7 giorni.</h1>
                         </div>
                     </div>
                     <button id="clean-btn" class="clean-button">Pulisci</button>
+                    <button id="dirty-close-btn" class="dirty-close-btn" title="Chiudi">×</button>
                 </div>
             `;
             document.body.insertAdjacentHTML('afterbegin', bannerHTML);
             this.banner = document.getElementById('dirty-banner');
             this.cleanBtn = document.getElementById('clean-btn');
+            this.closeBtn = document.getElementById('dirty-close-btn');
+            
             this.cleanBtn.addEventListener('click', () => this.showLoadingOverlay());
+            this.closeBtn.addEventListener('click', () => this.closeBanner());
         }
     }
 
@@ -188,6 +192,12 @@ class DirtyManager {
             this.overlay.classList.add('hidden');
         }
 
+        if (this.banner) {
+            this.banner.classList.add('hidden');
+        }
+    }
+
+    closeBanner() {
         if (this.banner) {
             this.banner.classList.add('hidden');
         }

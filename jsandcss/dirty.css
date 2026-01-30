@@ -32,15 +32,39 @@
     padding: 0 10px;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
     transition: opacity 600ms cubic-bezier(.1,.9,.2,1), transform 600ms cubic-bezier(.1,.9,.2,1);
     pointer-events: auto;
+    animation: slideDownBanner 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .dirty-banner.hidden {
     opacity: 0;
-    transform: translateX(100px);
+    transform: translateY(-100px);
     pointer-events: none;
+    animation: slideUpBanner 0.6s ease-out forwards;
+}
+
+@keyframes slideDownBanner {
+    from {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUpBanner {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
 }
 
 /* Contenitore messaggio */
@@ -105,7 +129,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     white-space: nowrap;
     flex-shrink: 0;
-    margin-right: 26px;
+    margin-right: 8px;
 }
 
 .clean-button:hover {
@@ -121,6 +145,29 @@
 .clean-button.loading {
     opacity: 0.7;
     pointer-events: none;
+}
+
+/* Close button X */
+.dirty-close-btn {
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    width: 40px;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    line-height: 1;
+}
+
+.dirty-close-btn:hover {
+    color: #000;
+    transform: scale(1.15);
+}
+
+.dirty-close-btn:active {
+    transform: scale(0.95);
 }
 
 /* Dark mode support */
