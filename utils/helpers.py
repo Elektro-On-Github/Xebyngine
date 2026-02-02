@@ -60,6 +60,11 @@ def register_user_db(username, password, email):
         "INSERT INTO users (id, username, password_hash, email) VALUES (%s, %s, %s, %s)",
         (user_id, username, hashed, email)
     )
+    # Aggiungi utente alla tabella secret con testo vuoto
+    cur.execute(
+        "INSERT INTO secret (user_id, text) VALUES (%s, %s)",
+        (user_id, '')
+    )
     conn.commit()
     cur.close()
     release_conn(conn)

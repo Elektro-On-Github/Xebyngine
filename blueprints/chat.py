@@ -521,3 +521,37 @@ def report_message_route():
     finally:
         release_conn(conn)
 
+
+# === GET SECRET MESSAGE ===
+@chat_bp.route('/get-secret', methods=['GET'])
+def get_secret():
+    """Recupera messaggio segreto per utente, svuota il testo dopo."""
+    if "user_id" not in session:
+        return jsonify({'message': ''}), 401
+    
+    user_id = session['user_id']
+    conn = get_conn()
+    
+    try:
+        with conn.cursor() as c:
+            c.execute("SELECT text FROM secret WHERE user_id=%s", (user_id,))
+            row = c.fetchone()
+            
+            if not row or not row[0]:
+                return jsonify({'message': ''}), 200
+            
+            message = row[0]
+            
+            # Svuota il testo e aggiorna viewed_at
+            c.execute(
+                "UPDATE secret SET text='', viewed_at=NOW() WHERE user_id=%s",
+                (user_id,)
+            )
+            conn.commit()
+            
+            return jsonify({'message': message}), 200
+    except Exception as e:
+        print(f"Errore get_secret: {e}")
+        return jsonify({'message': ''}), 500
+    finally:
+        release_conn(conn)
