@@ -109,6 +109,32 @@ def ensure_report_table():
         if conn:
             release_conn(conn)
 
+def ensure_e2ee_table():
+    """Crea tabella E2EE se non esiste."""
+    conn = None
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        # Tabella chiavi pubbliche
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS e2ee_keys (
+                user_id VARCHAR(32) PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                public_key TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        # Aggiungi colonna is_encrypted a messages se non esiste
+        cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS is_encrypted BOOLEAN DEFAULT FALSE")
+        conn.commit()
+        cur.close()
+    except Exception:
+        import sys
+        print("Warning: could not ensure e2ee table exists", file=sys.stderr)
+    finally:
+        if conn:
+            release_conn(conn)
+
 # ============================================================================
 # POST QUERIES
 # ============================================================================

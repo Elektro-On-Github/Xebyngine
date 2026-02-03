@@ -261,7 +261,18 @@ CREATE TABLE secret (
 ----------------------------------------------------------
 ----------------------------------------------------------
 
+-- =====================================================
+-- E2EE - CHIAVI PUBBLICHE UTENTI
+-- =====================================================
+CREATE TABLE IF NOT EXISTS e2ee_keys (
+    user_id VARCHAR(32) PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    public_key TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
+-- Modifica tabella messages per supportare E2EE
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS is_encrypted BOOLEAN DEFAULT FALSE;
 
 -- =====================================================
 -- INDICI UTILI

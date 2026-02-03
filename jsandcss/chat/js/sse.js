@@ -16,7 +16,7 @@ function initializeSSE() {
 }
 
 function setupSSEEventListeners(evtSource) {
-    evtSource.addEventListener('message', e => {
+    evtSource.addEventListener('message', async e => {
         try {
             const data = JSON.parse(e.data);
             const senderId = String(data.sender);
@@ -29,7 +29,17 @@ function setupSSEEventListeners(evtSource) {
                 if (data.message_type === 'post_share') {
                     appendPostShareMessage(data.sender, data.content, pinnedUser?.avatar_url || DEFAULT_AVATAR);
                 } else {
-                    appendMessage(data.sender, data.content, pinnedUser?.avatar_url || DEFAULT_AVATAR);
+                    // Decritto il messaggio se è crittografato E2EE
+                    let messageContent = data.content;
+                    if (data.is_encrypted && E2EE && E2EE.initialized && E2EE.myPrivateKey) {
+                        try {
+                            messageContent = await E2EE.decryptMessage(data.content);
+                        } catch (err) {
+                            console.error('Errore decrittografia SSE:', err);
+                            messageContent = '[Errore decrittografia]';
+                        }
+                    }
+                    appendMessage(data.sender, messageContent, pinnedUser?.avatar_url || DEFAULT_AVATAR);
                 }
                 markChatAsRead(data.sender);
                 return;
@@ -37,6 +47,18 @@ function setupSSEEventListeners(evtSource) {
             
             const now = new Date().toISOString();
             let previewText = data.content;
+            
+            // Decritto il preview se è crittografato
+            if (data.is_encrypted && E2EE && E2EE.initialized && E2EE.myPrivateKey) {
+                try {
+                    previewText = await E2EE.decryptMessage(data.content);
+                    if (previewText.length > 50) {
+                        previewText = previewText.substring(0, 50) + '...';
+                    }
+                } catch (err) {
+                    previewText = '[Messaggio crittografato]';
+                }
+            }
             
             if (data.message_type === 'post_share') {
                 try {

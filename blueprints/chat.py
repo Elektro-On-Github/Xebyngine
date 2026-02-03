@@ -144,7 +144,7 @@ def chat_history(other_user_id):
     try:
         with conn.cursor() as c:
             c.execute("""
-                SELECT id, sender_id, content, message_type FROM messages
+                SELECT id, sender_id, content, message_type, COALESCE(is_encrypted, FALSE) FROM messages
                 WHERE (sender_id=%s AND receiver_id=%s) OR (sender_id=%s AND receiver_id=%s)
                 ORDER BY created_at ASC
             """, (my_id, other_user_id, other_user_id, my_id))
@@ -160,7 +160,7 @@ def chat_history(other_user_id):
     avatar_rows.setdefault(other_user_id, default)
 
     html_parts = []
-    for msg_id, sid, content, message_type in rows:
+    for msg_id, sid, content, message_type, is_encrypted in rows:
         is_mine = sid == my_id
         avatar = avatar_rows.get(sid)
         
@@ -192,10 +192,11 @@ def chat_history(other_user_id):
                 )
         else:
             # Messaggio di testo normale
+            lock_icon = ' 🔒' if is_encrypted else ''
             html_parts.append(
                 f'<div class="message {"me" if is_mine else "other"}" data-message-id="{msg_id}" data-sender-id="{sid}" data-recipient-id="{other_user_id}">'
                 f'{"" if is_mine else f"<img class=\"message-avatar\" src=\"{avatar}\" alt=\"\">"}'
-                f'<span>{escape(content or "")}</span></div>'
+                f'<span>{escape(content or "")}{lock_icon}</span></div>'
             )
     
     return "".join(html_parts)
@@ -268,6 +269,7 @@ def send_message():
     send_to_user(receiver, 'message', {
         'sender': sender,
         'content': content,
+        'is_encrypted': False,
         'avatar': get_avatar_url(row[0] if row else None)
     })
 
@@ -358,6 +360,7 @@ def share_post():
         'sender': sender,
         'content': message_content,
         'message_type': 'post_share',
+        'is_encrypted': False,
         'avatar': get_avatar_url(row[0] if row else None)
     })
     
