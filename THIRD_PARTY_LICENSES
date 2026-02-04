@@ -1,0 +1,71 @@
+# Third-Party Licenses
+
+This project makes use of third-party open source libraries.
+Each library is distributed under its own license.
+All copyrights remain with their respective authors.
+
+The inclusion of these components does not grant any rights to this
+project's source code beyond those explicitly stated in this repository.
+
+---
+
+## Flask
+License: BSD 3-Clause License  
+Copyright © Pallets Projects
+
+---
+
+## Werkzeug
+License: BSD 3-Clause License  
+Copyright © Pallets Projects
+
+---
+
+## psycopg2
+License: GNU LGPL v3 with exceptions  
+Copyright © The Psycopg Team
+
+This project uses psycopg2 as an unmodified library.
+No changes have been made to the original source code.
+
+---
+
+## Pillow
+License: HPND / PIL Software License  
+Copyright © 1997–2011 Secret Labs AB  
+Copyright © 1995–2011 Fredrik Lundh and contributors  
+Copyright © 2010 by Jeffrey A. Clark and contributors
+
+---
+
+## qrcode
+License: BSD License  
+Copyright © Lincoln Loop
+
+---
+
+## Pillow-avif-plugin
+License: MIT License  
+Copyright © Pillow Contributors
+
+---
+
+## cryptography
+License: Apache License 2.0 / BSD License  
+Copyright © The cryptography Developers
+
+This product includes software developed by the cryptography project.
+See the NOTICE file distributed with cryptography for additional information.
+See licenses/LICENSE-APACHE-2.0.txt and licenses/LICENSE.BSD for full license texts
+
+---
+
+## Flask-SocketIO
+License: MIT License  
+Copyright © Miguel Grinberg
+
+---
+
+## APScheduler
+License: MIT License  
+Copyright © Alex Grönholm
