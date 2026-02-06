@@ -192,7 +192,7 @@
                 <div class="posts-list">
                     ${posts.slice(0, 20).map(p => `
                         <div class="post-result" data-post-id="${p.id}" data-full-content="${escapeHtml(p.content || '')}">
-                            <div class="post-title">${p.title || p.content?.substring(0, 30) || `Post ${p.id}`}</div>
+                            <div class="post-title">${escapeHtml(p.title || p.content?.substring(0, 30) || `Post ${p.id}`)}</div>
                         </div>
                     `).join('')}
                 </div>
