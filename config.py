@@ -17,7 +17,7 @@ SESSION_COOKIE_SECURE = False  # True HTTPS
 # ============================================================================
 
 DB_CONFIG = {
-    'dbname': 'moment2',
+    'dbname': 'moment4',
     'user': 'postgres',
     'password': 'elektro',
     'host': 'localhost',
@@ -109,5 +109,5 @@ HSTS_HEADER = 'max-age=31536000; includeSubDomains'
 # ============================================================================
 
 DEBUG = True
-HOST = "0.0.0.0"
+HOST = "127.0.0.1"
 PORT = 5000

@@ -118,7 +118,7 @@ def ensure_e2ee_table():
         # Tabella chiavi pubbliche
         cur.execute("""
             CREATE TABLE IF NOT EXISTS e2ee_keys (
-                user_id VARCHAR(32) PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
                 public_key TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

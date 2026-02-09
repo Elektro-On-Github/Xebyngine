@@ -37,6 +37,13 @@ const E2EE = {
             if (hasKeys) {
                 console.log('🔑 Chiavi trovate nel browser');
                 await this.loadStoredKeys();
+                if (this.myPublicKey) {
+                    try {
+                        await this.sendPublicKeyToServer(this.myPublicKey);
+                    } catch (error) {
+                        console.warn('⚠ Impossibile sincronizzare la chiave pubblica:', error);
+                    }
+                }
             } else {
                 console.log('🆕 Generando nuove chiavi...');
                 await this.generateAndSaveKeys();
@@ -404,7 +411,17 @@ const E2EE = {
      * Importa una chiave pubblica PEM
      */
     async importPublicKey(pem) {
-        const binaryString = atob(pem.split('\n').slice(1, -2).join(''));
+        const base64Body = pem
+            .replace(/-----BEGIN PUBLIC KEY-----/g, '')
+            .replace(/-----END PUBLIC KEY-----/g, '')
+            .replace(/\s+/g, '')
+            .trim();
+
+        if (!base64Body) {
+            throw new Error('Chiave pubblica non valida');
+        }
+
+        const binaryString = atob(base64Body);
         const bytes = new Uint8Array(binaryString.length);
         for (let i = 0; i < binaryString.length; i++) {
             bytes[i] = binaryString.charCodeAt(i);
@@ -426,7 +443,17 @@ const E2EE = {
      * Importa una chiave privata PEM
      */
     async importPrivateKey(pem) {
-        const binaryString = atob(pem.split('\n').slice(1, -2).join(''));
+        const base64Body = pem
+            .replace(/-----BEGIN PRIVATE KEY-----/g, '')
+            .replace(/-----END PRIVATE KEY-----/g, '')
+            .replace(/\s+/g, '')
+            .trim();
+
+        if (!base64Body) {
+            throw new Error('Chiave privata non valida');
+        }
+
+        const binaryString = atob(base64Body);
         const bytes = new Uint8Array(binaryString.length);
         for (let i = 0; i < binaryString.length; i++) {
             bytes[i] = binaryString.charCodeAt(i);
