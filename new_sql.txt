@@ -1,0 +1,244 @@
+-- DATABASE XEBYNGINE (PostgreSQL) --
+
+
+-- =====================================================
+-- UTENTI
+-- =====================================================
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY,
+    username VARCHAR(32) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =====================================================
+-- PROFILO UTENTE
+-- =====================================================
+CREATE TABLE IF NOT EXISTS profile (
+    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    bio VARCHAR(2000),
+    avatar_path VARCHAR(4096),
+    social_links VARCHAR(256)[],  -- array con max 8 link
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =====================================================
+-- POST
+-- =====================================================
+CREATE TABLE IF NOT EXISTS posts (
+    id SERIAL PRIMARY KEY,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    content VARCHAR(8192) NOT NULL,
+    image_path VARCHAR(4096),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at BIGINT NOT NULL  -- timestamp epoch
+);
+
+-- =====================================================
+-- LIKES SUI POST
+-- =====================================================
+CREATE TABLE IF NOT EXISTS likes (
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    post_id INT REFERENCES posts(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, post_id)
+);
+
+-- =====================================================
+-- COMMENTI
+-- =====================================================
+CREATE TABLE IF NOT EXISTS comments (
+    id SERIAL PRIMARY KEY,
+    post_id INT REFERENCES posts(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    content VARCHAR(8192) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =====================================================
+-- LIKE SUI COMMENTI
+-- =====================================================
+CREATE TABLE IF NOT EXISTS comment_likes (
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    comment_id INT REFERENCES comments(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, comment_id)
+);
+
+-- =====================================================
+-- LISTA PIN (utenti che metti in lista)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS pins (
+    owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    pinned_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (owner_id, pinned_id)
+);
+
+-- ========================================================
+-- Messaggi
+-- ========================================================
+CREATE TABLE IF NOT EXISTS messages (
+    id SERIAL PRIMARY KEY,
+    sender_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    receiver_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content VARCHAR(65536) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    message_type VARCHAR(20) NOT NULL DEFAULT 'text',
+    is_encrypted BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- /// se qualcosa non va con "is_read" fai cosi:
+-- ALTER TABLE messages
+-- ALTER COLUMN is_read TYPE boolean
+-- USING (is_read::boolean);
+
+-- /// lo passa a booleano in parole povere
+
+-- /// se non va il message_type fai cosi:
+-- ALTER TABLE messages
+-- ADD COLUMN message_type VARCHAR(20);
+
+-- ========================================================
+-- voti sondaggi e sondaggi stuff
+-- ========================================================
+
+-- Tabella dei sondaggi
+CREATE TABLE IF NOT EXISTS polls (
+    id SERIAL PRIMARY KEY,
+    post_id INT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    question TEXT NOT NULL
+);
+
+-- Tabella delle opzioni del sondaggio
+CREATE TABLE IF NOT EXISTS poll_options (
+    id SERIAL PRIMARY KEY,
+    poll_id INT NOT NULL REFERENCES polls(id) ON DELETE CASCADE,
+    option_index INT NOT NULL,
+    option_text TEXT NOT NULL,
+    UNIQUE (poll_id, option_index)
+);
+
+-- Tabella dei voti
+CREATE TABLE IF NOT EXISTS poll_votes (
+    id SERIAL PRIMARY KEY,
+    post_id INT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    option_index INT NOT NULL,
+    UNIQUE(post_id, user_id)  -- evita doppio voto
+);
+
+-- ----------------------------------------------------------
+-- Serve a eliminare i post scaduti con sondaggi o altro! e' importantissimo!!!
+-- ----------------------------------------------------------
+
+-- poll_votes → poll_options
+-- poll_options → polls
+-- polls → posts
+
+-- ----------------------------------------------------------
+-- ----------------------------------------------------------
+-- ----------------------------------------------------------
+
+-- USERNAME SEARCHBOX -- CRONO + AVATAR
+CREATE TABLE IF NOT EXISTS crono (
+    id BIGSERIAL PRIMARY KEY,
+    owner_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    username TEXT NOT NULL,
+    avatar_path TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (owner_id, username)
+);
+
+-- ----------------------------------
+
+-- VIEWS 4EVERYONE
+CREATE TABLE IF NOT EXISTS post_views (
+    id BIGSERIAL PRIMARY KEY,
+    viewer_token TEXT NOT NULL,
+    post_id INT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (viewer_token, post_id)
+);
+
+-- /// VISUALIZZATO - MESSAGE TIME STUFF (VIEWS, DOT, SOCIAL ANXIETY STUFF)
+CREATE TABLE IF NOT EXISTS conversations (
+    id BIGSERIAL PRIMARY KEY,
+    user_a UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_b UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    last_message TEXT,
+    last_at TIMESTAMPTZ,
+    unread_for_a INT DEFAULT 0,
+    unread_for_b INT DEFAULT 0,
+    user_min UUID GENERATED ALWAYS AS (LEAST(user_a, user_b)) STORED,
+    user_max UUID GENERATED ALWAYS AS (GREATEST(user_a, user_b)) STORED,
+    UNIQUE (user_min, user_max)
+);
+
+-- /// DIRTY OVERLAY
+CREATE TABLE IF NOT EXISTS dirty (
+    id BIGSERIAL PRIMARY KEY,
+    user_id UUID UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    status VARCHAR(3) DEFAULT 'no' CHECK(status IN ('yes', 'no')),
+    last_activity TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- =====================================================
+-- SEGNALAZIONI MESSAGGI
+-- =====================================================
+CREATE TABLE IF NOT EXISTS report (
+    id BIGSERIAL PRIMARY KEY,
+    reporter_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reporter_username VARCHAR(32) NOT NULL,
+    recipient_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    recipient_username VARCHAR(32) NOT NULL,
+    message_id INT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+    message_content VARCHAR(65536),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ----------------------------------------------------------
+-- ----------------------------------------------------------
+-- ----------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS secret (
+    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    text VARCHAR(1024) DEFAULT '',
+    viewed_at TIMESTAMP
+);
+
+-- ----------------------------------------------------------
+-- ----------------------------------------------------------
+-- ----------------------------------------------------------
+
+-- =====================================================
+-- E2EE - CHIAVI PUBBLICHE UTENTI
+-- =====================================================
+CREATE TABLE IF NOT EXISTS e2ee_keys (
+    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    public_key TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Modifica tabella messages per supportare E2EE
+-- (gia' incluso in messages.is_encrypted)
+
+-- =====================================================
+-- INDICI UTILI
+-- =====================================================
+CREATE INDEX IF NOT EXISTS idx_posts_user ON posts(user_id);
+CREATE INDEX IF NOT EXISTS idx_comments_post ON comments(post_id);
+CREATE INDEX IF NOT EXISTS idx_likes_post ON likes(post_id);
+CREATE INDEX IF NOT EXISTS idx_comment_likes_comment ON comment_likes(comment_id);
+CREATE INDEX IF NOT EXISTS idx_pins_owner ON pins(owner_id);
+CREATE INDEX IF NOT EXISTS crono_owner_created_idx ON crono (owner_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS post_views_post_idx ON post_views (post_id);
+CREATE INDEX IF NOT EXISTS report_reporter_idx ON report (reporter_id);
+CREATE INDEX IF NOT EXISTS report_recipient_idx ON report (recipient_id);
+CREATE INDEX IF NOT EXISTS report_created_idx ON report (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_dirty_user_id ON dirty(user_id);
+CREATE INDEX IF NOT EXISTS idx_dirty_status ON dirty(status);
+CREATE INDEX IF NOT EXISTS idx_dirty_last_activity ON dirty(last_activity);
