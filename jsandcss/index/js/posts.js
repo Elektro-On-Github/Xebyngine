@@ -183,7 +183,7 @@ const renderPostActions = (p) => `
 `;
 
 const renderCommentForm = (p) => `
-    <form class="comment-form" data-post-id="${p.id}" style="position:sticky;bottom:76px;z-index:50;padding:12px 12px;display:flex;align-items:center;gap:8px;border-radius:22px;">
+    <form class="comment-form" data-post-id="${p.id}" style="position:sticky;bottom:86px;z-index:50;padding:12px 12px;display:flex;align-items:center;gap:8px;border-radius:22px;">
         <input class="comment-input" type="text" name="content" placeholder="Commenta qui..." required style="flex:1;">
         <button class="comment-send-btn" type="submit" title="Commenta"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
