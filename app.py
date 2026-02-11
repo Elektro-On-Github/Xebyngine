@@ -71,7 +71,27 @@ def uploaded_avatar(filename):
 @app.route('/uploads/avif/<path:filename>')
 def uploaded_file(filename):
     safe_name = os.path.basename(filename)
-    return send_from_directory(config.UPLOAD_FOLDER, safe_name)
+    ext = os.path.splitext(safe_name)[1].lower()
+    
+    # Valida estensione: solo immagini permesse
+    valid_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.tiff', '.avif'}
+    if ext not in valid_extensions:
+        return "Invalid file type", 404
+    
+    # Prova il file con estensione originale
+    file_path = os.path.join(config.UPLOAD_FOLDER, safe_name)
+    if os.path.isfile(file_path):
+        return send_from_directory(config.UPLOAD_FOLDER, safe_name)
+    
+    # Se non esiste, prova con estensione .avif (file convertito)
+    name_without_ext = os.path.splitext(safe_name)[0]
+    avif_name = name_without_ext + ".avif"
+    avif_path = os.path.join(config.UPLOAD_FOLDER, avif_name)
+    if os.path.isfile(avif_path):
+        return send_from_directory(config.UPLOAD_FOLDER, avif_name, mimetype='image/avif')
+    
+    # Se non trovato, return 404
+    return "File not found", 404
 
 @app.route('/uploads/videos/<path:filename>')
 def uploaded_video(filename):
@@ -143,20 +163,47 @@ def public_stuff_ico2():
     return send_from_directory(os.getcwd(), 'public_stuff/icon-512.png')
 
 
-# runna avif
-from utils.avif import process_one
-process_one()  # esegui una volta all'avvio
+# ============================================================================
+# BACKGROUND JOBS
+# ============================================================================
 
-
-# clean expired posts periodically
+# Import processing workers
+from utils.moderation import process_one as mod_process_one
+from utils.avif import process_one as avif_process_one
 from utils.db import auto_cleanup_expired_posts
+
+# Start scheduler with multiple jobs
 scheduler = BackgroundScheduler()
+
+# Moderation pipeline: continuous scanning of uploads/moderation/raw/
+scheduler.add_job(
+    func=mod_process_one,
+    trigger='interval',
+    seconds=1,
+    id='moderation_job',
+    name='Moderation Pipeline'
+)
+
+# AVIF conversion pipeline: continuous scanning of uploads/raw/
+scheduler.add_job(
+    func=avif_process_one,
+    trigger='interval',
+    seconds=1,
+    id='avif_job',
+    name='AVIF Conversion'
+)
+
+# Cleanup expired posts periodically
 scheduler.add_job(
     func=auto_cleanup_expired_posts,
     trigger='interval',
-    minutes=1
+    minutes=1,
+    id='cleanup_job',
+    name='Expired Posts Cleanup'
 )
+
 scheduler.start()
+
 # ============================================================================
 # SERVER START
 # ============================================================================

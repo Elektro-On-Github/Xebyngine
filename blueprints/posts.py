@@ -56,18 +56,21 @@ def create_post():
         if not file:
             continue
         
-        # Prova a caricare come immagine
+        # Tutti i file (foto e video) vanno in moderation/raw
         if validate_image_file(file):
-            new_filename = generate_filename(session["user_id"], "avif")
-            os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
-            file.save(os.path.join(config.UPLOAD_FOLDER, new_filename))
+            ext = file.filename.rsplit('.', 1)[1].lower()
+            new_filename = generate_filename(session["user_id"], ext)
+            mod_raw = "uploads/moderation/raw"
+            os.makedirs(mod_raw, exist_ok=True)
+            file.save(os.path.join(mod_raw, new_filename))
             media.append({'path': new_filename, 'type': 'photo'})
         # Altrimenti prova come video
         elif validate_video_file(file):
             ext = file.filename.rsplit('.', 1)[1].lower()
             new_filename = generate_filename(session["user_id"], ext)
-            os.makedirs(config.VIDEO_FOLDER, exist_ok=True)
-            file.save(os.path.join(config.VIDEO_FOLDER, new_filename))
+            mod_raw = "uploads/moderation/raw"
+            os.makedirs(mod_raw, exist_ok=True)
+            file.save(os.path.join(mod_raw, new_filename))
             media.append({'path': new_filename, 'type': 'video'})
     
     image_path = json.dumps(media) if media else None
