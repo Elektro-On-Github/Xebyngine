@@ -139,6 +139,10 @@ const renderPostMenu = (p) => `
             <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
         <div class="post-menu-popup" style="display:none;">
+            <button onclick="openShareModal(${p.id})" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;border:none;background:none;text-align:left;cursor:pointer;color:#222;">
+                <i class="fa-solid fa-share" style="font-size:16px; color: #757575;"></i>
+                Condividi
+            </button>
             <button class="post-delete-btn" data-post-id="${p.id}" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;border:none;background:none;text-align:left;cursor:pointer;color:#e53935;">
                 <i class="fa-solid fa-trash-can" style="font-size:16px; color: #e53935;"></i>
                 Elimina post
@@ -321,7 +325,7 @@ const setupCommentEvents = (div, p) => {
 const hideMenuForNonOwner = (div, p) => {
     const loggedUser = window.LOGGED_USERNAME;
     if (!loggedUser || loggedUser !== p.username) {
-        const menu = div.querySelector('.post-menu');
-        if (menu) menu.style.display = 'none';
+        const deleteBtn = div.querySelector('.post-delete-btn');
+        if (deleteBtn) deleteBtn.style.display = 'none';
     }
 };
