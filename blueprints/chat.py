@@ -192,11 +192,10 @@ def chat_history(other_user_id):
                 )
         else:
             # Messaggio di testo normale
-            lock_icon = ' 🔒' if is_encrypted else ''
             html_parts.append(
                 f'<div class="message {"me" if is_mine else "other"}" data-message-id="{msg_id}" data-sender-id="{sid}" data-recipient-id="{other_user_id}">'
                 f'{"" if is_mine else f"<img class=\"message-avatar\" src=\"{avatar}\" alt=\"\">"}'
-                f'<span>{escape(content or "")}{lock_icon}</span></div>'
+                f'<span>{escape(content or "")}</span></div>'
             )
     
     return "".join(html_parts)
@@ -459,7 +458,7 @@ def get_chat_users_json():
                 SELECT u.id, u.username, p.avatar_path
                 FROM users u
                 LEFT JOIN profile p ON p.user_id = u.id
-                WHERE u.id = ANY(%s)
+                WHERE u.id = ANY(%s::uuid[])
                 ORDER BY u.username
             """, (user_ids,))
             

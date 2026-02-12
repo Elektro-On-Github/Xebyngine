@@ -194,7 +194,7 @@ def get_conversation_history(user_a, user_b, limit=50):
     try:
         with conn.cursor() as c:
             c.execute("""
-                SELECT id, sender_id, content, created_at, is_encrypted
+                SELECT id, sender_id, content, created_at, is_encrypted, message_type
                 FROM messages
                 WHERE (sender_id=%s AND receiver_id=%s) OR (sender_id=%s AND receiver_id=%s)
                 ORDER BY created_at DESC
@@ -203,13 +203,14 @@ def get_conversation_history(user_a, user_b, limit=50):
             rows = c.fetchall()
             
             messages = []
-            for msg_id, sender_id, content, created_at, is_encrypted in rows:
+            for msg_id, sender_id, content, created_at, is_encrypted, message_type in rows:
                 messages.append({
                     'id': msg_id,
                     'sender_id': sender_id,
                     'content': content,
                     'created_at': created_at.isoformat() if created_at else None,
-                    'is_encrypted': is_encrypted
+                    'is_encrypted': is_encrypted,
+                    'message_type': message_type
                 })
             
             return messages[::-1]  # Ordine cronologico

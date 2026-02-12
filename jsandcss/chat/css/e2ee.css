@@ -1,28 +1,5 @@
 /* E2EE Chat Styling */
 
-/* Indicatore lock nei messaggi */
-.message span[title*="crittografato"] {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-/* Contenitore messaggio con E2EE */
-.message > div:has(> span:last-child) {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-/* Lock icon negli input E2EE */
-.e2ee-lock-indicator {
-    display: inline-block;
-    font-size: 0.8em;
-    opacity: 0.7;
-    margin-left: 4px;
-    vertical-align: text-bottom;
-}
-
 /* Input container con indicatore E2EE */
 #input-container.e2ee-enabled {
     border: 1px solid #4caf50;
@@ -30,12 +7,7 @@
 }
 
 #input-container.e2ee-enabled::after {
-    content: '🔒 Crittografato';
-    display: block;
-    font-size: 0.75em;
-    color: #4caf50;
-    padding: 4px 8px;
-    text-align: center;
+    display: none;
 }
 
 /* Stato di caricamento crittografia */
@@ -59,22 +31,11 @@
     to { transform: rotate(360deg); }
 }
 
-/* Messaggi crittografati - visualizzazione */
+/* Messaggi crittografati - nessuno stile visivo speciale */
 .message-encrypted {
-    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
-    border-left: 3px solid #4caf50;
 }
 
 .message-encrypted.me {
-    background: linear-gradient(135deg, #c8e6c9 0%, #dcedc8 100%);
-}
-
-/* Icona di successo E2EE */
-.e2ee-success {
-    display: inline-block;
-    color: #4caf50;
-    font-size: 0.9em;
-    margin-left: 4px;
 }
 
 /* Stato di errore E2EE */
@@ -124,20 +85,7 @@
     font-size: 0.9em;
 }
 
-/* Header chat con indicatore E2EE */
+/* Header chat con indicatore E2EE - nascosto */
 .chat-header-e2ee-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.8em;
-    color: #4caf50;
-    margin-left: 8px;
-}
-
-.chat-header-e2ee-status.pending {
-    color: #ff9800;
-}
-
-.chat-header-e2ee-status.error {
-    color: #f44336;
+    display: none;
 }

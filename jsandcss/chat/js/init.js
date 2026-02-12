@@ -15,7 +15,7 @@ async function initializeChat() {
         z-index: 9999;
         font-family: monospace;
     `;
-    loadingDiv.innerHTML = '🔐 Caricamento chiavi E2EE...';
+    loadingDiv.innerHTML = 'Caricamento...';
     document.body.appendChild(loadingDiv);
     
     // Aspetta che E2EE sia inizializzato prima di procedere

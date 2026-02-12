@@ -108,7 +108,7 @@ const E2EEChat = {
     },
     
     /**
-     * Append messaggio crittografato con indicatore 🔒
+     * Append messaggio crittografato con indicatore
      */
     appendEncryptedMessage(sender, plainText, isMine = false) {
         const empty = ChatConfig.elements.chatContainer.querySelector('.empty-chat');
@@ -124,24 +124,9 @@ const E2EEChat = {
             msg.appendChild(img);
         }
         
-        const container = document.createElement('div');
-        container.style.display = 'flex';
-        container.style.alignItems = 'center';
-        container.style.gap = '6px';
-        
         const span = document.createElement('span');
         span.textContent = plainText;
-        container.appendChild(span);
-        
-        // Indicatore E2EE
-        const lockIcon = document.createElement('span');
-        lockIcon.innerHTML = '🔒';
-        lockIcon.title = 'Messaggio crittografato end-to-end';
-        lockIcon.style.fontSize = '0.8em';
-        lockIcon.style.opacity = '0.7';
-        container.appendChild(lockIcon);
-        
-        msg.appendChild(container);
+        msg.appendChild(span);
         
         ChatConfig.elements.chatContainer.appendChild(msg);
         ChatConfig.elements.chatContainer.scrollTop = ChatConfig.elements.chatContainer.scrollHeight;
@@ -223,7 +208,11 @@ const E2EEChat = {
                         
                         const avatar = !isMine ? ChatConfig.activeChatAvatar : null;
                         
-                        E2EEChat.appendEncryptedMessage(msg.sender_id, plainText, isMine);
+                        if (msg.message_type === 'post_share') {
+                            appendPostShareMessage(msg.sender_id, plainText, avatar);
+                        } else {
+                            E2EEChat.appendEncryptedMessage(msg.sender_id, plainText, isMine);
+                        }
                     } catch (error) {
                         console.error('Errore elaborazione messaggio:', error);
                         // Mostra un placeholder se qualcosa fallisce
