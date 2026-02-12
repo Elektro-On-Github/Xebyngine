@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="/jsandcss/my_pins/css/list.css">
     <link rel="stylesheet" href="/jsandcss/my_pins/css/modal.css">
     <link rel="stylesheet" href="/jsandcss/my_pins/css/navbar.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/modals.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/profile.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/components.css">
+    <link rel="stylesheet" href="/jsandcss/index/css/dinamico.css">
     <link rel="stylesheet" href="/jsandcss/my_pins/css/search.css">
     <link rel="stylesheet" href="/jsandcss/notify.css">
 </head>
@@ -95,13 +99,36 @@
     <i class="fa-solid fa-magnifying-glass"></i>
 </button>
 
+<div id="search-overlay">
+    <div class="overlay-panel" id="search-overlay-panel">
+        <div style="display:flex; align-items:center; gap:8px; padding:12px;">
+            <button class="back-btn-search" id="close-search-overlay" style="background:none;border:none;color:rgba(144, 16, 16, 1);font-size:1.3em;cursor:pointer;width:40px;height:40px;border-radius: 50px;"><i class="fa-solid fa-arrow-left"></i></button>
+            <div style="position:relative; flex:1;">
+                <input id="overlay-search-input" class="comment-input" type="text" placeholder="Cerca post e utenti">
+                <button id="overlay-clear-btn" type="button" title="Annulla" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:6px;">
+                    <i class="fa-solid fa-xmark" style="color:#000000; font-size:18px;"></i>
+                </button>
+            </div>
+            <button id="overlay-send-btn" type="button" class="comment-send-btn" title="Cerca">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+        <div style="padding:12px; overflow:auto; flex:1;">
+            <div id="overlay-results"></div>
+            <div id="overlay-history"></div>
+        </div>
+    </div>
+</div>
+
 <script src="/jsandcss/csrf.js"></script>
 <script src="/jsandcss/dirty.js"></script>
 <script src="/jsandcss/notify.js"></script>
 <script src="/jsandcss/my_pins/js/config.js"></script>
 <script src="/jsandcss/my_pins/js/animations.js"></script>
 <script src="/jsandcss/my_pins/js/modal.js"></script>
+<script src="/jsandcss/index/js/utils.js"></script>
 <script src="/jsandcss/my_pins/js/search.js"></script>
+<script src="/jsandcss/index/js/search.js"></script>
 <script src="/jsandcss/my_pins/js/init.js"></script>
 <script src="/jsandcss/darkness.js"></script>
 <script src="/service-worker.js"></script>

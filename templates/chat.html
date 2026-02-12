@@ -15,7 +15,14 @@
 <link rel="stylesheet" href="/jsandcss/chat/css/components.css">
 <link rel="stylesheet" href="/jsandcss/chat/css/responsive.css">
 <link rel="stylesheet" href="/jsandcss/chat/css/e2ee.css">
+<link rel="stylesheet" href="/jsandcss/index/css/modals.css">
+<link rel="stylesheet" href="/jsandcss/index/css/profile.css">
+<link rel="stylesheet" href="/jsandcss/index/css/components.css">
+<link rel="stylesheet" href="/jsandcss/index/css/dinamico.css">
 <link rel="stylesheet" href="/jsandcss/notify.css">
+<style>
+#search-overlay { z-index: 12000; }
+</style>
 </head>
 <body>
 
@@ -86,7 +93,7 @@
 
 <!-- Navbar -->
 <nav class="navbar">
-    <form action="/" style="margin:0;">
+    <form action="/user/{{ username }}" style="margin:0;">
         <button class="nav-btn" title="Profilo"><i class="fa-solid fa-user"></i></button>
     </form>
     <form action="/my_pins" style="margin:0;">
@@ -100,6 +107,31 @@
     </form>
 </nav>
 
+<button id="open-search-overlay" title="Cerca" class="navbar-search">
+    <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+
+<div id="search-overlay">
+    <div class="overlay-panel" id="search-overlay-panel">
+        <div style="display:flex; align-items:center; gap:8px; padding:12px;">
+            <button class="back-btn-search" id="close-search-overlay" style="background:none;border:none;color:rgba(144, 16, 16, 1);font-size:1.3em;cursor:pointer;width:40px;height:40px;border-radius: 50px;"><i class="fa-solid fa-arrow-left"></i></button>
+            <div style="position:relative; flex:1;">
+                <input id="overlay-search-input" class="comment-input" type="text" placeholder="Cerca post e utenti">
+                <button id="overlay-clear-btn" type="button" title="Annulla" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:6px;">
+                    <i class="fa-solid fa-xmark" style="color:#000000; font-size:18px;"></i>
+                </button>
+            </div>
+            <button id="overlay-send-btn" type="button" class="comment-send-btn" title="Cerca">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+        <div style="padding:12px; overflow:auto; flex:1;">
+            <div id="overlay-results"></div>
+            <div id="overlay-history"></div>
+        </div>
+    </div>
+</div>
+
 <script src="/jsandcss/csrf.js"></script>
 <script src="/jsandcss/dirty.js"></script>
 <script src="/jsandcss/notify.js"></script>
@@ -108,6 +140,16 @@
 <script src="/jsandcss/chat/js/messages.js"></script>
 <script src="/jsandcss/chat/js/chat.js"></script>
 <script src="/jsandcss/chat/js/sse.js"></script>
+<script>
+window.LOGGED_USERNAME = window.LOGGED_USERNAME || null;
+window.LOGGED_AVATAR = window.LOGGED_AVATAR || null;
+window.POSTS_BY_ID = window.POSTS_BY_ID || {};
+window.INDEX_SEARCH_MODE = false;
+window.INDEX_QUERY = '';
+window.INDEX_QUERY_RAW = '';
+</script>
+<script src="/jsandcss/index/js/utils.js"></script>
+<script src="/jsandcss/index/js/search.js"></script>
 <script src="/jsandcss/darkness.js"></script>
 <!-- E2EE Scripts -->
 <script src="/jsandcss/chat/js/e2ee-compat.js"></script>

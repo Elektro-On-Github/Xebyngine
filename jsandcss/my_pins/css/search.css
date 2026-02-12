@@ -59,7 +59,7 @@
     left: 0;
     right: 0;
     margin: 0 auto;
-    z-index: 110;
+    z-index: 0;
     display: flex;
     gap: 8px;
     align-items: center;

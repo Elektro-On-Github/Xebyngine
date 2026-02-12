@@ -127,6 +127,7 @@ def chat_page():
 
     return render_template("chat.html",
                            my_id=my_id,
+                           username=session.get("username", ""),
                            pinned_users=pinned_users,
                            initial_chat=initial_target_info)
 
