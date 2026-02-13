@@ -135,6 +135,240 @@ def ensure_e2ee_table():
         if conn:
             release_conn(conn)
 
+def ensure_banned_table():
+    """Crea tabella banned_users e user_fingerprints se non esistono."""
+    conn = None
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS banned_users (
+                id BIGSERIAL PRIMARY KEY,
+                user_id VARCHAR(64),
+                username TEXT,
+                email TEXT,
+                ip_address TEXT,
+                fingerprint TEXT,
+                reason TEXT,
+                banned_at TIMESTAMPTZ DEFAULT NOW()
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS banned_users_ip_idx ON banned_users (ip_address)")
+        cur.execute("CREATE INDEX IF NOT EXISTS banned_users_fp_idx ON banned_users (fingerprint)")
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS user_fingerprints (
+                user_id VARCHAR(32) PRIMARY KEY,
+                ip_address TEXT,
+                fingerprint TEXT,
+                updated_at TIMESTAMPTZ DEFAULT NOW()
+            )
+        """)
+        conn.commit()
+        cur.close()
+    except Exception:
+        import sys
+        print("Warning: could not ensure banned_users table exists", file=sys.stderr)
+    finally:
+        if conn:
+            release_conn(conn)
+
+def ensure_pending_registrations_table():
+    """Crea tabella pending_registrations se non esiste."""
+    conn = None
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS pending_registrations (
+                id BIGSERIAL PRIMARY KEY,
+                username VARCHAR(50) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                password_hash TEXT NOT NULL,
+                code VARCHAR(8) NOT NULL,
+                created_at TIMESTAMPTZ DEFAULT NOW(),
+                expires_at TIMESTAMPTZ NOT NULL,
+                verified BOOLEAN DEFAULT FALSE
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS pending_reg_email_idx ON pending_registrations (email)")
+        cur.execute("CREATE INDEX IF NOT EXISTS pending_reg_code_idx ON pending_registrations (code)")
+        conn.commit()
+        cur.close()
+    except Exception:
+        import sys
+        print("Warning: could not ensure pending_registrations table exists", file=sys.stderr)
+    finally:
+        if conn:
+            release_conn(conn)
+
+def save_user_fingerprint(user_id, ip_address, fingerprint):
+    """Salva/aggiorna IP e fingerprint dell'utente."""
+    conn = None
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO user_fingerprints (user_id, ip_address, fingerprint, updated_at)
+            VALUES (%s, %s, %s, NOW())
+            ON CONFLICT (user_id) DO UPDATE
+            SET ip_address=EXCLUDED.ip_address, fingerprint=EXCLUDED.fingerprint, updated_at=NOW()
+        """, (user_id, ip_address, fingerprint))
+        conn.commit()
+        cur.close()
+    except Exception:
+        if conn:
+            conn.rollback()
+    finally:
+        if conn:
+            release_conn(conn)
+
+def ban_user(user_id, reason="moderation"):
+    """Banna un utente e cancella tutti i suoi dati."""
+    conn = None
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+
+        # Fetch username and email
+        cur.execute("SELECT username, email FROM users WHERE id=%s", (user_id,))
+        row = cur.fetchone()
+        if not row:
+            cur.close()
+            return False
+        username, email = row
+
+        # Fetch IP/fingerprint from user_fingerprints
+        ip_addr = None
+        fp = None
+        try:
+            cur.execute("SELECT ip_address, fingerprint FROM user_fingerprints WHERE user_id=%s", (user_id,))
+            fp_row = cur.fetchone()
+            if fp_row:
+                ip_addr, fp = fp_row
+        except Exception:
+            pass
+
+        # Insert ban record
+        cur.execute("""
+            INSERT INTO banned_users (user_id, username, email, ip_address, fingerprint, reason)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (user_id, username, email, ip_addr, fp, reason))
+
+        # Delete all user data
+        cur.execute("DELETE FROM poll_votes WHERE post_id IN (SELECT id FROM posts WHERE user_id=%s)", (user_id,))
+        cur.execute("DELETE FROM poll_options WHERE poll_id IN (SELECT id FROM polls WHERE post_id IN (SELECT id FROM posts WHERE user_id=%s))", (user_id,))
+        cur.execute("DELETE FROM polls WHERE post_id IN (SELECT id FROM posts WHERE user_id=%s)", (user_id,))
+        cur.execute("DELETE FROM comment_likes WHERE comment_id IN (SELECT id FROM comments WHERE user_id=%s)", (user_id,))
+        cur.execute("DELETE FROM comments WHERE user_id=%s", (user_id,))
+        cur.execute("DELETE FROM likes WHERE user_id=%s", (user_id,))
+        cur.execute("DELETE FROM post_views WHERE post_id IN (SELECT id FROM posts WHERE user_id=%s)", (user_id,))
+        cur.execute("DELETE FROM posts WHERE user_id=%s", (user_id,))
+        cur.execute("DELETE FROM messages WHERE sender_id=%s OR receiver_id=%s", (user_id, user_id))
+
+        try:
+            cur.execute("DELETE FROM conversations WHERE user_min=%s::uuid OR user_max=%s::uuid", (user_id, user_id))
+        except Exception:
+            conn.rollback()
+
+        try:
+            cur.execute("DELETE FROM pins WHERE owner_id=%s OR pinned_id=%s", (user_id, user_id))
+        except Exception:
+            conn.rollback()
+
+        try:
+            cur.execute("DELETE FROM crono WHERE owner_id=%s", (user_id,))
+        except Exception:
+            conn.rollback()
+
+        try:
+            cur.execute("DELETE FROM profile WHERE user_id=%s", (user_id,))
+        except Exception:
+            conn.rollback()
+
+        try:
+            cur.execute("DELETE FROM e2ee_keys WHERE user_id=%s::uuid", (user_id,))
+        except Exception:
+            conn.rollback()
+
+        try:
+            cur.execute("DELETE FROM secret WHERE user_id=%s", (user_id,))
+        except Exception:
+            conn.rollback()
+
+        try:
+            cur.execute("DELETE FROM user_fingerprints WHERE user_id=%s", (user_id,))
+        except Exception:
+            conn.rollback()
+
+        cur.execute("DELETE FROM users WHERE id=%s", (user_id,))
+
+        conn.commit()
+        cur.close()
+        return True
+    except Exception:
+        if conn:
+            conn.rollback()
+        return False
+    finally:
+        if conn:
+            release_conn(conn)
+
+def save_ban_fingerprint(user_id, ip_address, fingerprint):
+    """Salva IP e fingerprint per un utente bannato."""
+    conn = None
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE banned_users SET ip_address=%s, fingerprint=%s WHERE user_id=%s
+        """, (ip_address, fingerprint, user_id))
+        conn.commit()
+        cur.close()
+    finally:
+        if conn:
+            release_conn(conn)
+
+def is_banned(ip_address=None, fingerprint=None, email=None):
+    """Controlla se IP, fingerprint o email sono bannati."""
+    if not ip_address and not fingerprint and not email:
+        return False
+    conn = None
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        conditions = []
+        params = []
+        if ip_address:
+            conditions.append("ip_address=%s")
+            params.append(ip_address)
+        if fingerprint:
+            conditions.append("fingerprint=%s")
+            params.append(fingerprint)
+        if email:
+            conditions.append("email=%s")
+            params.append(email)
+        cur.execute(f"SELECT 1 FROM banned_users WHERE {' OR '.join(conditions)} LIMIT 1", params)
+        result = cur.fetchone() is not None
+        cur.close()
+        return result
+    finally:
+        if conn:
+            release_conn(conn)
+
+def is_user_banned(user_id):
+    """Controlla se un utente è bannato."""
+    conn = None
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT 1 FROM banned_users WHERE user_id=%s LIMIT 1", (user_id,))
+        result = cur.fetchone() is not None
+        cur.close()
+        return result
+    finally:
+        if conn:
+            release_conn(conn)
+
 # ============================================================================
 # POST QUERIES
 # ============================================================================

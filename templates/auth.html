@@ -47,6 +47,7 @@
                 <input type="password" name="password" required maxlength="200" autocomplete="current-password">
             </div>
 
+            <input type="hidden" name="fingerprint" id="login-fingerprint">
             <button class="submitbtn" type="submit">Login</button>
         </form>
 
@@ -70,6 +71,7 @@
                 <input type="password" name="password" maxlength="200" required autocomplete="new-password">
             </div>
 
+            <input type="hidden" name="fingerprint" id="register-fingerprint">
             <button class="submitbtn" type="submit">Registrati</button>
         </form>
     </div>
@@ -88,5 +90,48 @@
 
     <!-- Service Worker -->
     <script src="/service-worker.js"></script>
+    <!-- Fingerprint + Ban Check -->
+    <script>
+    (function(){
+        // Simple fingerprint from browser properties
+        function generateFingerprint(){
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            ctx.textBaseline = 'top';
+            ctx.font = '14px Arial';
+            ctx.fillText('fp', 2, 2);
+            var canvasData = canvas.toDataURL();
+            var raw = [
+                navigator.userAgent,
+                navigator.language,
+                screen.width + 'x' + screen.height,
+                screen.colorDepth,
+                new Date().getTimezoneOffset(),
+                navigator.hardwareConcurrency || '',
+                navigator.platform || '',
+                canvasData
+            ].join('|');
+            // Simple hash
+            var hash = 0;
+            for(var i = 0; i < raw.length; i++){
+                var c = raw.charCodeAt(i);
+                hash = ((hash << 5) - hash) + c;
+                hash |= 0;
+            }
+            return 'fp_' + Math.abs(hash).toString(36);
+        }
+        var fp = generateFingerprint();
+        var el1 = document.getElementById('login-fingerprint');
+        var el2 = document.getElementById('register-fingerprint');
+        if(el1) el1.value = fp;
+        if(el2) el2.value = fp;
+
+        // Check if banned (via URL param)
+        var params = new URLSearchParams(window.location.search);
+        if(params.get('banned') === '1'){
+            window.location.href = '/banned';
+        }
+    })();
+    </script>
 </body>
 </html>

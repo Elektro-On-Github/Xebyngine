@@ -6,7 +6,7 @@ import os
 import config
 from apscheduler.schedulers.background import BackgroundScheduler
 # Import utils per inizializzazione
-from utils.db import ensure_crono_table, ensure_post_views_table, ensure_report_table, ensure_e2ee_table
+from utils.db import ensure_crono_table, ensure_post_views_table, ensure_report_table, ensure_e2ee_table, ensure_banned_table, ensure_pending_registrations_table
 from utils.dirty_manager import ensure_dirty_table
 
 # Import blueprints
@@ -49,6 +49,8 @@ ensure_post_views_table()
 ensure_dirty_table()
 ensure_report_table()
 ensure_e2ee_table()
+ensure_banned_table()
+ensure_pending_registrations_table()
 
 
 # ============================================================================
@@ -107,8 +109,15 @@ def uploaded_video(filename):
 @app.before_request
 def refresh_session_timeout():
     if "user_id" in session:
-        session.permanent = True
-        session.modified = True
+        # Check if user was banned by moderation
+        from utils.db import is_user_banned
+        if is_user_banned(session["user_id"]):
+            session['banned'] = True
+            session.pop('user_id', None)
+            session.pop('username', None)
+        else:
+            session.permanent = True
+            session.modified = True
     try:
         if 'csrf_token' not in session:
             session['csrf_token'] = secrets.token_urlsafe(32)
@@ -121,6 +130,24 @@ def inject_csrf_token():
         return { 'csrf_token': session.get('csrf_token') }
     except Exception:
         return { 'csrf_token': None }
+
+@app.route('/check_ban')
+def check_ban():
+    from flask import jsonify
+    if session.get('banned'):
+        return jsonify({'banned': True}), 200
+    if 'user_id' in session:
+        from utils.db import is_user_banned
+        if is_user_banned(session['user_id']):
+            session['banned'] = True
+            return jsonify({'banned': True}), 200
+    return jsonify({'banned': False}), 200
+
+@app.route('/banned')
+def banned_page():
+    from flask import render_template
+    session.clear()
+    return render_template('banned.html')
 
 @app.after_request
 def add_security_headers(response):

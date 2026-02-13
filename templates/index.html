@@ -168,5 +168,18 @@
     <script src="/jsandcss/index/js/init.js"></script>
     <script src="/jsandcss/darkness.js"></script>
     <script src="/service-worker.js"></script>
+    <!-- Ban Check -->
+    <script>
+    (function(){
+        function checkBan(){
+            fetch('/check_ban').then(r=>r.json()).then(d=>{
+                if(d.banned){
+                    window.location.href = '/banned';
+                }
+            }).catch(function(){});
+        }
+        setInterval(checkBan, 5000);
+    })();
+    </script>
 </body>
 </html>

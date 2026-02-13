@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Verifica Email - Xebyngine</title>
+    <link rel="stylesheet" href="/jsandcss/auth/css/auth.css">
+    <link rel="stylesheet" href="/jsandcss/notify.css">
+    <style>
+        .verify-info {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.95em;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .verify-email {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .code-inputs {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+        .code-inputs input {
+            width: 36px;
+            height: 50px;
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: 700;
+            padding: 0;
+            border-radius: 12px;
+        }
+        .code-inputs input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(144, 16, 16, 0.15);
+        }
+        .error-msg {
+            color: #d32f2f;
+            text-align: center;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        .resend-link {
+            text-align: center;
+            margin-top: 4px;
+        }
+        .resend-link button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9em;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2 class="ready" data-login-text="Verifica Email" data-register-text="Verifica Email">Verifica Email</h2>
+
+    <div class="form-wrapper" style="min-height:auto;">
+        <form method="POST" action="/verify" class="active" style="position:relative;">
+            <p class="verify-info">
+                Abbiamo inviato un codice a 8 cifre a<br>
+                <span class="verify-email">{{ email }}</span>
+            </p>
+
+            {% if error %}
+            <p class="error-msg">{{ error }}</p>
+            {% endif %}
+
+            <div class="code-inputs">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" data-idx="0">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" data-idx="1">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" data-idx="2">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" data-idx="3">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" data-idx="4">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" data-idx="5">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" data-idx="6">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" data-idx="7">
+            </div>
+
+            <input type="hidden" name="code" id="full-code">
+            <button class="submitbtn" type="submit">Verifica</button>
+
+            <div class="resend-link">
+                <span style="color:var(--text-muted);font-size:0.9em;">Non hai ricevuto il codice?</span>
+                <form method="POST" action="/resend_code" style="position:relative;opacity:1;pointer-events:auto;transform:none;padding:0;background:none;box-shadow:none;backdrop-filter:none;">
+                    <div class="resend-link">
+                        <button type="submit">Reinvia codice</button>
+                    </div>
+                </form>
+            </div>
+        </form>
+
+
+    </div>
+
+    <script src="/jsandcss/csrf.js"></script>
+    <script src="/jsandcss/notify.js"></script>
+    <script src="/jsandcss/darkness.js"></script>
+    <script>
+    (function(){
+        var inputs = document.querySelectorAll('.code-inputs input');
+        var hidden = document.getElementById('full-code');
+
+        function updateHidden(){
+            var code = '';
+            inputs.forEach(function(inp){ code += inp.value; });
+            hidden.value = code;
+        }
+
+        inputs.forEach(function(inp, idx){
+            inp.addEventListener('input', function(){
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if(this.value && idx < inputs.length - 1){
+                    inputs[idx + 1].focus();
+                }
+                updateHidden();
+            });
+            inp.addEventListener('keydown', function(e){
+                if(e.key === 'Backspace' && !this.value && idx > 0){
+                    inputs[idx - 1].focus();
+                    inputs[idx - 1].value = '';
+                    updateHidden();
+                }
+            });
+            inp.addEventListener('paste', function(e){
+                e.preventDefault();
+                var paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+                for(var i = 0; i < paste.length && i < inputs.length; i++){
+                    inputs[i].value = paste[i];
+                }
+                updateHidden();
+                var focusIdx = Math.min(paste.length, inputs.length - 1);
+                inputs[focusIdx].focus();
+            });
+        });
+
+        inputs[0].focus();
+    })();
+    </script>
+</body>
+</html>

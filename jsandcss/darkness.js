@@ -56,7 +56,13 @@
         .post-delete-btn,
         .notify-button,
         .fa-flag,
-        .fa-times
+        .fa-times,
+        .ban-container,
+        .ban-title,
+        .ban-message,
+        .ban-rule,
+        .verify-email,
+        .resend-link button
         
         { 
         filter: invert(1) hue-rotate(180deg) !important; 

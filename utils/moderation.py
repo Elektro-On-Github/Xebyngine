@@ -1,4 +1,4 @@
-import hashlib, shutil, sys, os, tempfile, time
+import hashlib, shutil, sys, os, tempfile, time, json
 from pathlib import Path
 from PIL import Image
 import imagehash
@@ -391,12 +391,17 @@ def process_video(video_path, banned_hashes):
 
 def is_stable(path, delay=STABILITY_DELAY):
     """Verifica se il file è stabile (non in upload)."""
-    if not os.path.exists(path):
+    try:
+        if not os.path.exists(path):
+            return False
+        size1 = os.path.getsize(path)
+        time.sleep(delay)
+        if not os.path.exists(path):
+            return False
+        size2 = os.path.getsize(path)
+        return size1 == size2
+    except OSError:
         return False
-    size1 = os.path.getsize(path)
-    time.sleep(delay)
-    size2 = os.path.getsize(path)
-    return size1 == size2
 
 def safe_move(src, dest_dir):
     """Sposta file senza sovrascrivere."""
@@ -408,6 +413,61 @@ def safe_move(src, dest_dir):
         n += 1
     shutil.move(str(src), str(dest))
     return dest
+
+# ============================================================================
+# DATABASE: DELETE POST BY FILENAME
+# ============================================================================
+
+def extract_user_id_from_filename(filename):
+    """Estrae user_id dal filename: {timestamp}_{user_id}_{random_hex}.{ext}"""
+    name = os.path.splitext(filename)[0]  # remove extension
+    parts = name.split("_")
+    # Format: timestamp_userid_randomhex - user_id is between first and last underscore
+    # But timestamp itself contains underscores? No - the format is:
+    # 2026-02-13---14:30:22.123_USERID_a1b2c3
+    # So parts[0] = timestamp, parts[-1] = random_hex, middle parts = user_id
+    if len(parts) >= 3:
+        return "_".join(parts[1:-1])
+    return None
+
+def delete_post_by_filename(filename):
+    """Cerca il post che contiene il file e lo elimina dal DB (cascade completa)."""
+    try:
+        from .db import get_conn, release_conn
+    except ImportError:
+        from utils.db import get_conn, release_conn
+
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        # Cerca post che contiene questo filename in image_path (JSON)
+        cur.execute("SELECT id, image_path FROM posts WHERE image_path LIKE %s", (f"%{filename}%",))
+        rows = cur.fetchall()
+
+        if not rows:
+            print(f"    [DB] Nessun post trovato per file: {filename}")
+            cur.close()
+            return
+
+        for post_id, image_path in rows:
+            print(f"    [DB] Eliminazione post id={post_id} per file bannato: {filename}")
+            cur.execute("DELETE FROM poll_votes WHERE post_id=%s", (post_id,))
+            cur.execute("DELETE FROM poll_options WHERE poll_id IN (SELECT id FROM polls WHERE post_id=%s)", (post_id,))
+            cur.execute("DELETE FROM polls WHERE post_id=%s", (post_id,))
+            cur.execute("DELETE FROM comment_likes WHERE comment_id IN (SELECT id FROM comments WHERE post_id=%s)", (post_id,))
+            cur.execute("DELETE FROM comments WHERE post_id=%s", (post_id,))
+            cur.execute("DELETE FROM likes WHERE post_id=%s", (post_id,))
+            cur.execute("DELETE FROM post_views WHERE post_id=%s", (post_id,))
+            cur.execute("DELETE FROM posts WHERE id=%s", (post_id,))
+
+        conn.commit()
+        cur.close()
+        print(f"    [DB] Post eliminati: {len(rows)}")
+    except Exception as e:
+        conn.rollback()
+        print(f"    [DB ERROR] {e}")
+    finally:
+        release_conn(conn)
 
 # ============================================================================
 # MAIN PIPELINE WORKER
@@ -455,11 +515,23 @@ def process_one():
         
         # ROUTING
         if verdict == "BLOCK":
+            delete_post_by_filename(name)
+            # Ban the user
+            user_id = extract_user_id_from_filename(name)
+            if user_id:
+                try:
+                    from .db import ban_user
+                except ImportError:
+                    from utils.db import ban_user
+                banned = ban_user(user_id, reason=f"Moderation BLOCK: {reason}")
+                if banned:
+                    print(f"[BANNED] User {user_id} bannato per: {reason}")
             Path(MOD_BAN_DIR).mkdir(parents=True, exist_ok=True)
             shutil.move(raw_path, os.path.join(MOD_BAN_DIR, name))
             print(f"[BAN] {name}\n")
         
         elif verdict == "REVIEW":
+            delete_post_by_filename(name)
             Path(MOD_REVIEW_DIR).mkdir(parents=True, exist_ok=True)
             shutil.move(raw_path, os.path.join(MOD_REVIEW_DIR, name))
             print(f"[REVIEW] {name}\n")

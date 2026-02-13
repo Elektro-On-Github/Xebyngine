@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Bannato</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #efefef;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .ban-container {
+            max-width: 480px;
+            padding: 40px 24px;
+        }
+        .ban-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 16px;
+        }
+        .ban-message {
+            font-size: 16px;
+            color: #404040;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        .ban-rule {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid rgba(255, 59, 48, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #ff0000;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="ban-container">
+        <h1 class="ban-title">Account Bannato</h1>
+        <p class="ban-message">
+            Il tuo account è stato permanentemente bannato per aver violato le regole della community.
+            Hai pubblicato contenuti che non rispettano le linee guida.
+        </p>
+        <div class="ban-rule">
+            Questa decisione è definitiva e non può essere contestata.
+            Non sarà possibile creare un nuovo account.
+        </div>
+    </div>
+<script src="/jsandcss/darkness.js"></script>
+<script src="/service-worker.js"></script>
+</body>
+</html>

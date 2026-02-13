@@ -105,6 +105,17 @@ SECURITY_HEADERS = {
 HSTS_HEADER = 'max-age=31536000; includeSubDomains'
 
 # ============================================================================
+# EMAIL VERIFICATION
+# ============================================================================
+
+MAIL_SENDER = "xbynginserver040@gmail.com"
+MAIL_PASSWORD = "vpsr nula mwcz kyzn"  #key
+MAIL_SMTP_HOST = "smtp.gmail.com"
+MAIL_SMTP_PORT = 587
+VERIFICATION_CODE_LENGTH = 8
+VERIFICATION_CODE_EXPIRY = 600  # 10 minuti
+
+# ============================================================================
 # DEBUG
 # ============================================================================
 

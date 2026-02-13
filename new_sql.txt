@@ -242,3 +242,48 @@ CREATE INDEX IF NOT EXISTS report_created_idx ON report (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_dirty_user_id ON dirty(user_id);
 CREATE INDEX IF NOT EXISTS idx_dirty_status ON dirty(status);
 CREATE INDEX IF NOT EXISTS idx_dirty_last_activity ON dirty(last_activity);
+
+-- =====================================================
+-- UTENTI BANNATI (moderazione automatica)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS banned_users (
+    id BIGSERIAL PRIMARY KEY,
+    user_id VARCHAR(64),
+    username TEXT,
+    email TEXT,
+    ip_address TEXT,
+    fingerprint TEXT,
+    reason TEXT,
+    banned_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS banned_users_ip_idx ON banned_users (ip_address);
+CREATE INDEX IF NOT EXISTS banned_users_fp_idx ON banned_users (fingerprint);
+CREATE INDEX IF NOT EXISTS banned_users_email_idx ON banned_users (email);
+
+-- =====================================================
+-- FINGERPRINT UTENTI (tracking per ban)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS user_fingerprints (
+    user_id VARCHAR(64) PRIMARY KEY,
+    ip_address TEXT,
+    fingerprint TEXT,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- =====================================================
+-- REGISTRAZIONI IN ATTESA (verifica email)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS pending_registrations (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password_hash TEXT NOT NULL,
+    code VARCHAR(8) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    expires_at TIMESTAMPTZ NOT NULL,
+    verified BOOLEAN DEFAULT FALSE
+);
+
+CREATE INDEX IF NOT EXISTS pending_reg_email_idx ON pending_registrations (email);
+CREATE INDEX IF NOT EXISTS pending_reg_code_idx ON pending_registrations (code);
