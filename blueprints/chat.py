@@ -248,12 +248,28 @@ def mark_chat_read(other_user_id):
 @require_csrf
 @rate_limit(*config.RATE_LIMIT_MESSAGE)
 def send_message():
-    sender = request.form.get('my_id')
+    if "user_id" not in session:
+        return "Unauthorized", 401
+
+    sender = session["user_id"]
+    sender_param = request.form.get('my_id')
     receiver = request.form.get('other_id')
     content = sanitize_input(request.form.get('content', ''), config.MAX_CONTENT_LENGTH)
 
-    if not all([sender, receiver, content]):
+    if sender_param and str(sender_param) != str(sender):
+        return "Forbidden", 403
+
+    if not all([receiver, content]):
         return "Missing parameters", 400
+
+    conn = get_conn()
+    try:
+        with conn.cursor() as c:
+            c.execute("SELECT 1 FROM users WHERE id=%s", (receiver,))
+            if not c.fetchone():
+                return "User not found", 404
+    finally:
+        release_conn(conn)
 
     save_message(sender, receiver, content)
 
@@ -389,9 +405,12 @@ def stream_messages():
     if "user_id" not in session:
         return "Unauthorized", 401
 
-    user_id = str(request.args.get('user_id'))
+    session_user_id = str(session["user_id"])
+    user_id = str(request.args.get('user_id') or session_user_id)
     if not user_id:
         return "Missing user_id", 400
+    if user_id != session_user_id:
+        return "Forbidden", 403
 
     def generate():
         q = queue.Queue(maxsize=100)
@@ -479,6 +498,7 @@ def get_chat_users_json():
 # === REPORT MESSAGE ===
 @chat_bp.route('/report_message', methods=['POST'])
 @rate_limit(10, 60)
+@require_csrf
 def report_message_route():
     """Segnala un messaggio come inappropriato."""
     if "user_id" not in session:

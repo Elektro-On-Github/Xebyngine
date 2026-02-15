@@ -10,7 +10,7 @@ SECRET_KEY = "r0Kr6RjOXUmG63Vf4iXbRqlh7yDi2RzxkAPIGp0PSrvP9WyAmDqFaM0muP0vFfM5Ee
 SESSION_LIFETIME_DAYS = 365
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SECURE = False  # True HTTPS
+SESSION_COOKIE_SECURE = True  # True HTTPS
 
 # ============================================================================
 # DATABASE
@@ -71,6 +71,8 @@ RATE_LIMIT_CRONO = (30, 60)
 # APP SETTINGS
 # ============================================================================
 
+ADMIN_USER_IDS = {u for u in os.getenv("ADMIN_USER_IDS", "").split(",") if u}
+
 MAX_POST_DURATION_SECONDS = 2 * 24 * 3600
 DEFAULT_POST_DURATION = 3600
 
@@ -88,7 +90,7 @@ COMMENTS_MAX_PER_PAGE = 100
 # SOCKETIO
 # ============================================================================
 
-SOCKETIO_CORS_ORIGINS = "*"
+SOCKETIO_CORS_ORIGINS = None
 
 # ============================================================================
 # SECURITY HEADERS
@@ -119,6 +121,6 @@ VERIFICATION_CODE_EXPIRY = 600  # 10 minuti
 # DEBUG
 # ============================================================================
 
-DEBUG = True
+DEBUG = False
 HOST = "127.0.0.1"
 PORT = 5000

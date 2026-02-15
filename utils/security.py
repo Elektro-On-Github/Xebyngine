@@ -114,10 +114,12 @@ def rate_limit(max_requests=10, window_seconds=60):
     def decorator(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
-            if 'user_id' not in session:
-                return f(*args, **kwargs)
-            
-            user_id = session['user_id']
+            user_id = session.get('user_id')
+            if not user_id:
+                user_id = request.headers.get('X-Forwarded-For', request.remote_addr)
+                if user_id and ',' in user_id:
+                    user_id = user_id.split(',')[0].strip()
+                user_id = f"ip:{user_id or 'unknown'}"
             now = time.time()
             
             with rate_limit_lock:

@@ -5,6 +5,7 @@ from utils.dirty_manager import (
     get_all_dirty_users
 )
 from utils.security import require_csrf
+import config
 
 dirty_bp = Blueprint('dirty_bp', __name__, url_prefix='/api/dirty')
 
@@ -68,10 +69,8 @@ def admin_list_dirty():
     """
     if 'user_id' not in session:
         return jsonify({'error': 'Non autenticato'}), 401
-    
-    # TODO: Aggiungi controllo admin se hai ruoli
-    # if not is_admin(session['user_id']):
-    #     return jsonify({'error': 'Non autorizzato'}), 403
+    if session['user_id'] not in config.ADMIN_USER_IDS:
+        return jsonify({'error': 'Non autorizzato'}), 403
     
     dirty_users = get_all_dirty_users()
     
