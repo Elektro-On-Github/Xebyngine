@@ -6,8 +6,9 @@ import os
 import config
 from utils.security import sanitize_input, validate_image_file, validate_video_file, rate_limit, require_csrf
 from utils.helpers import generate_filename, remove_files_for_image_path, ensure_viewer_token
-from utils.db import (get_conn, release_conn, get_comments, get_post_like_count, 
-                      get_post_view_count, get_poll_results, cleanup_expired_posts)
+from utils.moderation import analyze_text_from_post
+from utils.db import (get_conn, release_conn, get_comments, get_post_like_count,
+                      get_post_view_count, get_poll_results, cleanup_expired_posts, ban_user)
 
 posts_bp = Blueprint('posts_bp', __name__)
 
@@ -93,6 +94,45 @@ def create_post():
         flash('Il post non può essere vuoto. Aggiungi testo, foto o video.', 'error')
         return redirect(request.referrer or url_for('misc_bp.index'))
 
+    def enforce_text_moderation(text_value, label, user_id_value):
+        print(f"    [{label}] {text_value}")
+        action, reason, report = analyze_text_from_post(text_value)
+        if report.get("text"):
+            print(f"    [{label}] {report['text']}")
+        if action == "BLOCK":
+            ban_user(user_id_value, reason=f"Text moderation BLOCK ({label}): {reason}")
+            session['banned'] = True
+            session.pop('user_id', None)
+            session.pop('username', None)
+            return False, reason
+        return True, None
+
+    if content:
+        label = "POST_NOIMG" if not has_images else "POSTXT"
+        ok, reason = enforce_text_moderation(content, label, user_id)
+        if not ok:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+                return jsonify({'status': 'error', 'error': reason}), 400
+            flash(f'Contenuto non consentito: {reason}', 'error')
+            return redirect(request.referrer or url_for('misc_bp.index'))
+
+    if poll_question:
+        ok, reason = enforce_text_moderation(poll_question, "POLLQ", user_id)
+        if not ok:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+                return jsonify({'status': 'error', 'error': reason}), 400
+            flash(f'Domanda sondaggio non consentita: {reason}', 'error')
+            return redirect(request.referrer or url_for('misc_bp.index'))
+
+    if poll_options:
+        for opt in poll_options:
+            ok, reason = enforce_text_moderation(opt, "POLLOPT", user_id)
+            if not ok:
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+                    return jsonify({'status': 'error', 'error': reason}), 400
+                flash(f'Opzione sondaggio non consentita: {reason}', 'error')
+                return redirect(request.referrer or url_for('misc_bp.index'))
+
     conn = get_conn()
     cur = conn.cursor()
     cur.execute(
@@ -140,13 +180,24 @@ def like_post(post_id):
 @rate_limit(*config.RATE_LIMIT_COMMENT)
 def add_comment(post_id):
     user_id = session.get("user_id")
-    if not user_id: 
+    if not user_id:
         return "not logged in", 401
 
     content = sanitize_input(request.form.get("content", ""), config.MAX_CONTENT_LENGTH)
     if not content:
         return jsonify({'error': 'Empty comment'}), 400
-    
+
+    print(f"    [COMMENT] {content}")
+    action, reason, report = analyze_text_from_post(content)
+    if report.get("text"):
+        print(f"    [COMMENT] {report['text']}")
+    if action == "BLOCK":
+        ban_user(user_id, reason=f"Text moderation BLOCK (COMMENT): {reason}")
+        session['banned'] = True
+        session.pop('user_id', None)
+        session.pop('username', None)
+        return jsonify({'error': reason}), 400
+
     conn = get_conn()
     cur = conn.cursor()
     cur.execute("INSERT INTO comments (post_id, user_id, content) VALUES (%s,%s,%s)", (post_id, user_id, content))

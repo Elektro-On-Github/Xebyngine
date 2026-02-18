@@ -7,7 +7,8 @@ import time
 import config
 from utils.security import sanitize_input, validate_image_file, rate_limit, require_csrf, validate_csrf
 from utils.helpers import generate_filename
-from utils.db import get_conn, release_conn, is_pinned, get_pinned_users, get_post_view_count, get_comments, get_poll_results
+from utils.db import get_conn, release_conn, is_pinned, get_pinned_users, get_post_view_count, get_comments, get_poll_results, ban_user
+from utils.moderation import analyze_text_from_post
 
 try:
     import qrcode
@@ -31,6 +32,17 @@ def profile():
             return "Invalid CSRF token", 403
         
         new_bio = sanitize_input(request.form.get("bio", ""), config.MAX_BIO_LENGTH)
+        if new_bio:
+            print(f"    [BIO] {new_bio}")
+            action, reason, report = analyze_text_from_post(new_bio)
+            if report.get("text"):
+                print(f"    [BIO] {report['text']}")
+            if action == "BLOCK":
+                ban_user(session["user_id"], reason=f"Text moderation BLOCK (BIO): {reason}")
+                session['banned'] = True
+                session.pop('user_id', None)
+                session.pop('username', None)
+                return f"Bio non consentita: {reason}", 400
         social_links = []
         for i in range(config.MAX_SOCIAL_LINKS):
             link = sanitize_input(request.form.get(f"social{i}", ""), 500)
