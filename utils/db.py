@@ -109,32 +109,6 @@ def ensure_report_table():
         if conn:
             release_conn(conn)
 
-def ensure_e2ee_table():
-    """Crea tabella E2EE se non esiste."""
-    conn = None
-    try:
-        conn = get_conn()
-        cur = conn.cursor()
-        # Tabella chiavi pubbliche
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS e2ee_keys (
-                user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-                public_key TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-        # Aggiungi colonna is_encrypted a messages se non esiste
-        cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS is_encrypted BOOLEAN DEFAULT FALSE")
-        conn.commit()
-        cur.close()
-    except Exception:
-        import sys
-        print("Warning: could not ensure e2ee table exists", file=sys.stderr)
-    finally:
-        if conn:
-            release_conn(conn)
-
 def ensure_banned_table():
     """Crea tabella banned_users e user_fingerprints se non esistono."""
     conn = None
@@ -168,35 +142,6 @@ def ensure_banned_table():
     except Exception:
         import sys
         print("Warning: could not ensure banned_users table exists", file=sys.stderr)
-    finally:
-        if conn:
-            release_conn(conn)
-
-def ensure_pending_registrations_table():
-    """Crea tabella pending_registrations se non esiste."""
-    conn = None
-    try:
-        conn = get_conn()
-        cur = conn.cursor()
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS pending_registrations (
-                id BIGSERIAL PRIMARY KEY,
-                username VARCHAR(50) NOT NULL,
-                email VARCHAR(100) NOT NULL,
-                password_hash TEXT NOT NULL,
-                code VARCHAR(8) NOT NULL,
-                created_at TIMESTAMPTZ DEFAULT NOW(),
-                expires_at TIMESTAMPTZ NOT NULL,
-                verified BOOLEAN DEFAULT FALSE
-            )
-        """)
-        cur.execute("CREATE INDEX IF NOT EXISTS pending_reg_email_idx ON pending_registrations (email)")
-        cur.execute("CREATE INDEX IF NOT EXISTS pending_reg_code_idx ON pending_registrations (code)")
-        conn.commit()
-        cur.close()
-    except Exception:
-        import sys
-        print("Warning: could not ensure pending_registrations table exists", file=sys.stderr)
     finally:
         if conn:
             release_conn(conn)
@@ -282,11 +227,6 @@ def ban_user(user_id, reason="moderation"):
 
         try:
             cur.execute("DELETE FROM profile WHERE user_id=%s", (user_id,))
-        except Exception:
-            conn.rollback()
-
-        try:
-            cur.execute("DELETE FROM e2ee_keys WHERE user_id=%s::uuid", (user_id,))
         except Exception:
             conn.rollback()
 

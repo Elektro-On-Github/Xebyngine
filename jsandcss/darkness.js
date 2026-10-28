@@ -60,9 +60,7 @@
         .ban-container,
         .ban-title,
         .ban-message,
-        .ban-rule,
-        .verify-email,
-        .resend-link button
+        .ban-rule
         
         { 
         filter: invert(1) hue-rotate(180deg) !important; 

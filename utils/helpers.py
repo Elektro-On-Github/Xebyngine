@@ -48,7 +48,7 @@ def remove_files_for_image_path(image_path_value):
 # USER MANAGEMENT
 # ============================================================================
 
-def register_user_db(username, password, email):
+def register_user_db(username, password):
     """Registra nuovo utente nel DB."""
     from .db import get_conn, release_conn
     
@@ -57,8 +57,8 @@ def register_user_db(username, password, email):
     conn = get_conn()
     cur = conn.cursor()
     cur.execute(
-        "INSERT INTO users (id, username, password_hash, email) VALUES (%s, %s, %s, %s)",
-        (user_id, username, hashed, email)
+        "INSERT INTO users (id, username, password_hash) VALUES (%s, %s, %s)",
+        (user_id, username, hashed)
     )
     # Aggiungi utente alla tabella secret con testo vuoto
     cur.execute(

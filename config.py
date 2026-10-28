@@ -46,7 +46,6 @@ ALLOWED_VIDEO_EXT = {'mp4', 'webm'}
 MAX_CONTENT_LENGTH = 5000
 MAX_BIO_LENGTH = 1000
 MAX_USERNAME_LENGTH = 50
-MAX_EMAIL_LENGTH = 100
 MAX_PASSWORD_LENGTH = 128
 MIN_PASSWORD_LENGTH = 6
 MAX_SOCIAL_LINKS = 8
@@ -105,17 +104,6 @@ SECURITY_HEADERS = {
 }
 
 HSTS_HEADER = 'max-age=31536000; includeSubDomains'
-
-# ============================================================================
-# EMAIL VERIFICATION
-# ============================================================================
-
-MAIL_SENDER = "xbynginserver040@gmail.com"
-MAIL_PASSWORD = "vpsr nula mwcz kyzn"  #key
-MAIL_SMTP_HOST = "smtp.gmail.com"
-MAIL_SMTP_PORT = 587
-VERIFICATION_CODE_LENGTH = 8
-VERIFICATION_CODE_EXPIRY = 600  # 10 minuti
 
 # ============================================================================
 # DEBUG

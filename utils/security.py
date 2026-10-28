@@ -40,13 +40,6 @@ def validate_username(username):
         return False
     return bool(re.match(r'^[a-zA-Z0-9_-]+$', username))
 
-def validate_email(email):
-    """Valida email base."""
-    if not email or len(email) > config.MAX_EMAIL_LENGTH:
-        return False
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return bool(re.match(pattern, email))
-
 def validate_password(password):
     """Valida forza password."""
     if not password or len(password) < config.MIN_PASSWORD_LENGTH or len(password) > config.MAX_PASSWORD_LENGTH:

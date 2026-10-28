@@ -145,14 +145,14 @@ def chat_history(other_user_id):
     try:
         with conn.cursor() as c:
             c.execute("""
-                SELECT id, sender_id, content, message_type, COALESCE(is_encrypted, FALSE) FROM messages
+                SELECT id, sender_id, content, message_type FROM messages
                 WHERE (sender_id=%s AND receiver_id=%s) OR (sender_id=%s AND receiver_id=%s)
                 ORDER BY created_at ASC
             """, (my_id, other_user_id, other_user_id, my_id))
             rows = c.fetchall()
 
             user_ids = list({r[1] for r in rows} | {my_id, other_user_id})
-            c.execute("SELECT user_id, avatar_path FROM profile WHERE user_id = ANY(%s)", (user_ids,))
+            c.execute("SELECT user_id, avatar_path FROM profile WHERE user_id = ANY(%s::uuid[])", (user_ids,))
             avatar_rows = {uid: get_avatar_url(path) for uid, path in c.fetchall()}
     finally:
         release_conn(conn)
@@ -161,7 +161,7 @@ def chat_history(other_user_id):
     avatar_rows.setdefault(other_user_id, default)
 
     html_parts = []
-    for msg_id, sid, content, message_type, is_encrypted in rows:
+    for msg_id, sid, content, message_type in rows:
         is_mine = sid == my_id
         avatar = avatar_rows.get(sid)
         
@@ -285,7 +285,6 @@ def send_message():
     send_to_user(receiver, 'message', {
         'sender': sender,
         'content': content,
-        'is_encrypted': False,
         'avatar': get_avatar_url(row[0] if row else None)
     })
 
@@ -376,7 +375,6 @@ def share_post():
         'sender': sender,
         'content': message_content,
         'message_type': 'post_share',
-        'is_encrypted': False,
         'avatar': get_avatar_url(row[0] if row else None)
     })
     
